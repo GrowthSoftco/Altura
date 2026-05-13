@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Cliente {
+  id            String       @id @default(cuid())
+  nombre        String
+  telefono      String
+  correo        String?
+  documento     String?
+  fechaRegistro DateTime     @default(now())
+  cotizaciones  Cotizacion[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@map("clientes")
+}
+
+model Cotizacion {
+  id            String   @id @default(cuid())
+  codigo        String   @unique
+  estado        Estado   @default(COTIZADA)
+  fechaCreacion DateTime @default(now())
+
+  clienteId String
+  cliente   Cliente @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  tipo          TipoViaje
+  origen        String
+  destino       String
+  fechaSalida   DateTime
+  fechaRegreso  DateTime
+  aerolinea     String?
+  numeroVuelo   String?
+  adultos       Int       @default(1)
+  menores       Int       @default(0)
+  edadesMenores Int[]     @default([])
+
+  servicios  Json
+  itinerario Json?
+
+  porcentajeGanancia  Decimal
+  valorNetoIndividual Decimal
+  valorNetoTotal      Decimal
+  gananciaTotal       Decimal
+  valorConPorcentaje  Decimal
+
+  planPagos Json
+
+  asistenciaMedica Boolean @default(false)
+  observaciones    String?
+  notasInternas    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("cotizaciones")
+}
+
+enum Estado {
+  COTIZADA
+  NEGOCIACION
+  APROBADA
+  PAGANDO
+  COMPLETADA
+  CANCELADA
+}
+
+enum TipoViaje {
+  NACIONAL
+  INTERNACIONAL
+}

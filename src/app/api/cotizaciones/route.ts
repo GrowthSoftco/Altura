@@ -1,0 +1,82 @@
+import { NextRequest, NextResponse } from "next/server"
+import { prisma } from "@/lib/prisma"
+import { generarCodigoCotizacion, calcularPrecios } from "@/lib/calculos"
+
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url)
+  const estado    = searchParams.get("estado")
+  const clienteId = searchParams.get("clienteId")
+
+  const cotizaciones = await prisma.cotizacion.findMany({
+    where: {
+      ...(estado    && { estado: estado as never }),
+      ...(clienteId && { clienteId }),
+    },
+    include: { cliente: true },
+    orderBy: { createdAt: "desc" },
+  })
+  return NextResponse.json(cotizaciones)
+}
+
+export async function POST(req: NextRequest) {
+  const body = await req.json()
+
+  let clienteId = body.clienteId
+
+  // Create new client inline if no existing clienteId
+  if (!clienteId && body.clienteNuevo) {
+    const c = body.clienteNuevo
+    const cliente = await prisma.cliente.create({
+      data: {
+        nombre:    c.nombre,
+        telefono:  c.telefono,
+        correo:    c.correo    || null,
+        documento: c.documento || null,
+      },
+    })
+    clienteId = cliente.id
+  }
+
+  if (!clienteId) {
+    return NextResponse.json({ error: "Cliente requerido" }, { status: 400 })
+  }
+
+  const codigo  = await generarCodigoCotizacion(prisma)
+  const precios = calcularPrecios(
+    body.servicios,
+    body.adultos,
+    body.menores,
+    body.porcentajeGanancia
+  )
+
+  const cotizacion = await prisma.cotizacion.create({
+    data: {
+      codigo,
+      clienteId,
+      tipo:         body.tipo,
+      origen:       body.origen,
+      destino:      body.destino,
+      fechaSalida:  new Date(body.fechaSalida),
+      fechaRegreso: new Date(body.fechaRegreso),
+      aerolinea:    body.aerolinea   || null,
+      numeroVuelo:  body.numeroVuelo || null,
+      adultos:      body.adultos,
+      menores:      body.menores,
+      edadesMenores: body.edadesMenores || [],
+      servicios:    body.servicios,
+      itinerario:   body.itinerario || {},
+      porcentajeGanancia:  precios.valorNetoIndividual === 0 ? body.porcentajeGanancia : body.porcentajeGanancia,
+      valorNetoIndividual: precios.valorNetoIndividual,
+      valorNetoTotal:      precios.valorNetoTotal,
+      gananciaTotal:       precios.gananciaTotal,
+      valorConPorcentaje:  precios.valorConPorcentaje,
+      planPagos:           precios.planPagos as never,
+      asistenciaMedica:    body.asistenciaMedica ?? false,
+      observaciones:       body.observaciones || null,
+      notasInternas:       body.notasInternas  || null,
+    },
+    include: { cliente: true },
+  })
+
+  return NextResponse.json(cotizacion, { status: 201 })
+}
