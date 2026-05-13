@@ -110,7 +110,7 @@ export default async function ClienteDetailPage({
             <div className="flex justify-between">
               <span className="text-[#737373]">Completadas</span>
               <span className="text-emerald-400 font-medium tabular-nums">
-                {cliente.cotizaciones.filter((c) => c.estado === "COMPLETADA").length}
+                {cliente.cotizaciones.filter((c: { estado: string }) => c.estado === "COMPLETADA").length}
               </span>
             </div>
           </CardContent>
