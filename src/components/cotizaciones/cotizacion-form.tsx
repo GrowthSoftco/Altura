@@ -183,7 +183,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     initPlan?.cuotas?.map(c => c.porcentaje) ?? [50, 30, 20]
   )
 
-  // PDF toggle
+  // IVA + PDF toggles
+  const [cobrarIva, setCobrarIva]               = useState(cotizacion?.cobrarIva ?? false)
   const [mostrarPlanPagos, setMostrarPlanPagos] = useState(cotizacion?.mostrarPlanPagos ?? true)
 
   // Extras
@@ -191,7 +192,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const [calculos, setCalculos]         = useState<CalculoPrecios>(() => {
     const initServicios = (cotizacion?.servicios as ServicioItem[]) ?? SERVICIOS_DEFAULT
     const initPct = cotizacion ? Number(cotizacion.porcentajeGanancia) : 10
-    return calcularPrecios(initServicios, cotizacion?.adultos ?? 1, cotizacion?.menores ?? 0, initPct, { aplicar: true, numeroCuotas: cotizacion?.numeroCuotas ?? 3 })
+    return calcularPrecios(initServicios, cotizacion?.adultos ?? 1, cotizacion?.menores ?? 0, initPct, { aplicar: true, numeroCuotas: cotizacion?.numeroCuotas ?? 3 }, cotizacion?.cobrarIva ?? false)
   })
 
   // Pre-fill client when coming from /clientes/[id] with ?clienteId=
@@ -207,8 +208,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   useEffect(() => {
     setCalculos(calcularPrecios(servicios, adultos, menores, porcentaje, {
       aplicar: aplicarPlan, numeroCuotas: numCuotas, porcentajes: porcentajesCuotas
-    }))
-  }, [servicios, adultos, menores, porcentaje, aplicarPlan, numCuotas, porcentajesCuotas])
+    }, cobrarIva))
+  }, [servicios, adultos, menores, porcentaje, aplicarPlan, numCuotas, porcentajesCuotas, cobrarIva])
 
   // Sync edades when menores changes
   useEffect(() => {
@@ -266,6 +267,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     tramos,
     servicios,
     porcentajeGanancia: porcentaje,
+    cobrarIva,
     mostrarPlanPagos: aplicarPlan,
     numeroCuotas: numCuotas,
     porcentajesCuotas,
@@ -316,10 +318,11 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         valorConUtilidad: calculos.valorConUtilidad,
         valorPorPersona: calculos.valorPorPersona,
         valorNetoIndividual: calculos.valorPorPersona,
-        valorNetoTotal: calculos.valorConUtilidad,
-        gananciaTotal: calculos.valorConUtilidad - calculos.costoNetoTotal,
-        valorConPorcentaje: calculos.valorConUtilidad,
+        valorNetoTotal: calculos.valorFinal,
+        gananciaTotal: calculos.valorFinal - calculos.costoNetoTotal,
+        valorConPorcentaje: calculos.valorFinal,
         planPagos: calculos.planPagos,
+        cobrarIva,
         mostrarPlanPagos: aplicarPlan,
         numeroCuotas: numCuotas,
         asistenciaMedica: servicios.find(s => s.id === "asistencia")?.activo ?? false,
@@ -672,6 +675,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       <div>
         <ResumenCard
           calculos={calculos} porcentaje={porcentaje} adultos={adultos} menores={menores}
+          cobrarIva={cobrarIva} onToggleIva={setCobrarIva}
           mostrarPlanPagos={mostrarPlanPagos} onTogglePlanPagos={setMostrarPlanPagos}
           onGuardar={handleGuardar} onGenerarPDF={handleGenerarPDF} isLoading={isLoading}
         />

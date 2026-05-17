@@ -12,6 +12,8 @@ interface ResumenCardProps {
   porcentaje: number
   adultos: number
   menores: number
+  cobrarIva: boolean
+  onToggleIva: (v: boolean) => void
   mostrarPlanPagos: boolean
   onTogglePlanPagos: (v: boolean) => void
   onGuardar: () => void
@@ -21,6 +23,7 @@ interface ResumenCardProps {
 
 export function ResumenCard({
   calculos, porcentaje, adultos, menores,
+  cobrarIva, onToggleIva,
   mostrarPlanPagos, onTogglePlanPagos,
   onGuardar, onGenerarPDF, isLoading
 }: ResumenCardProps) {
@@ -44,13 +47,29 @@ export function ResumenCard({
 
         <Separator className="bg-[#222222]" />
 
+        {/* Subtotal antes de IVA */}
+        <div className="flex justify-between text-sm">
+          <span className="text-[#737373]">Subtotal</span>
+          <span className="text-[#F2F2F2] tabular-nums">{formatCOP(calculos.valorConUtilidad)}</span>
+        </div>
+
+        {/* IVA row — solo visible si está activo */}
+        {cobrarIva && (
+          <div className="flex justify-between text-sm">
+            <span className="text-[#737373]">IVA (19%)</span>
+            <span className="text-amber-400 tabular-nums">+{formatCOP(calculos.ivaTotal)}</span>
+          </div>
+        )}
+
+        <Separator className="bg-[#222222]" />
+
         <div className="flex justify-between font-semibold">
           <span className="text-[#F2F2F2] text-sm">Valor / persona</span>
           <span className="text-[#00B4C5] tabular-nums">{formatCOP(calculos.valorPorPersona)}</span>
         </div>
         <div className="flex justify-between font-bold">
           <span className="text-[#F2F2F2]">Total</span>
-          <span className="text-[#00B4C5] text-lg tabular-nums">{formatCOP(calculos.valorConUtilidad)}</span>
+          <span className="text-[#00B4C5] text-lg tabular-nums">{formatCOP(calculos.valorFinal)}</span>
         </div>
 
         {mostrarPlanPagos && calculos.planPagos.aplicar && calculos.planPagos.cuotas.length > 0 && (
@@ -68,6 +87,21 @@ export function ResumenCard({
 
         <Separator className="bg-[#222222]" />
 
+        {/* Toggle IVA */}
+        <button
+          type="button"
+          onClick={() => onToggleIva(!cobrarIva)}
+          className="flex items-center gap-2 text-xs transition-colors w-full"
+        >
+          {cobrarIva
+            ? <ToggleRight className="h-4 w-4 text-amber-400 shrink-0" />
+            : <ToggleLeft  className="h-4 w-4 text-[#4A4A4A] shrink-0" />}
+          <span className={cobrarIva ? "text-amber-400 font-medium" : "text-[#737373]"}>
+            {cobrarIva ? "IVA incluido (19%)" : "No cobrar IVA"}
+          </span>
+        </button>
+
+        {/* Toggle plan de pagos */}
         <button
           type="button"
           onClick={() => onTogglePlanPagos(!mostrarPlanPagos)}
@@ -82,7 +116,7 @@ export function ResumenCard({
 
       <CardFooter className="flex flex-col gap-2 p-4 pt-0">
         <Button
-          className="w-full bg-white hover:bg-gray-100 text-[#00B4C5] font-semibold shadow-md shadow-[#272F46]/15"
+          className="w-full bg-white hover:bg-gray-100 text-[#1A1A1A] font-semibold shadow-md shadow-black/10"
           onClick={onGenerarPDF} disabled={isLoading} type="button"
         >
           <Download className="mr-2 h-4 w-4" /> Generar PDF

@@ -69,6 +69,7 @@ model Cotizacion {
 
   planPagos Json
 
+  cobrarIva        Boolean @default(false)
   asistenciaMedica Boolean @default(false)
   observaciones    String?
   notasInternas    String?

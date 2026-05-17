@@ -39,7 +39,8 @@ export async function POST(req: NextRequest) {
     body.adultos,
     body.menores,
     body.porcentajeGanancia,
-    { aplicar: body.mostrarPlanPagos ?? true, numeroCuotas: body.numeroCuotas ?? 3, porcentajes: body.porcentajesCuotas }
+    { aplicar: body.mostrarPlanPagos ?? true, numeroCuotas: body.numeroCuotas ?? 3, porcentajes: body.porcentajesCuotas },
+    body.cobrarIva ?? false,
   )
 
   const cotizacion = await prisma.cotizacion.create({
@@ -75,10 +76,11 @@ export async function POST(req: NextRequest) {
       mostrarPlanPagos:   body.mostrarPlanPagos ?? true,
       numeroCuotas:       body.numeroCuotas ?? 3,
       porcentajeGanancia:  body.porcentajeGanancia,
+      cobrarIva:           body.cobrarIva ?? false,
       valorNetoIndividual: precios.valorPorPersona,
-      valorNetoTotal:      precios.valorConUtilidad,
-      gananciaTotal:       precios.valorConUtilidad - precios.costoNetoTotal,
-      valorConPorcentaje:  precios.valorConUtilidad,
+      valorNetoTotal:      precios.valorFinal,
+      gananciaTotal:       precios.valorFinal - precios.costoNetoTotal,
+      valorConPorcentaje:  precios.valorFinal,
       planPagos:           precios.planPagos as never,
       asistenciaMedica:    body.asistenciaMedica ?? false,
       observaciones:       body.observaciones || null,

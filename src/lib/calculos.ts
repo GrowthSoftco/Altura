@@ -22,7 +22,8 @@ export function calcularPrecios(
   adultos: number,
   menores: number,
   porcentaje: number,
-  planConfig?: { aplicar: boolean; numeroCuotas: number; porcentajes?: number[] }
+  planConfig?: { aplicar: boolean; numeroCuotas: number; porcentajes?: number[] },
+  cobrarIva?: boolean,
 ): CalculoPrecios {
   const totalPax = Math.max(adultos + menores, 1)
 
@@ -34,24 +35,27 @@ export function calcularPrecios(
     .filter(s => s.activo && s.esPorPersona === false)
     .reduce((sum, s) => sum + s.valorNeto, 0)
 
-  const costoNetoTotal = costoPorPersona * totalPax + costoGrupo
-  const utilidad = costoNetoTotal * (porcentaje / 100)
-  const valorConUtilidad = costoNetoTotal + utilidad
-  const valorPorPersona = totalPax > 0 ? Math.ceil(valorConUtilidad / totalPax) : 0
+  const costoNetoTotal    = costoPorPersona * totalPax + costoGrupo
+  const utilidad          = costoNetoTotal * (porcentaje / 100)
+  const valorConUtilidad  = costoNetoTotal + utilidad
 
-  const aplicar = planConfig?.aplicar ?? true
-  const numCuotas = planConfig?.numeroCuotas ?? 3
+  const ivaTotal   = cobrarIva ? Math.ceil(valorConUtilidad * 0.19) : 0
+  const valorFinal = valorConUtilidad + ivaTotal
+  const valorPorPersona = totalPax > 0 ? Math.ceil(valorFinal / totalPax) : 0
+
+  const aplicar     = planConfig?.aplicar ?? true
+  const numCuotas   = planConfig?.numeroCuotas ?? 3
   const porcentajes = planConfig?.porcentajes ?? generarPorcentajesDefault(numCuotas)
 
   const cuotas: CuotaPago[] = porcentajes.map((pct, i) => ({
     numero: i + 1,
     porcentaje: pct,
-    valorTotal: Math.ceil(valorConUtilidad * (pct / 100)),
+    valorTotal: Math.ceil(valorFinal * (pct / 100)),
   }))
 
   const planPagos: PlanPagosConfig = { aplicar, numeroCuotas: numCuotas, cuotas }
 
-  return { costoNetoTotal, valorConUtilidad, valorPorPersona, planPagos }
+  return { costoNetoTotal, valorConUtilidad, ivaTotal, valorFinal, valorPorPersona, planPagos }
 }
 
 export async function generarCodigoCotizacion(prisma: {

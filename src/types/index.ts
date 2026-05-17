@@ -40,8 +40,10 @@ export interface Tramo {
 
 export interface CalculoPrecios {
   costoNetoTotal: number
-  valorConUtilidad: number
+  valorConUtilidad: number   // subtotal antes de IVA
   valorPorPersona: number
+  ivaTotal: number           // 19% de valorConUtilidad (0 si no aplica)
+  valorFinal: number         // valorConUtilidad + ivaTotal
   planPagos: PlanPagosConfig
 }
 
@@ -106,6 +108,7 @@ export interface CotizacionBase {
   planPagos: PlanPagosConfig
   mostrarPlanPagos: boolean
   numeroCuotas: number
+  cobrarIva: boolean
   asistenciaMedica: boolean
   observaciones: string | null
   notasInternas: string | null

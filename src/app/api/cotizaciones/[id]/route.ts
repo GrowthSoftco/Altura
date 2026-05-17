@@ -23,15 +23,17 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       body.adultos ?? 1,
       body.menores ?? 0,
       body.porcentajeGanancia ?? 0,
-      { aplicar: body.mostrarPlanPagos ?? true, numeroCuotas: body.numeroCuotas ?? 3, porcentajes: body.porcentajesCuotas }
+      { aplicar: body.mostrarPlanPagos ?? true, numeroCuotas: body.numeroCuotas ?? 3, porcentajes: body.porcentajesCuotas },
+      body.cobrarIva ?? false,
     )
     preciosData = {
       servicios:           body.servicios,
       porcentajeGanancia:  body.porcentajeGanancia,
+      cobrarIva:           body.cobrarIva ?? false,
       valorNetoIndividual: precios.valorPorPersona,
-      valorNetoTotal:      precios.valorConUtilidad,
-      gananciaTotal:       precios.valorConUtilidad - precios.costoNetoTotal,
-      valorConPorcentaje:  precios.valorConUtilidad,
+      valorNetoTotal:      precios.valorFinal,
+      gananciaTotal:       precios.valorFinal - precios.costoNetoTotal,
+      valorConPorcentaje:  precios.valorFinal,
       planPagos:           precios.planPagos as never,
     }
   }
@@ -64,6 +66,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       ...(body.tramos              !== undefined && { tramos: body.tramos }),
       ...(body.mostrarPlanPagos    !== undefined && { mostrarPlanPagos: body.mostrarPlanPagos }),
       ...(body.numeroCuotas        !== undefined && { numeroCuotas: body.numeroCuotas }),
+      ...(body.cobrarIva           !== undefined && { cobrarIva: body.cobrarIva }),
       ...(body.observaciones       !== undefined && { observaciones: body.observaciones }),
       ...(body.notasInternas       !== undefined && { notasInternas: body.notasInternas }),
       ...preciosData,

@@ -255,9 +255,11 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
   const fmtF       = (d: string | Date) => format(new Date(d), "dd/MM/yyyy")
   const fmtFLong   = (d: string | Date) => format(new Date(d), "dd MMM yyyy", { locale: es })
 
-  const plan   = cotizacion.planPagos as { cuotas?: Array<{ numero: number; porcentaje: number; valorTotal: number }> } | null
-  const cuotas = plan?.cuotas ?? null
-  const mostrar = cotizacion.mostrarPlanPagos !== false && cuotas && cuotas.length > 0
+  const plan      = cotizacion.planPagos as { cuotas?: Array<{ numero: number; porcentaje: number; valorTotal: number }> } | null
+  const cuotas    = plan?.cuotas ?? null
+  const mostrar   = cotizacion.mostrarPlanPagos !== false && cuotas && cuotas.length > 0
+  const cobrarIva = !!cotizacion.cobrarIva
+  const ivaTotal  = cobrarIva ? Math.ceil(Number(cotizacion.valorConUtilidad) * 0.19) : 0
 
   const hasVuelo  = !!(cotizacion.aerolineaIda ?? cotizacion.aerolinea ?? cotizacion.horaSalidaIda)
   const hasHotel  = !!cotizacion.hotelNombre
@@ -443,6 +445,18 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
 
             {/* Total */}
             <View style={S.bandC3}>
+              {cobrarIva && (
+                <>
+                  <Text style={S.bandTotalLbl}>Subtotal</Text>
+                  <Text style={[S.bandSmall, { textAlign: "right", marginBottom: 4 }]}>
+                    {formatCOP(Number(cotizacion.valorConUtilidad))}
+                  </Text>
+                  <Text style={S.bandTotalLbl}>IVA (19%)</Text>
+                  <Text style={[S.bandSmall, { textAlign: "right", marginBottom: 6 }]}>
+                    +{formatCOP(ivaTotal)}
+                  </Text>
+                </>
+              )}
               <Text style={S.bandTotalLbl}>Valor total</Text>
               <Text style={S.bandTotal}>{formatCOP(total)}</Text>
             </View>
