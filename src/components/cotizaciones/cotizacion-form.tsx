@@ -52,7 +52,7 @@ function TramoBlock({
   return (
     <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-[#272F46] uppercase tracking-wider">Tramo {index + 1}</span>
+        <span className="text-xs font-semibold text-[#00B4C5] uppercase tracking-wider">Tramo {index + 1}</span>
         <button type="button" onClick={onRemove} className="text-[#737373] hover:text-red-400 transition-colors">
           <Trash2 className="h-4 w-4" />
         </button>
@@ -60,52 +60,52 @@ function TramoBlock({
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Origen</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.origen} onChange={e => up("origen", e.target.value)} placeholder="Ciudad origen" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Destino</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.destino} onChange={e => up("destino", e.target.value)} placeholder="Ciudad destino" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha salida</Label>
-          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.fechaSalida ?? ""} onChange={e => up("fechaSalida", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha regreso</Label>
-          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.fechaRegreso ?? ""} onChange={e => up("fechaRegreso", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Aerolínea ida</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.aerolineaIda ?? ""} onChange={e => up("aerolineaIda", e.target.value)} placeholder="Aerolínea" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Aerolínea regreso</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.aerolineaRegreso ?? ""} onChange={e => up("aerolineaRegreso", e.target.value)} placeholder="Aerolínea" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora salida (ida)</Label>
-          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.horaSalidaIda ?? ""} onChange={e => up("horaSalidaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora llegada (ida)</Label>
-          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.horaLlegadaIda ?? ""} onChange={e => up("horaLlegadaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Escalas / conexión</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.escalas ?? ""} onChange={e => up("escalas", e.target.value)} placeholder="Ej: Bogotá (1h30)" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Plataforma</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.plataforma ?? ""} onChange={e => up("plataforma", e.target.value)} placeholder="Despegar, Avianca..." />
         </div>
       </div>
@@ -344,7 +344,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           <div className="flex gap-2">
             <div className="flex-1 space-y-1">
               <Label className="text-[#737373] text-xs">Nombre completo *</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Nombre del cliente" value={nombre} onChange={e => setNombre(e.target.value)} />
             </div>
             <div className="mt-6">
@@ -381,18 +381,18 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Teléfono *</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="300 000 0000" value={telefono} onChange={e => setTelefono(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Correo electrónico</Label>
-              <Input type="email" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input type="email" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="cliente@email.com" value={correo} onChange={e => setCorreo(e.target.value)} />
             </div>
           </div>
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Documento de identidad</Label>
-            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
               placeholder="CC / Pasaporte" value={documento} onChange={e => setDocumento(e.target.value)} />
           </div>
         </div>
@@ -404,7 +404,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
             {(["NACIONAL", "INTERNACIONAL"] as const).map(t => (
               <button key={t} type="button" onClick={() => setTipo(t)}
                 className={cn("rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
-                  tipo === t ? "bg-[#272F46] border-[#272F46] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#272F46]/40 hover:text-[#F2F2F2]")}>
+                  tipo === t ? "bg-[#00B4C5] border-[#00B4C5] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40 hover:text-[#F2F2F2]")}>
                 {t === "NACIONAL" ? "Nacional" : "Internacional"}
               </button>
             ))}
@@ -413,12 +413,12 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Origen *</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Ciudad origen" value={origen} onChange={e => setOrigen(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Destino *</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Ciudad destino" value={destino} onChange={e => setDestino(e.target.value)} />
             </div>
           </div>
@@ -459,58 +459,58 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
             </div>
           </div>
 
-          {duracion && <p className="text-xs text-[#272F46] font-medium">✈ {duracion.label}</p>}
+          {duracion && <p className="text-xs text-[#00B4C5] font-medium">✈ {duracion.label}</p>}
 
           {/* Vuelo detalle */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Plataforma de reserva</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Despegar, Avianca.com..." value={plataforma} onChange={e => setPlataforma(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Escalas / conexión</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Ej: Bogotá (1h30)" value={escalas} onChange={e => setEscalas(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Aerolínea ida</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Avianca, Latam..." value={aerolineaIda} onChange={e => setAerolineaIda(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Aerolínea regreso</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Avianca, Latam..." value={aerolineaRegreso} onChange={e => setAerolineaRegreso(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Hora salida (ida)</Label>
-              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 value={horaSalidaIda} onChange={e => setHoraSalidaIda(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Hora llegada (ida)</Label>
-              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 value={horaLlegadaIda} onChange={e => setHoraLlegadaIda(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Hora salida (regreso)</Label>
-              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 value={horaSalidaRegreso} onChange={e => setHoraSalidaRegreso(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Hora llegada (regreso)</Label>
-              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 value={horaLlegadaRegreso} onChange={e => setHoraLlegadaRegreso(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Tiempo de vuelo</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Ej: 4h30m" value={tiempoVuelo} onChange={e => setTiempoVuelo(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Tiempo de escala</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
                 placeholder="Ej: 2h" value={tiempoEscala} onChange={e => setTiempoEscala(e.target.value)} />
             </div>
           </div>
@@ -548,7 +548,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                     <span className="text-xs text-[#737373]">M{i + 1}:</span>
                     <Input
                       type="number" min={0} max={17}
-                      className="w-16 h-7 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] text-sm text-center"
+                      className="w-16 h-7 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
                       value={edad}
                       onChange={e => {
                         const n = [...edadesMenores]
@@ -569,17 +569,17 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         <div className="grid grid-cols-3 gap-3">
           <div className="col-span-1 space-y-1">
             <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
-            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
               placeholder="Ej: Marriott" value={hotelNombre} onChange={e => setHotelNombre(e.target.value)} />
           </div>
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Noches</Label>
-            <Input type="number" min={0} className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+            <Input type="number" min={0} className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
               value={hotelNoches || ""} onChange={e => setHotelNoches(parseInt(e.target.value) || 0)} placeholder="0" />
           </div>
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
-            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
               placeholder="Doble, sencilla..." value={hotelTipo} onChange={e => setHotelTipo(e.target.value)} />
           </div>
         </div>
@@ -593,7 +593,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
               onRemove={() => removeTramo(t.id)} />
           ))}
           <button type="button" onClick={addTramo}
-            className="flex items-center gap-2 text-sm text-[#272F46] hover:text-[#3D4F6E] transition-colors font-medium">
+            className="flex items-center gap-2 text-sm text-[#00B4C5] hover:text-[#3D4F6E] transition-colors font-medium">
             <Plus className="h-4 w-4" /> Añadir tramo
           </button>
         </div>
@@ -609,10 +609,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
             <Label className="text-[#737373] text-xs w-40">Porcentaje de utilidad</Label>
             <input type="range" min={0} max={70} value={porcentaje}
               onChange={e => setPorcentaje(Number(e.target.value))}
-              className="flex-1 accent-[#272F46]" />
+              className="flex-1 accent-[#00B4C5]" />
             <div className="flex items-center gap-1">
               <Input type="number" min={0} max={70}
-                className="w-16 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] text-center h-8"
+                className="w-16 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-center h-8"
                 value={porcentaje} onChange={e => setPorcentaje(Math.min(70, Math.max(0, Number(e.target.value))))} />
               <span className="text-[#737373] text-sm">%</span>
             </div>
@@ -624,7 +624,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <Switch checked={aplicarPlan} onCheckedChange={setAplicarPlan}
-              className="data-[state=checked]:bg-[#272F46]" />
+              className="data-[state=checked]:bg-[#00B4C5]" />
             <Label className="text-[#F2F2F2] text-sm cursor-pointer" onClick={() => setAplicarPlan(!aplicarPlan)}>
               Aplicar plan de pagos en cuotas
             </Label>
@@ -648,7 +648,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                   <div key={i} className="flex items-center gap-3">
                     <span className="text-xs text-[#737373] w-16">Cuota {i + 1}</span>
                     <Input type="number" min={0} max={100}
-                      className="w-20 h-7 bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] text-sm text-center"
+                      className="w-20 h-7 bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
                       value={pct} onChange={e => updatePorcentajeCuota(i, Number(e.target.value))} />
                     <span className="text-xs text-[#737373]">%</span>
                   </div>
@@ -663,7 +663,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
 
         {/* OBSERVACIONES */}
         <Section title="Observaciones" />
-        <Textarea className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] min-h-[80px]"
+        <Textarea className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] min-h-[80px]"
           placeholder="Notas adicionales para el cliente..." value={observaciones}
           onChange={e => setObservaciones(e.target.value)} />
       </div>

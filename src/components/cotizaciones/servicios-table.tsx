@@ -45,17 +45,17 @@ export function ServiciosTable({ servicios, onChange }: ServiciosTableProps) {
           className={cn(
             "grid grid-cols-[40px_1fr_140px_80px_1fr_32px] items-center gap-2 px-3 py-2.5 border-t border-[#1E1E1E]",
             idx === 0 && "border-t-0",
-            s.activo ? "bg-[#1C1C1C] border-l-2 border-l-[#272F46]" : "bg-[#181818] border-l-2 border-l-transparent opacity-50"
+            s.activo ? "bg-[#1C1C1C] border-l-2 border-l-[#00B4C5]" : "bg-[#181818] border-l-2 border-l-transparent opacity-50"
           )}
         >
           <Switch
             checked={s.activo}
             onCheckedChange={v => update(s.id, { activo: v })}
-            className="data-[state=checked]:bg-[#272F46]"
+            className="data-[state=checked]:bg-[#00B4C5]"
           />
           {isCustom(s.id) ? (
             <Input
-              className="h-7 text-sm bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              className="h-7 text-sm bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
               placeholder="Nombre del servicio..."
               value={s.nombre}
               onChange={e => update(s.id, { nombre: e.target.value })}
@@ -66,7 +66,7 @@ export function ServiciosTable({ servicios, onChange }: ServiciosTableProps) {
           <div className="relative">
             <span className="absolute left-2 top-1/2 -translate-y-1/2 text-xs text-[#737373]">$</span>
             <Input
-              className="pl-5 h-7 text-sm bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+              className="pl-5 h-7 text-sm bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
               placeholder="0"
               value={fmt(s.valorNeto)}
               disabled={!s.activo}
@@ -79,14 +79,14 @@ export function ServiciosTable({ servicios, onChange }: ServiciosTableProps) {
             className={cn(
               "text-[10px] font-medium rounded px-1.5 py-0.5 border transition-colors cursor-pointer",
               s.esPorPersona
-                ? "bg-[#272F46]/10 text-[#272F46] border-[#272F46]/20"
+                ? "bg-[#272F46]/10 text-[#00B4C5] border-[#272F46]/20"
                 : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
             )}
           >
             {s.esPorPersona ? "×pax" : "grupo"}
           </button>
           <Input
-            className="h-7 text-sm bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
+            className="h-7 text-sm bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5]"
             placeholder="Detalles..."
             value={s.obs}
             disabled={!s.activo}
@@ -105,7 +105,7 @@ export function ServiciosTable({ servicios, onChange }: ServiciosTableProps) {
         <button
           type="button"
           onClick={addCustom}
-          className="flex items-center gap-1.5 text-xs text-[#737373] hover:text-[#272F46] transition-colors"
+          className="flex items-center gap-1.5 text-xs text-[#737373] hover:text-[#00B4C5] transition-colors"
         >
           <Plus className="h-3.5 w-3.5" />
           Añadir servicio personalizado

@@ -72,8 +72,8 @@ export function AppSidebar() {
             className={cn(
               "flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all",
               pathname === "/cotizaciones/nueva"
-                ? "bg-white text-[#272F46] shadow-lg shadow-black/10"
-                : "bg-white text-[#272F46] hover:bg-gray-100 shadow-md shadow-[#272F46]/15"
+                ? "bg-white text-[#00B4C5] shadow-lg shadow-black/10"
+                : "bg-white text-[#00B4C5] hover:bg-gray-100 shadow-md shadow-black/15"
             )}
           >
             <FilePlus className="h-4 w-4 shrink-0" />
@@ -85,7 +85,7 @@ export function AppSidebar() {
       <SidebarFooter className="px-4 py-4 border-t border-[#1A1A1A]">
         <div className="flex items-center gap-3">
           <Avatar className="h-7 w-7 shrink-0">
-            <AvatarFallback className="bg-[#1A2035] text-[#272F46] text-[11px] font-bold">
+            <AvatarFallback className="bg-[#1A2035] text-[#00B4C5] text-[11px] font-bold">
               A
             </AvatarFallback>
           </Avatar>

@@ -42,8 +42,8 @@ export default async function DashboardPage() {
       label:     "Cotizaciones este mes",
       value:     cotizacionesMes,
       icon:      FileText,
-      color:     "text-[#272F46]",
-      iconBg:    "bg-[#272F46]/10",
+      color:     "text-[#00B4C5]",
+      iconBg:    "bg-[#00B4C5]/10",
     },
     {
       label:     "Clientes registrados",

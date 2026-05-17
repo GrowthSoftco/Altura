@@ -6,7 +6,7 @@ const estadoVariants: Record<EstadoCotizacion, string> = {
   NEGOCIACION: "bg-amber-500/10 text-amber-400 border border-amber-500/20",
   APROBADA:    "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
   PAGANDO:     "bg-blue-500/10 text-blue-400 border border-blue-500/20",
-  COMPLETADA:  "bg-[#272F46]/10 text-[#272F46] border border-[#272F46]/20",
+  COMPLETADA:  "bg-[#00B4C5]/10 text-[#00B4C5] border border-[#00B4C5]/20",
   CANCELADA:   "bg-red-500/10 text-red-400 border border-red-500/20",
 }
 

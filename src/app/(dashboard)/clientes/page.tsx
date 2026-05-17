@@ -48,7 +48,7 @@ export default function ClientesPage() {
         </div>
         <ClienteForm
           trigger={
-            <Button className="bg-white hover:bg-gray-100 text-[#272F46] font-semibold text-sm h-9 px-4 rounded-lg shadow-md shadow-[#272F46]/10">
+            <Button className="bg-white hover:bg-gray-100 text-[#00B4C5] font-semibold text-sm h-9 px-4 rounded-lg shadow-md shadow-[#272F46]/10">
               <UserPlus className="mr-2 h-4 w-4" /> Nuevo Cliente
             </Button>
           }
@@ -91,10 +91,10 @@ export default function ClientesPage() {
               <tr key={c.id} className="border-t border-[#1E1E1E] hover:bg-[#202020] transition-colors">
                 <td className="px-4 py-3">
                   <Link href={`/clientes/${c.id}`} className="flex items-center gap-3 group">
-                    <div className="h-8 w-8 rounded-full bg-[#1A2035] flex items-center justify-center text-[#272F46] font-bold text-sm shrink-0">
+                    <div className="h-8 w-8 rounded-full bg-[#1A2035] flex items-center justify-center text-[#00B4C5] font-bold text-sm shrink-0">
                       {c.nombre.charAt(0).toUpperCase()}
                     </div>
-                    <span className="font-medium text-[#F2F2F2] text-sm group-hover:text-[#272F46] transition-colors">{c.nombre}</span>
+                    <span className="font-medium text-[#F2F2F2] text-sm group-hover:text-[#00B4C5] transition-colors">{c.nombre}</span>
                   </Link>
                 </td>
                 <td className="px-4 py-3">
