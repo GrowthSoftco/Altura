@@ -143,7 +143,7 @@ export default function CotizacionDetailPage() {
           </Select>
           <Button
             onClick={handlePDF}
-            className="bg-white hover:bg-gray-100 text-[#272F46] font-semibold h-9 px-4 shadow-md shadow-[#272F46]/10"
+            className="bg-white hover:bg-gray-100 text-[#1A1A1A] font-semibold h-9 px-4 shadow-md shadow-black/10"
           >
             <Download className="mr-2 h-4 w-4" /> Descargar PDF
           </Button>
@@ -230,14 +230,14 @@ export default function CotizacionDetailPage() {
             <span className="text-[#737373]">Valor neto total</span>
             <span className="text-[#F2F2F2] tabular-nums">{formatCOP(Number(cot.valorNetoTotal))}</span>
           </div>
-          <div className="flex justify-between text-sm text-[#272F46]">
+          <div className="flex justify-between text-sm text-[#00B4C5]">
             <span>Ganancia ({Number(cot.porcentajeGanancia)}%)</span>
             <span className="tabular-nums">+{formatCOP(Number(cot.gananciaTotal))}</span>
           </div>
           <Separator className="bg-[#222222]" />
           <div className="flex justify-between font-semibold">
             <span className="text-[#F2F2F2]">Total</span>
-            <span className="text-[#272F46] text-base tabular-nums">
+            <span className="text-[#00B4C5] text-base tabular-nums">
               {formatCOP(Number(cot.valorConPorcentaje))}
             </span>
           </div>
