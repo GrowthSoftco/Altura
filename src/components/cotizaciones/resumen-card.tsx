@@ -39,18 +39,18 @@ export function ResumenCard({
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-[#737373]">Utilidad aplicada</span>
-          <span className="text-[#4F6EF7] tabular-nums">{porcentaje}%</span>
+          <span className="text-[#272F46] tabular-nums">{porcentaje}%</span>
         </div>
 
         <Separator className="bg-[#222222]" />
 
         <div className="flex justify-between font-semibold">
           <span className="text-[#F2F2F2] text-sm">Valor / persona</span>
-          <span className="text-[#4F6EF7] tabular-nums">{formatCOP(calculos.valorPorPersona)}</span>
+          <span className="text-[#272F46] tabular-nums">{formatCOP(calculos.valorPorPersona)}</span>
         </div>
         <div className="flex justify-between font-bold">
           <span className="text-[#F2F2F2]">Total</span>
-          <span className="text-[#4F6EF7] text-lg tabular-nums">{formatCOP(calculos.valorConUtilidad)}</span>
+          <span className="text-[#272F46] text-lg tabular-nums">{formatCOP(calculos.valorConUtilidad)}</span>
         </div>
 
         {mostrarPlanPagos && calculos.planPagos.aplicar && calculos.planPagos.cuotas.length > 0 && (
@@ -74,7 +74,7 @@ export function ResumenCard({
           className="flex items-center gap-2 text-xs text-[#737373] hover:text-[#F2F2F2] transition-colors w-full"
         >
           {mostrarPlanPagos
-            ? <ToggleRight className="h-4 w-4 text-[#4F6EF7]" />
+            ? <ToggleRight className="h-4 w-4 text-[#272F46]" />
             : <ToggleLeft className="h-4 w-4" />}
           {mostrarPlanPagos ? "Ocultar plan de pagos en PDF" : "Mostrar plan de pagos en PDF"}
         </button>
@@ -82,7 +82,7 @@ export function ResumenCard({
 
       <CardFooter className="flex flex-col gap-2 p-4 pt-0">
         <Button
-          className="w-full bg-[#4F6EF7] hover:bg-[#6B85F9] text-white font-semibold shadow-md shadow-[#4F6EF7]/15"
+          className="w-full bg-white hover:bg-gray-100 text-[#272F46] font-semibold shadow-md shadow-[#272F46]/15"
           onClick={onGenerarPDF} disabled={isLoading} type="button"
         >
           <Download className="mr-2 h-4 w-4" /> Generar PDF

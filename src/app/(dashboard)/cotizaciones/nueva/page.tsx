@@ -1,6 +1,12 @@
 import { CotizacionForm } from "@/components/cotizaciones/cotizacion-form"
 
-export default function NuevaCotizacionPage() {
+export default async function NuevaCotizacionPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ clienteId?: string }>
+}) {
+  const { clienteId } = await searchParams
+
   return (
     <div className="space-y-6 max-w-7xl">
       <div>
@@ -14,7 +20,7 @@ export default function NuevaCotizacionPage() {
 
       <div className="h-px bg-[#1E1E1E]" />
 
-      <CotizacionForm />
+      <CotizacionForm initialClienteId={clienteId} />
     </div>
   )
 }

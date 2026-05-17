@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import { Download, ArrowLeft } from "lucide-react"
+import { Download, ArrowLeft, Pencil } from "lucide-react"
 import Link from "next/link"
 import { pdf } from "@react-pdf/renderer"
 import { saveAs } from "file-saver"
@@ -119,6 +119,12 @@ export default function CotizacionDetailPage() {
           <EstadoBadge estado={cot.estado} />
         </div>
         <div className="flex items-center gap-2">
+          <Link
+            href={`/cotizaciones/${id}/editar`}
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }), "border-[#262626] bg-[#1C1C1C] text-[#737373] hover:text-[#F2F2F2] hover:bg-[#242424] h-9 gap-1.5")}
+          >
+            <Pencil className="h-3.5 w-3.5" /> Editar
+          </Link>
           <Select
             value={cot.estado}
             onValueChange={(v) => handleEstado(v as EstadoCotizacion)}
@@ -137,7 +143,7 @@ export default function CotizacionDetailPage() {
           </Select>
           <Button
             onClick={handlePDF}
-            className="bg-[#4F6EF7] hover:bg-[#6B85F9] text-white font-semibold h-9 px-4 shadow-md shadow-[#4F6EF7]/10"
+            className="bg-white hover:bg-gray-100 text-[#272F46] font-semibold h-9 px-4 shadow-md shadow-[#272F46]/10"
           >
             <Download className="mr-2 h-4 w-4" /> Descargar PDF
           </Button>
@@ -224,14 +230,14 @@ export default function CotizacionDetailPage() {
             <span className="text-[#737373]">Valor neto total</span>
             <span className="text-[#F2F2F2] tabular-nums">{formatCOP(Number(cot.valorNetoTotal))}</span>
           </div>
-          <div className="flex justify-between text-sm text-[#4F6EF7]">
+          <div className="flex justify-between text-sm text-[#272F46]">
             <span>Ganancia ({Number(cot.porcentajeGanancia)}%)</span>
             <span className="tabular-nums">+{formatCOP(Number(cot.gananciaTotal))}</span>
           </div>
           <Separator className="bg-[#222222]" />
           <div className="flex justify-between font-semibold">
             <span className="text-[#F2F2F2]">Total</span>
-            <span className="text-[#4F6EF7] text-base tabular-nums">
+            <span className="text-[#272F46] text-base tabular-nums">
               {formatCOP(Number(cot.valorConPorcentaje))}
             </span>
           </div>

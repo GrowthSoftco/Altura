@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { href: "/dashboard",    icon: LayoutDashboard, label: "Inicio",       dot: "bg-emerald-500" },
-  { href: "/cotizaciones", icon: FileText,         label: "Cotizaciones", dot: "bg-[#4F6EF7]"  },
+  { href: "/cotizaciones", icon: FileText,         label: "Cotizaciones", dot: "bg-[#272F46]"  },
   { href: "/clientes",     icon: Users,            label: "Clientes",     dot: "bg-violet-500"  },
 ]
 
@@ -53,14 +53,13 @@ export function AppSidebar() {
                     : "text-[#737373] hover:bg-[#191919] hover:text-[#C0C0C0]"
                 )}
               >
-                <span className={cn(
-                  "h-[7px] w-[7px] rounded-full shrink-0 transition-opacity",
-                  item.dot,
-                  active ? "opacity-100" : "opacity-30 group-hover:opacity-60"
+                <item.icon className={cn(
+                  "h-4 w-4 shrink-0 transition-colors",
+                  active ? "text-white" : "text-[#4A4A4A] group-hover:text-[#737373]"
                 )} />
                 <span className="font-medium">{item.label}</span>
                 {active && (
-                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[#4F6EF7]" />
+                  <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white" />
                 )}
               </Link>
             )
@@ -73,8 +72,8 @@ export function AppSidebar() {
             className={cn(
               "flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all",
               pathname === "/cotizaciones/nueva"
-                ? "bg-[#4F6EF7] text-white shadow-lg shadow-[#4F6EF7]/20"
-                : "bg-[#4F6EF7] text-white hover:bg-[#6B85F9] shadow-md shadow-[#4F6EF7]/15"
+                ? "bg-white text-[#272F46] shadow-lg shadow-black/10"
+                : "bg-white text-[#272F46] hover:bg-gray-100 shadow-md shadow-[#272F46]/15"
             )}
           >
             <FilePlus className="h-4 w-4 shrink-0" />
@@ -86,7 +85,7 @@ export function AppSidebar() {
       <SidebarFooter className="px-4 py-4 border-t border-[#1A1A1A]">
         <div className="flex items-center gap-3">
           <Avatar className="h-7 w-7 shrink-0">
-            <AvatarFallback className="bg-[#1E2A4A] text-[#4F6EF7] text-[11px] font-bold">
+            <AvatarFallback className="bg-[#1A2035] text-[#272F46] text-[11px] font-bold">
               A
             </AvatarFallback>
           </Avatar>

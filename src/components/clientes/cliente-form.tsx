@@ -69,7 +69,7 @@ export function ClienteForm({ trigger, cliente, onSuccess }: ClienteFormProps) {
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Nombre completo *</Label>
             <Input
-              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
               value={nombre}
               onChange={(e) => setNombre(e.target.value)}
             />
@@ -77,7 +77,7 @@ export function ClienteForm({ trigger, cliente, onSuccess }: ClienteFormProps) {
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Teléfono *</Label>
             <Input
-              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
               value={telefono}
               onChange={(e) => setTelefono(e.target.value)}
             />
@@ -86,7 +86,7 @@ export function ClienteForm({ trigger, cliente, onSuccess }: ClienteFormProps) {
             <Label className="text-[#737373] text-xs">Correo</Label>
             <Input
               type="email"
-              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
             />
@@ -94,7 +94,7 @@ export function ClienteForm({ trigger, cliente, onSuccess }: ClienteFormProps) {
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Documento</Label>
             <Input
-              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
               value={documento}
               onChange={(e) => setDoc(e.target.value)}
             />
@@ -102,7 +102,7 @@ export function ClienteForm({ trigger, cliente, onSuccess }: ClienteFormProps) {
           <Button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-[#4F6EF7] hover:bg-[#6B85F9] text-white font-semibold shadow-md shadow-[#4F6EF7]/15"
+            className="w-full bg-white hover:bg-gray-100 text-[#272F46] font-semibold shadow-md shadow-[#272F46]/15"
           >
             {isLoading ? "Guardando..." : cliente ? "Actualizar" : "Crear cliente"}
           </Button>

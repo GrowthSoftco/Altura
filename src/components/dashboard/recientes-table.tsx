@@ -46,7 +46,7 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
               key={cot.id}
               className="border-[#1E1E1E] hover:bg-[#202020] transition-colors"
             >
-              <TableCell className="font-mono text-xs text-[#4F6EF7] font-medium py-3">
+              <TableCell className="font-mono text-xs text-[#272F46] font-medium py-3">
                 {cot.codigo}
               </TableCell>
               <TableCell className="text-[#F2F2F2] text-sm py-3">

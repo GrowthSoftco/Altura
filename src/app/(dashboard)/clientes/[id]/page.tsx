@@ -67,7 +67,7 @@ export default function ClienteDetailPage() {
           <Link href="/clientes" className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-[#737373] hover:text-[#F2F2F2]")}>
             <ArrowLeft className="h-4 w-4" />
           </Link>
-          <div className="h-9 w-9 rounded-full bg-[#1E2A4A] flex items-center justify-center text-[#4F6EF7] font-bold text-base shrink-0">
+          <div className="h-9 w-9 rounded-full bg-[#1A2035] flex items-center justify-center text-[#272F46] font-bold text-base shrink-0">
             {cliente.nombre.charAt(0).toUpperCase()}
           </div>
           <div>
@@ -79,7 +79,7 @@ export default function ClienteDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link href={`/cotizaciones/nueva?clienteId=${id}`}
-            className={cn(buttonVariants({ size: "sm" }), "bg-[#4F6EF7] hover:bg-[#6B85F9] text-white font-medium h-8 text-xs gap-1.5")}>
+            className={cn(buttonVariants({ size: "sm" }), "bg-white hover:bg-gray-100 text-[#272F46] font-medium h-8 text-xs gap-1.5")}>
             <FilePlus className="h-3.5 w-3.5" /> Nueva cotización
           </Link>
           <ClienteForm
@@ -144,12 +144,12 @@ export default function ClienteDetailPage() {
           <Link key={cot.id} href={`/cotizaciones/${cot.id}`}
             className="flex items-center justify-between rounded-xl border border-[#222222] bg-[#1C1C1C] p-4 hover:border-[#2E2E2E] hover:bg-[#202020] transition-all">
             <div>
-              <p className="font-mono text-xs text-[#4F6EF7] font-medium">{cot.codigo}</p>
+              <p className="font-mono text-xs text-[#272F46] font-medium">{cot.codigo}</p>
               <p className="text-sm text-[#F2F2F2] mt-0.5">{cot.origen} → {cot.destino}</p>
               <p className="text-xs text-[#737373] mt-0.5">{format(new Date(cot.fechaCreacion), "dd MMM yyyy", { locale: es })}</p>
             </div>
             <div className="text-right space-y-1.5">
-              <p className="text-sm font-semibold text-[#4F6EF7] tabular-nums">{formatCOP(Number(cot.valorConPorcentaje))}</p>
+              <p className="text-sm font-semibold text-[#272F46] tabular-nums">{formatCOP(Number(cot.valorConPorcentaje))}</p>
               <EstadoBadge estado={cot.estado} />
             </div>
           </Link>

@@ -52,7 +52,7 @@ function TramoBlock({
   return (
     <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-[#4F6EF7] uppercase tracking-wider">Tramo {index + 1}</span>
+        <span className="text-xs font-semibold text-[#272F46] uppercase tracking-wider">Tramo {index + 1}</span>
         <button type="button" onClick={onRemove} className="text-[#737373] hover:text-red-400 transition-colors">
           <Trash2 className="h-4 w-4" />
         </button>
@@ -60,52 +60,52 @@ function TramoBlock({
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Origen</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.origen} onChange={e => up("origen", e.target.value)} placeholder="Ciudad origen" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Destino</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.destino} onChange={e => up("destino", e.target.value)} placeholder="Ciudad destino" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha salida</Label>
-          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.fechaSalida ?? ""} onChange={e => up("fechaSalida", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha regreso</Label>
-          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.fechaRegreso ?? ""} onChange={e => up("fechaRegreso", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Aerolínea ida</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.aerolineaIda ?? ""} onChange={e => up("aerolineaIda", e.target.value)} placeholder="Aerolínea" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Aerolínea regreso</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.aerolineaRegreso ?? ""} onChange={e => up("aerolineaRegreso", e.target.value)} placeholder="Aerolínea" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora salida (ida)</Label>
-          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.horaSalidaIda ?? ""} onChange={e => up("horaSalidaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora llegada (ida)</Label>
-          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.horaLlegadaIda ?? ""} onChange={e => up("horaLlegadaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Escalas / conexión</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.escalas ?? ""} onChange={e => up("escalas", e.target.value)} placeholder="Ej: Bogotá (1h30)" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Plataforma</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-8 text-sm"
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-8 text-sm"
             value={tramo.plataforma ?? ""} onChange={e => up("plataforma", e.target.value)} placeholder="Despegar, Avianca..." />
         </div>
       </div>
@@ -122,66 +122,87 @@ const PORCENTAJES_CUOTAS_DEFAULT: Record<number, number[]> = {
   6: [25, 20, 20, 15, 10, 10],
 }
 
-export function CotizacionForm() {
+interface CotizacionFormProps {
+  initialClienteId?: string
+  cotizacion?: CotizacionCompleta
+}
+
+export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormProps = {}) {
   const router = useRouter()
+  const isEdit = Boolean(cotizacion)
   const [isLoading, setIsLoading] = useState(false)
 
   // Cliente
-  const [clienteId, setClienteId]       = useState<string | null>(null)
-  const [nombre, setNombre]             = useState("")
-  const [telefono, setTelefono]         = useState("")
-  const [correo, setCorreo]             = useState("")
-  const [documento, setDocumento]       = useState("")
+  const [clienteId, setClienteId]       = useState<string | null>(cotizacion?.clienteId ?? null)
+  const [nombre, setNombre]             = useState(cotizacion?.cliente?.nombre ?? "")
+  const [telefono, setTelefono]         = useState(cotizacion?.cliente?.telefono ?? "")
+  const [correo, setCorreo]             = useState(cotizacion?.cliente?.correo ?? "")
+  const [documento, setDocumento]       = useState(cotizacion?.cliente?.documento ?? "")
   const [clienteSearch, setClienteSearch] = useState(false)
   const [clientes, setClientes]         = useState<ClienteBase[]>([])
 
   // Viaje principal
-  const [tipo, setTipo]                 = useState<"NACIONAL" | "INTERNACIONAL">("NACIONAL")
-  const [origen, setOrigen]             = useState("")
-  const [destino, setDestino]           = useState("")
-  const [fechaSalida, setFechaSalida]   = useState<Date | undefined>()
-  const [fechaRegreso, setFechaRegreso] = useState<Date | undefined>()
-  const [plataforma, setPlataforma]     = useState("")
-  const [aerolineaIda, setAerolineaIda]             = useState("")
-  const [aerolineaRegreso, setAerolineaRegreso]     = useState("")
-  const [horaSalidaIda, setHoraSalidaIda]           = useState("")
-  const [horaLlegadaIda, setHoraLlegadaIda]         = useState("")
-  const [horaSalidaRegreso, setHoraSalidaRegreso]   = useState("")
-  const [horaLlegadaRegreso, setHoraLlegadaRegreso] = useState("")
-  const [tiempoVuelo, setTiempoVuelo]   = useState("")
-  const [escalas, setEscalas]           = useState("")
-  const [tiempoEscala, setTiempoEscala] = useState("")
+  const [tipo, setTipo]                 = useState<"NACIONAL" | "INTERNACIONAL">((cotizacion?.tipo as "NACIONAL" | "INTERNACIONAL") ?? "NACIONAL")
+  const [origen, setOrigen]             = useState(cotizacion?.origen ?? "")
+  const [destino, setDestino]           = useState(cotizacion?.destino ?? "")
+  const [fechaSalida, setFechaSalida]   = useState<Date | undefined>(cotizacion ? new Date(cotizacion.fechaSalida) : undefined)
+  const [fechaRegreso, setFechaRegreso] = useState<Date | undefined>(cotizacion ? new Date(cotizacion.fechaRegreso) : undefined)
+  const [plataforma, setPlataforma]     = useState(cotizacion?.plataforma ?? "")
+  const [aerolineaIda, setAerolineaIda]             = useState(cotizacion?.aerolineaIda ?? "")
+  const [aerolineaRegreso, setAerolineaRegreso]     = useState(cotizacion?.aerolineaRegreso ?? "")
+  const [horaSalidaIda, setHoraSalidaIda]           = useState(cotizacion?.horaSalidaIda ?? "")
+  const [horaLlegadaIda, setHoraLlegadaIda]         = useState(cotizacion?.horaLlegadaIda ?? "")
+  const [horaSalidaRegreso, setHoraSalidaRegreso]   = useState(cotizacion?.horaSalidaRegreso ?? "")
+  const [horaLlegadaRegreso, setHoraLlegadaRegreso] = useState(cotizacion?.horaLlegadaRegreso ?? "")
+  const [tiempoVuelo, setTiempoVuelo]   = useState(cotizacion?.tiempoVuelo ?? "")
+  const [escalas, setEscalas]           = useState(cotizacion?.escalas ?? "")
+  const [tiempoEscala, setTiempoEscala] = useState(cotizacion?.tiempoEscala ?? "")
 
   // Pasajeros
-  const [adultos, setAdultos]           = useState(1)
-  const [menores, setMenores]           = useState(0)
-  const [edadesMenores, setEdadesMenores] = useState<number[]>([])
+  const [adultos, setAdultos]           = useState(cotizacion?.adultos ?? 1)
+  const [menores, setMenores]           = useState(cotizacion?.menores ?? 0)
+  const [edadesMenores, setEdadesMenores] = useState<number[]>(cotizacion?.edadesMenores ?? [])
 
   // Hotel
-  const [hotelNombre, setHotelNombre]   = useState("")
-  const [hotelNoches, setHotelNoches]   = useState<number>(0)
-  const [hotelTipo, setHotelTipo]       = useState("")
+  const [hotelNombre, setHotelNombre]   = useState(cotizacion?.hotelNombre ?? "")
+  const [hotelNoches, setHotelNoches]   = useState<number>(cotizacion?.hotelNoches ?? 0)
+  const [hotelTipo, setHotelTipo]       = useState(cotizacion?.hotelTipo ?? "")
 
   // Tramos
-  const [tramos, setTramos]             = useState<Tramo[]>([])
+  const [tramos, setTramos]             = useState<Tramo[]>((cotizacion?.tramos as Tramo[]) ?? [])
 
   // Servicios
-  const [servicios, setServicios]       = useState<ServicioItem[]>(SERVICIOS_DEFAULT)
-  const [porcentaje, setPorcentaje]     = useState(10)
+  const [servicios, setServicios]       = useState<ServicioItem[]>((cotizacion?.servicios as ServicioItem[]) ?? SERVICIOS_DEFAULT)
+  const [porcentaje, setPorcentaje]     = useState(cotizacion ? Number(cotizacion.porcentajeGanancia) : 10)
 
   // Plan de pagos
-  const [aplicarPlan, setAplicarPlan]   = useState(true)
-  const [numCuotas, setNumCuotas]       = useState(3)
-  const [porcentajesCuotas, setPorcentajesCuotas] = useState<number[]>([50, 30, 20])
+  const initPlan = cotizacion?.planPagos as { aplicar?: boolean; numeroCuotas?: number; cuotas?: { porcentaje: number }[] } | undefined
+  const [aplicarPlan, setAplicarPlan]   = useState(initPlan?.aplicar ?? true)
+  const [numCuotas, setNumCuotas]       = useState(cotizacion?.numeroCuotas ?? initPlan?.numeroCuotas ?? 3)
+  const [porcentajesCuotas, setPorcentajesCuotas] = useState<number[]>(
+    initPlan?.cuotas?.map(c => c.porcentaje) ?? [50, 30, 20]
+  )
 
   // PDF toggle
-  const [mostrarPlanPagos, setMostrarPlanPagos] = useState(true)
+  const [mostrarPlanPagos, setMostrarPlanPagos] = useState(cotizacion?.mostrarPlanPagos ?? true)
 
   // Extras
-  const [observaciones, setObservaciones] = useState("")
-  const [calculos, setCalculos]         = useState<CalculoPrecios>(() =>
-    calcularPrecios(SERVICIOS_DEFAULT, 1, 0, 10, { aplicar: true, numeroCuotas: 3 })
-  )
+  const [observaciones, setObservaciones] = useState(cotizacion?.observaciones ?? "")
+  const [calculos, setCalculos]         = useState<CalculoPrecios>(() => {
+    const initServicios = (cotizacion?.servicios as ServicioItem[]) ?? SERVICIOS_DEFAULT
+    const initPct = cotizacion ? Number(cotizacion.porcentajeGanancia) : 10
+    return calcularPrecios(initServicios, cotizacion?.adultos ?? 1, cotizacion?.menores ?? 0, initPct, { aplicar: true, numeroCuotas: cotizacion?.numeroCuotas ?? 3 })
+  })
+
+  // Pre-fill client when coming from /clientes/[id] with ?clienteId=
+  useEffect(() => {
+    if (!initialClienteId || cotizacion) return
+    fetch(`/api/clientes/${initialClienteId}`)
+      .then(r => r.ok ? r.json() : null)
+      .then((c) => { if (c) seleccionarCliente(c) })
+      .catch(() => {/* silent */})
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialClienteId])
 
   useEffect(() => {
     setCalculos(calcularPrecios(servicios, adultos, menores, porcentaje, {
@@ -258,14 +279,16 @@ export function CotizacionForm() {
     }
     setIsLoading(true)
     try {
-      const res = await fetch("/api/cotizaciones", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+      const url    = isEdit ? `/api/cotizaciones/${cotizacion!.id}` : "/api/cotizaciones"
+      const method = isEdit ? "PUT" : "POST"
+      const res = await fetch(url, {
+        method, headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildPayload()),
       })
       if (!res.ok) throw new Error(await res.text())
-      const cot = await res.json()
-      toast.success(`Cotización ${cot.codigo} guardada`)
-      router.push(`/cotizaciones/${cot.id}`)
+      const saved = await res.json()
+      toast.success(isEdit ? "Cotización actualizada" : `Cotización ${saved.codigo} guardada`)
+      router.push(`/cotizaciones/${saved.id}`)
     } catch { toast.error("Error al guardar") } finally { setIsLoading(false) }
   }
 
@@ -321,7 +344,7 @@ export function CotizacionForm() {
           <div className="flex gap-2">
             <div className="flex-1 space-y-1">
               <Label className="text-[#737373] text-xs">Nombre completo *</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Nombre del cliente" value={nombre} onChange={e => setNombre(e.target.value)} />
             </div>
             <div className="mt-6">
@@ -358,18 +381,18 @@ export function CotizacionForm() {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Teléfono *</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="300 000 0000" value={telefono} onChange={e => setTelefono(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Correo electrónico</Label>
-              <Input type="email" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input type="email" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="cliente@email.com" value={correo} onChange={e => setCorreo(e.target.value)} />
             </div>
           </div>
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Documento de identidad</Label>
-            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
               placeholder="CC / Pasaporte" value={documento} onChange={e => setDocumento(e.target.value)} />
           </div>
         </div>
@@ -381,7 +404,7 @@ export function CotizacionForm() {
             {(["NACIONAL", "INTERNACIONAL"] as const).map(t => (
               <button key={t} type="button" onClick={() => setTipo(t)}
                 className={cn("rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
-                  tipo === t ? "bg-[#4F6EF7] border-[#4F6EF7] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#4F6EF7]/40 hover:text-[#F2F2F2]")}>
+                  tipo === t ? "bg-[#272F46] border-[#272F46] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#272F46]/40 hover:text-[#F2F2F2]")}>
                 {t === "NACIONAL" ? "Nacional" : "Internacional"}
               </button>
             ))}
@@ -390,12 +413,12 @@ export function CotizacionForm() {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Origen *</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Ciudad origen" value={origen} onChange={e => setOrigen(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Destino *</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Ciudad destino" value={destino} onChange={e => setDestino(e.target.value)} />
             </div>
           </div>
@@ -436,58 +459,58 @@ export function CotizacionForm() {
             </div>
           </div>
 
-          {duracion && <p className="text-xs text-[#4F6EF7] font-medium">✈ {duracion.label}</p>}
+          {duracion && <p className="text-xs text-[#272F46] font-medium">✈ {duracion.label}</p>}
 
           {/* Vuelo detalle */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Plataforma de reserva</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Despegar, Avianca.com..." value={plataforma} onChange={e => setPlataforma(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Escalas / conexión</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Ej: Bogotá (1h30)" value={escalas} onChange={e => setEscalas(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Aerolínea ida</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Avianca, Latam..." value={aerolineaIda} onChange={e => setAerolineaIda(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Aerolínea regreso</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Avianca, Latam..." value={aerolineaRegreso} onChange={e => setAerolineaRegreso(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Hora salida (ida)</Label>
-              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 value={horaSalidaIda} onChange={e => setHoraSalidaIda(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Hora llegada (ida)</Label>
-              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 value={horaLlegadaIda} onChange={e => setHoraLlegadaIda(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Hora salida (regreso)</Label>
-              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 value={horaSalidaRegreso} onChange={e => setHoraSalidaRegreso(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Hora llegada (regreso)</Label>
-              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input type="time" className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 value={horaLlegadaRegreso} onChange={e => setHoraLlegadaRegreso(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Tiempo de vuelo</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Ej: 4h30m" value={tiempoVuelo} onChange={e => setTiempoVuelo(e.target.value)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Tiempo de escala</Label>
-              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+              <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
                 placeholder="Ej: 2h" value={tiempoEscala} onChange={e => setTiempoEscala(e.target.value)} />
             </div>
           </div>
@@ -525,7 +548,7 @@ export function CotizacionForm() {
                     <span className="text-xs text-[#737373]">M{i + 1}:</span>
                     <Input
                       type="number" min={0} max={17}
-                      className="w-16 h-7 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] text-sm text-center"
+                      className="w-16 h-7 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] text-sm text-center"
                       value={edad}
                       onChange={e => {
                         const n = [...edadesMenores]
@@ -546,17 +569,17 @@ export function CotizacionForm() {
         <div className="grid grid-cols-3 gap-3">
           <div className="col-span-1 space-y-1">
             <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
-            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
               placeholder="Ej: Marriott" value={hotelNombre} onChange={e => setHotelNombre(e.target.value)} />
           </div>
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Noches</Label>
-            <Input type="number" min={0} className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+            <Input type="number" min={0} className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
               value={hotelNoches || ""} onChange={e => setHotelNoches(parseInt(e.target.value) || 0)} placeholder="0" />
           </div>
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
-            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7]"
+            <Input className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46]"
               placeholder="Doble, sencilla..." value={hotelTipo} onChange={e => setHotelTipo(e.target.value)} />
           </div>
         </div>
@@ -570,7 +593,7 @@ export function CotizacionForm() {
               onRemove={() => removeTramo(t.id)} />
           ))}
           <button type="button" onClick={addTramo}
-            className="flex items-center gap-2 text-sm text-[#4F6EF7] hover:text-[#6B85F9] transition-colors font-medium">
+            className="flex items-center gap-2 text-sm text-[#272F46] hover:text-[#3D4F6E] transition-colors font-medium">
             <Plus className="h-4 w-4" /> Añadir tramo
           </button>
         </div>
@@ -586,10 +609,10 @@ export function CotizacionForm() {
             <Label className="text-[#737373] text-xs w-40">Porcentaje de utilidad</Label>
             <input type="range" min={0} max={70} value={porcentaje}
               onChange={e => setPorcentaje(Number(e.target.value))}
-              className="flex-1 accent-[#4F6EF7]" />
+              className="flex-1 accent-[#272F46]" />
             <div className="flex items-center gap-1">
               <Input type="number" min={0} max={70}
-                className="w-16 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] text-center h-8"
+                className="w-16 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] text-center h-8"
                 value={porcentaje} onChange={e => setPorcentaje(Math.min(70, Math.max(0, Number(e.target.value))))} />
               <span className="text-[#737373] text-sm">%</span>
             </div>
@@ -601,7 +624,7 @@ export function CotizacionForm() {
         <div className="space-y-4">
           <div className="flex items-center gap-3">
             <Switch checked={aplicarPlan} onCheckedChange={setAplicarPlan}
-              className="data-[state=checked]:bg-[#4F6EF7]" />
+              className="data-[state=checked]:bg-[#272F46]" />
             <Label className="text-[#F2F2F2] text-sm cursor-pointer" onClick={() => setAplicarPlan(!aplicarPlan)}>
               Aplicar plan de pagos en cuotas
             </Label>
@@ -625,7 +648,7 @@ export function CotizacionForm() {
                   <div key={i} className="flex items-center gap-3">
                     <span className="text-xs text-[#737373] w-16">Cuota {i + 1}</span>
                     <Input type="number" min={0} max={100}
-                      className="w-20 h-7 bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] text-sm text-center"
+                      className="w-20 h-7 bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] text-sm text-center"
                       value={pct} onChange={e => updatePorcentajeCuota(i, Number(e.target.value))} />
                     <span className="text-xs text-[#737373]">%</span>
                   </div>
@@ -640,7 +663,7 @@ export function CotizacionForm() {
 
         {/* OBSERVACIONES */}
         <Section title="Observaciones" />
-        <Textarea className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] min-h-[80px]"
+        <Textarea className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] min-h-[80px]"
           placeholder="Notas adicionales para el cliente..." value={observaciones}
           onChange={e => setObservaciones(e.target.value)} />
       </div>

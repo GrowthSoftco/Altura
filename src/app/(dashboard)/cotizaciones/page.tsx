@@ -47,7 +47,7 @@ export default async function CotizacionesPage({
           href="/cotizaciones/nueva"
           className={cn(
             buttonVariants(),
-            "bg-[#4F6EF7] hover:bg-[#6B85F9] text-white font-semibold text-sm h-9 px-4 rounded-lg shadow-md shadow-[#4F6EF7]/10"
+            "bg-white hover:bg-gray-100 text-[#272F46] font-semibold text-sm h-9 px-4 rounded-lg shadow-md shadow-[#272F46]/10"
           )}
         >
           <FilePlus className="mr-2 h-4 w-4" /> Nueva Cotización

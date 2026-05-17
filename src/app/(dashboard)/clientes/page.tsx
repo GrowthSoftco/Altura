@@ -48,7 +48,7 @@ export default function ClientesPage() {
         </div>
         <ClienteForm
           trigger={
-            <Button className="bg-[#4F6EF7] hover:bg-[#6B85F9] text-white font-semibold text-sm h-9 px-4 rounded-lg shadow-md shadow-[#4F6EF7]/10">
+            <Button className="bg-white hover:bg-gray-100 text-[#272F46] font-semibold text-sm h-9 px-4 rounded-lg shadow-md shadow-[#272F46]/10">
               <UserPlus className="mr-2 h-4 w-4" /> Nuevo Cliente
             </Button>
           }
@@ -60,7 +60,7 @@ export default function ClientesPage() {
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#737373]" />
         <Input
-          className="pl-9 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-9"
+          className="pl-9 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-9"
           placeholder="Buscar por nombre o teléfono..."
           value={query}
           onChange={e => setQuery(e.target.value)}
@@ -91,10 +91,10 @@ export default function ClientesPage() {
               <tr key={c.id} className="border-t border-[#1E1E1E] hover:bg-[#202020] transition-colors">
                 <td className="px-4 py-3">
                   <Link href={`/clientes/${c.id}`} className="flex items-center gap-3 group">
-                    <div className="h-8 w-8 rounded-full bg-[#1E2A4A] flex items-center justify-center text-[#4F6EF7] font-bold text-sm shrink-0">
+                    <div className="h-8 w-8 rounded-full bg-[#1A2035] flex items-center justify-center text-[#272F46] font-bold text-sm shrink-0">
                       {c.nombre.charAt(0).toUpperCase()}
                     </div>
-                    <span className="font-medium text-[#F2F2F2] text-sm group-hover:text-[#4F6EF7] transition-colors">{c.nombre}</span>
+                    <span className="font-medium text-[#F2F2F2] text-sm group-hover:text-[#272F46] transition-colors">{c.nombre}</span>
                   </Link>
                 </td>
                 <td className="px-4 py-3">
