@@ -3,10 +3,24 @@
 import * as React from "react"
 import {
   DayPicker,
-  getDefaultClassNames,
+  UI,
+  DayFlag,
+  SelectionState,
+  Animation,
+  type ClassNames,
   type DayButton,
   type Locale,
 } from "react-day-picker"
+
+// getDefaultClassNames is not exported from the react-day-picker v9 main index; polyfill it:
+function getDefaultClassNames(): ClassNames {
+  const classNames: Record<string, string> = {}
+  for (const key in UI) classNames[(UI as Record<string, string>)[key]] = `rdp-${(UI as Record<string, string>)[key]}`
+  for (const key in DayFlag) classNames[(DayFlag as Record<string, string>)[key]] = `rdp-${(DayFlag as Record<string, string>)[key]}`
+  for (const key in SelectionState) classNames[(SelectionState as Record<string, string>)[key]] = `rdp-${(SelectionState as Record<string, string>)[key]}`
+  for (const key in Animation) classNames[(Animation as Record<string, string>)[key]] = `rdp-${(Animation as Record<string, string>)[key]}`
+  return classNames as ClassNames
+}
 
 import { cn } from "@/lib/utils"
 import { Button, buttonVariants } from "@/components/ui/button"

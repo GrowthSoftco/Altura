@@ -36,8 +36,24 @@ model Cotizacion {
   destino       String
   fechaSalida   DateTime
   fechaRegreso  DateTime
-  aerolinea     String?
-  numeroVuelo   String?
+  aerolinea          String?
+  aerolineaIda       String?
+  aerolineaRegreso   String?
+  plataforma         String?
+  horaSalidaIda      String?
+  horaLlegadaIda     String?
+  horaSalidaRegreso  String?
+  horaLlegadaRegreso String?
+  tiempoVuelo        String?
+  escalas            String?
+  tiempoEscala       String?
+  hotelNombre        String?
+  hotelNoches        Int?
+  hotelTipo          String?
+  tramos             Json?
+  mostrarPlanPagos   Boolean @default(true)
+  numeroCuotas       Int     @default(3)
+  numeroVuelo        String?
   adultos       Int       @default(1)
   menores       Int       @default(0)
   edadesMenores Int[]     @default([])

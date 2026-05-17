@@ -4,50 +4,50 @@ export interface ServicioItem {
   activo: boolean
   valorNeto: number
   obs: string
+  esPorPersona: boolean   // false = precio de grupo (hotel, traslados)
   noches?: number
 }
 
-export interface PagoCuota {
+export interface CuotaPago {
+  numero: number
   porcentaje: number
-  valorIndividual: number
   valorTotal: number
 }
 
-export interface PlanPagos {
-  pago1: PagoCuota
-  pago2: PagoCuota
-  pago3: PagoCuota
+export interface PlanPagosConfig {
+  aplicar: boolean
+  numeroCuotas: number
+  cuotas: CuotaPago[]
 }
 
-export interface ItinerarioVuelo {
-  aerolinea?: string
-  numeroVuelo?: string
-  salida?: string
-  llegada?: string
-  duracion?: string
+export interface Tramo {
+  id: string
+  origen: string
+  destino: string
+  fechaSalida?: string
+  fechaRegreso?: string
+  aerolineaIda?: string
+  aerolineaRegreso?: string
+  plataforma?: string
+  horaSalidaIda?: string
+  horaLlegadaIda?: string
+  horaSalidaRegreso?: string
+  horaLlegadaRegreso?: string
+  tiempoVuelo?: string
   escalas?: string
-}
-
-export interface Itinerario {
-  ida?: ItinerarioVuelo
-  regreso?: ItinerarioVuelo
+  tiempoEscala?: string
 }
 
 export interface CalculoPrecios {
-  valorNetoIndividual: number
-  valorNetoTotal: number
-  gananciaTotal: number
-  valorConPorcentaje: number
-  planPagos: PlanPagos
+  costoNetoTotal: number
+  valorConUtilidad: number
+  valorPorPersona: number
+  planPagos: PlanPagosConfig
 }
 
 export type EstadoCotizacion =
-  | "COTIZADA"
-  | "NEGOCIACION"
-  | "APROBADA"
-  | "PAGANDO"
-  | "COMPLETADA"
-  | "CANCELADA"
+  | "COTIZADA" | "NEGOCIACION" | "APROBADA"
+  | "PAGANDO"  | "COMPLETADA"  | "CANCELADA"
 
 export type TipoViaje = "NACIONAL" | "INTERNACIONAL"
 
@@ -73,19 +73,39 @@ export interface CotizacionBase {
   destino: string
   fechaSalida: Date
   fechaRegreso: Date
-  aerolinea: string | null
+  aerolinea: string | null          // legacy
+  aerolineaIda: string | null
+  aerolineaRegreso: string | null
+  plataforma: string | null
+  horaSalidaIda: string | null
+  horaLlegadaIda: string | null
+  horaSalidaRegreso: string | null
+  horaLlegadaRegreso: string | null
+  tiempoVuelo: string | null
+  escalas: string | null
+  tiempoEscala: string | null
   numeroVuelo: string | null
   adultos: number
   menores: number
   edadesMenores: number[]
   servicios: ServicioItem[]
-  itinerario: Itinerario | null
+  itinerario: unknown
+  hotelNombre: string | null
+  hotelNoches: number | null
+  hotelTipo: string | null
+  tramos: Tramo[] | null
   porcentajeGanancia: number
+  costoNetoTotal: number
+  valorConUtilidad: number
+  valorPorPersona: number
+  // keep legacy fields for compat
   valorNetoIndividual: number
   valorNetoTotal: number
   gananciaTotal: number
   valorConPorcentaje: number
-  planPagos: PlanPagos
+  planPagos: PlanPagosConfig
+  mostrarPlanPagos: boolean
+  numeroCuotas: number
   asistenciaMedica: boolean
   observaciones: string | null
   notasInternas: string | null

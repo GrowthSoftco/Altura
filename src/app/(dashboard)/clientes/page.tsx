@@ -1,29 +1,50 @@
-export const dynamic = "force-dynamic"
+"use client"
 
-import { prisma } from "@/lib/prisma"
-import { Button } from "@/components/ui/button"
-import { ClienteForm } from "@/components/clientes/cliente-form"
-import { UserPlus, Phone, Mail } from "lucide-react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
+import { Search, UserPlus, Phone, Mail } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { ClienteForm } from "@/components/clientes/cliente-form"
 
-export default async function ClientesPage() {
-  const clientes = await prisma.cliente.findMany({
-    include: { _count: { select: { cotizaciones: true } } },
-    orderBy: { createdAt: "desc" },
-  })
+interface Cliente {
+  id: string
+  nombre: string
+  telefono: string
+  correo: string | null
+  createdAt: string
+  _count?: { cotizaciones: number }
+}
+
+export default function ClientesPage() {
+  const [clientes, setClientes]   = useState<Cliente[]>([])
+  const [query, setQuery]         = useState("")
+  const [loading, setLoading]     = useState(true)
+
+  const fetchClientes = async (q = "") => {
+    setLoading(true)
+    try {
+      const res = await fetch(`/api/clientes${q ? `?q=${encodeURIComponent(q)}` : ""}`)
+      const data = await res.json()
+      setClientes(data)
+    } finally { setLoading(false) }
+  }
+
+  useEffect(() => { fetchClientes() }, [])
+
+  useEffect(() => {
+    const t = setTimeout(() => fetchClientes(query), 300)
+    return () => clearTimeout(t)
+  }, [query])
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-5 max-w-7xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-[#F2F2F2] tracking-tight">
-            Clientes
-          </h1>
-          <p className="text-sm text-[#737373] mt-0.5">
-            {clientes.length} cliente(s) registrado(s)
-          </p>
+          <h1 className="text-2xl font-semibold text-[#F2F2F2] tracking-tight">Clientes</h1>
+          <p className="text-sm text-[#737373] mt-0.5">{clientes.length} cliente(s)</p>
         </div>
         <ClienteForm
           trigger={
@@ -31,47 +52,70 @@ export default async function ClientesPage() {
               <UserPlus className="mr-2 h-4 w-4" /> Nuevo Cliente
             </Button>
           }
+          onSuccess={() => fetchClientes(query)}
         />
       </div>
 
-      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
-        {clientes.map((c) => (
-          <Link
-            key={c.id}
-            href={`/clientes/${c.id}`}
-            className="group rounded-xl border border-[#222222] bg-[#1C1C1C] p-4 hover:border-[#2E2E2E] hover:bg-[#202020] transition-all"
-          >
-            <div className="flex items-start justify-between mb-3">
-              <div className="h-8 w-8 rounded-full bg-[#1E2A4A] flex items-center justify-center text-[#4F6EF7] font-bold text-sm shrink-0">
-                {c.nombre.charAt(0).toUpperCase()}
-              </div>
-              <span className="text-[11px] text-[#4A4A4A] tabular-nums">
-                {c._count.cotizaciones} cotización{c._count.cotizaciones !== 1 ? "es" : ""}
-              </span>
-            </div>
-            <p className="font-medium text-[#F2F2F2] text-sm leading-snug">{c.nombre}</p>
-            <div className="mt-2 space-y-1">
-              <div className="flex items-center gap-2 text-xs text-[#737373]">
-                <Phone className="h-3 w-3 shrink-0" />
-                {c.telefono}
-              </div>
-              {c.correo && (
-                <div className="flex items-center gap-2 text-xs text-[#737373]">
-                  <Mail className="h-3 w-3 shrink-0" />
-                  <span className="truncate">{c.correo}</span>
-                </div>
-              )}
-            </div>
-            <p className="mt-3 text-[10px] text-[#3A3A3A]">
-              Desde {format(new Date(c.createdAt), "MMM yyyy", { locale: es })}
-            </p>
-          </Link>
-        ))}
-        {clientes.length === 0 && (
-          <p className="col-span-3 text-center text-[#4A4A4A] text-sm py-16">
-            No hay clientes registrados aún
-          </p>
-        )}
+      {/* Search */}
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#737373]" />
+        <Input
+          className="pl-9 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#4F6EF7] h-9"
+          placeholder="Buscar por nombre o teléfono..."
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+      </div>
+
+      {/* Table */}
+      <div className="rounded-xl border border-[#222222] overflow-hidden bg-[#1C1C1C]">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-[#222222]">
+              <th className="text-left text-[10px] text-[#4A4A4A] uppercase tracking-wider font-medium px-4 py-3">Cliente</th>
+              <th className="text-left text-[10px] text-[#4A4A4A] uppercase tracking-wider font-medium px-4 py-3">Teléfono</th>
+              <th className="text-left text-[10px] text-[#4A4A4A] uppercase tracking-wider font-medium px-4 py-3">Correo</th>
+              <th className="text-left text-[10px] text-[#4A4A4A] uppercase tracking-wider font-medium px-4 py-3">Registro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading && (
+              <tr><td colSpan={4} className="text-center text-[#737373] py-10 text-sm">Cargando...</td></tr>
+            )}
+            {!loading && clientes.length === 0 && (
+              <tr><td colSpan={4} className="text-center text-[#4A4A4A] py-10 text-sm">
+                {query ? `Sin resultados para "${query}"` : "No hay clientes aún"}
+              </td></tr>
+            )}
+            {clientes.map(c => (
+              <tr key={c.id} className="border-t border-[#1E1E1E] hover:bg-[#202020] transition-colors">
+                <td className="px-4 py-3">
+                  <Link href={`/clientes/${c.id}`} className="flex items-center gap-3 group">
+                    <div className="h-8 w-8 rounded-full bg-[#1E2A4A] flex items-center justify-center text-[#4F6EF7] font-bold text-sm shrink-0">
+                      {c.nombre.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="font-medium text-[#F2F2F2] text-sm group-hover:text-[#4F6EF7] transition-colors">{c.nombre}</span>
+                  </Link>
+                </td>
+                <td className="px-4 py-3">
+                  <span className="flex items-center gap-1.5 text-sm text-[#737373]">
+                    <Phone className="h-3 w-3 shrink-0" /> {c.telefono}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  {c.correo ? (
+                    <span className="flex items-center gap-1.5 text-sm text-[#737373] truncate max-w-[200px]">
+                      <Mail className="h-3 w-3 shrink-0" /> {c.correo}
+                    </span>
+                  ) : <span className="text-[#383838] text-sm">—</span>}
+                </td>
+                <td className="px-4 py-3 text-xs text-[#737373] tabular-nums">
+                  {format(new Date(c.createdAt), "dd MMM yyyy", { locale: es })}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   )

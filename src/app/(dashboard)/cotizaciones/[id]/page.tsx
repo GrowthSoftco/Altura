@@ -237,15 +237,29 @@ export default function CotizacionDetailPage() {
           </div>
           <Separator className="bg-[#222222]" />
           <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider pt-1">Plan de pagos</p>
-          {(["pago1", "pago2", "pago3"] as const).map((key, i) => {
-            const p = cot.planPagos[key]
-            return (
-              <div key={key} className="flex justify-between text-sm">
-                <span className="text-[#737373]">Pago {i + 1} ({p.porcentaje}%)</span>
-                <span className="text-[#F2F2F2] tabular-nums">{formatCOP(p.valorTotal)}</span>
-              </div>
-            )
-          })}
+          {(() => {
+            const plan = cot.planPagos as unknown as Record<string, unknown>
+            // New format: { cuotas: [...] }
+            if (plan && Array.isArray(plan.cuotas)) {
+              return (plan.cuotas as Array<{ numero: number; porcentaje: number; valorTotal: number }>).map(c => (
+                <div key={c.numero} className="flex justify-between text-sm">
+                  <span className="text-[#737373]">Cuota {c.numero} ({c.porcentaje}%)</span>
+                  <span className="text-[#F2F2F2] tabular-nums">{formatCOP(c.valorTotal)}</span>
+                </div>
+              ))
+            }
+            // Legacy format: { pago1, pago2, pago3 }
+            return (["pago1", "pago2", "pago3"] as const).map((key, i) => {
+              const p = plan[key] as { porcentaje: number; valorTotal: number } | undefined
+              if (!p) return null
+              return (
+                <div key={key} className="flex justify-between text-sm">
+                  <span className="text-[#737373]">Pago {i + 1} ({p.porcentaje}%)</span>
+                  <span className="text-[#F2F2F2] tabular-nums">{formatCOP(p.valorTotal)}</span>
+                </div>
+              )
+            })
+          })()}
         </CardContent>
       </Card>
 

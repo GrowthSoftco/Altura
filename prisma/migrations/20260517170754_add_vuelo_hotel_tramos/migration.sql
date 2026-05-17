@@ -1,0 +1,17 @@
+-- AlterTable
+ALTER TABLE "cotizaciones" ADD COLUMN     "aerolineaIda" TEXT,
+ADD COLUMN     "aerolineaRegreso" TEXT,
+ADD COLUMN     "escalas" TEXT,
+ADD COLUMN     "horaLlegadaIda" TEXT,
+ADD COLUMN     "horaLlegadaRegreso" TEXT,
+ADD COLUMN     "horaSalidaIda" TEXT,
+ADD COLUMN     "horaSalidaRegreso" TEXT,
+ADD COLUMN     "hotelNoches" INTEGER,
+ADD COLUMN     "hotelNombre" TEXT,
+ADD COLUMN     "hotelTipo" TEXT,
+ADD COLUMN     "mostrarPlanPagos" BOOLEAN NOT NULL DEFAULT true,
+ADD COLUMN     "numeroCuotas" INTEGER NOT NULL DEFAULT 3,
+ADD COLUMN     "plataforma" TEXT,
+ADD COLUMN     "tiempoEscala" TEXT,
+ADD COLUMN     "tiempoVuelo" TEXT,
+ADD COLUMN     "tramos" JSONB;
