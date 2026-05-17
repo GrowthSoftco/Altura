@@ -14,23 +14,24 @@ import { CotizacionCompleta, ServicioItem, Tramo } from "@/types"
 import { formatCOP, calcularDuracion } from "@/lib/calculos"
 
 // ─── Fonts ────────────────────────────────────────────────────────────────────
-// Disable hyphenation to prevent internal canvas crashes
 Font.registerHyphenationCallback((word) => [word])
 
-// Poppins — served from /public/fonts (absolute URL required in browser context)
-const origin =
-  typeof window !== "undefined"
-    ? window.location.origin
-    : "http://localhost:3000"
-
-Font.register({
-  family: "Poppins",
-  fonts: [
-    { src: `${origin}/fonts/poppins-regular.ttf`,  fontWeight: 400 },
-    { src: `${origin}/fonts/poppins-medium.ttf`,   fontWeight: 500 },
-    { src: `${origin}/fonts/poppins-semibold.ttf`, fontWeight: 600 },
-  ],
-})
+// Font registration must happen at runtime (client-side) so window.location.origin
+// is the real production URL, not "localhost:3000" from SSR module evaluation.
+let _fontsRegistered = false
+function ensureFonts() {
+  if (_fontsRegistered || typeof window === "undefined") return
+  const origin = window.location.origin
+  Font.register({
+    family: "Poppins",
+    fonts: [
+      { src: `${origin}/fonts/poppins-regular.ttf`,  fontWeight: 400 },
+      { src: `${origin}/fonts/poppins-medium.ttf`,   fontWeight: 500 },
+      { src: `${origin}/fonts/poppins-semibold.ttf`, fontWeight: 600 },
+    ],
+  })
+  _fontsRegistered = true
+}
 
 // ─── Design tokens ──────────────────────────────────────────────────────────
 const T = {
@@ -245,6 +246,7 @@ function Item({
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }) {
+  ensureFonts()
   const duracion   = calcularDuracion(new Date(cotizacion.fechaSalida), new Date(cotizacion.fechaRegreso))
   const totalPax   = cotizacion.adultos + cotizacion.menores
   const activos    = (cotizacion.servicios as ServicioItem[]).filter(s => s.activo)
