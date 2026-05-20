@@ -249,7 +249,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const [porcentaje, setPorcentaje] = useState(cotizacion ? Number(cotizacion.porcentajeGanancia) : 10)
 
   // ── Plan de pagos ──
-  const initPlan = cotizacion?.planPagos as { aplicar?: boolean; numeroCuotas?: number; cuotas?: { porcentaje: number }[]; modalidad?: "mensual" | "quincenal"; incremento?: number } | undefined
+  const initPlan = cotizacion?.planPagos as { aplicar?: boolean; numeroCuotas?: number; cuotas?: { porcentaje: number }[]; modalidad?: "mensual" | "quincenal"; incremento?: number; fechaInicial?: string } | undefined
   const [aplicarPlan, setAplicarPlan]       = useState(initPlan?.aplicar ?? true)
   const [numCuotas, setNumCuotas]           = useState(cotizacion?.numeroCuotas ?? initPlan?.numeroCuotas ?? 3)
   const [porcentajesCuotas, setPorcentajesCuotas] = useState<number[]>(
