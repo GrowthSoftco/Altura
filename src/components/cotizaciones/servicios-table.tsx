@@ -22,8 +22,8 @@ export function ServiciosTable({ servicios, onChange }: ServiciosTableProps) {
 
   const remove = (id: string) => onChange(servicios.filter(s => s.id !== id))
 
-  const fmt = (v: number) => v === 0 ? "" : String(v)
-  const parse = (raw: string) => { const c = raw.replace(/[^0-9]/g, ""); return c === "" ? 0 : parseInt(c, 10) }
+  const fmt   = (v: number) => v === 0 ? "" : String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+  const parse = (raw: string) => { const c = raw.replace(/\./g, "").replace(/[^0-9]/g, ""); return c === "" ? 0 : parseInt(c, 10) }
 
   const isCustom = (id: string) => id.startsWith("custom_")
 

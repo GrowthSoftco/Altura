@@ -12,11 +12,15 @@ export interface CuotaPago {
   numero: number
   porcentaje: number
   valorTotal: number
+  fecha?: string   // ISO date "yyyy-MM-dd"
 }
 
 export interface PlanPagosConfig {
   aplicar: boolean
   numeroCuotas: number
+  modalidad?: "mensual" | "quincenal"
+  fechaInicial?: string
+  incremento?: number   // 0-40 %
   cuotas: CuotaPago[]
 }
 
@@ -36,6 +40,12 @@ export interface Tramo {
   tiempoVuelo?: string
   escalas?: string
   tiempoEscala?: string
+  // Hotel por tramo
+  hotelNombre?: string
+  hotelCheckIn?: string
+  hotelCheckOut?: string
+  hotelNoches?: number
+  hotelTipo?: string
 }
 
 export interface CalculoPrecios {

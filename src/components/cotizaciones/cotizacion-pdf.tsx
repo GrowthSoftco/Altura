@@ -255,7 +255,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
   const fmtF       = (d: string | Date) => format(new Date(d), "dd/MM/yyyy")
   const fmtFLong   = (d: string | Date) => format(new Date(d), "dd MMM yyyy", { locale: es })
 
-  const plan      = cotizacion.planPagos as { cuotas?: Array<{ numero: number; porcentaje: number; valorTotal: number }> } | null
+  const plan      = cotizacion.planPagos as { cuotas?: Array<{ numero: number; porcentaje: number; valorTotal: number; fecha?: string }> } | null
   const cuotas    = plan?.cuotas ?? null
   const mostrar   = cotizacion.mostrarPlanPagos !== false && cuotas && cuotas.length > 0
   const cobrarIva = !!cotizacion.cobrarIva
@@ -427,11 +427,13 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
             <View style={S.bandC1}>
               {mostrar && cuotas
                 ? cuotas.map(c => (
-                  <Text key={c.numero} style={S.bandSmall}>
-                    {"Cuota "}{c.numero}{"  ("}{c.porcentaje}{"%)\n"}
+                  <View key={c.numero} style={{ marginBottom: 8 }}>
+                    <Text style={S.bandSmall}>
+                      {"Cuota "}{c.numero}{"  ("}{c.porcentaje}{"%)"}
+                      {c.fecha ? `  —  ${format(new Date(c.fecha + "T12:00:00"), "dd MMM yyyy", { locale: es })}` : ""}
+                    </Text>
                     <Text style={S.bandBold}>{formatCOP(c.valorTotal)}</Text>
-                    {"\n\n"}
-                  </Text>
+                  </View>
                 ))
                 : <Text style={S.bandSmall}>Pago único</Text>
               }
@@ -514,6 +516,22 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
           ].map((c, i) => (
             <Text key={i} style={S.tc}>{i + 1}.{"  "}{c}</Text>
           ))}
+
+          {/* Legal note — plan de pagos */}
+          {mostrar && (
+            <View style={{ marginTop: 16, backgroundColor: "#F0EEE9", borderRadius: 4, padding: 10 }}>
+              <Text style={{ fontSize: 6.5, fontWeight: 500, color: T.g2, letterSpacing: 1.4, textTransform: "uppercase", marginBottom: 4 }}>
+                Nota sobre el plan de pagos
+              </Text>
+              <Text style={{ fontSize: 7.5, color: T.g1, lineHeight: 1.7 }}>
+                {"Nota importante: El plan de pagos fraccionado no corresponde a un crédito bancario ni genera intereses. " +
+                 "Debido a que los servicios turísticos están sujetos a variaciones del mercado, el valor final de los tiquetes " +
+                 "y hoteles puede presentar cambios al momento de la emisión o del pago total del plan o servicio adquirido. " +
+                 "En consecuencia, el ajuste en el costo obedecerá a la diferencia de la tarifa vigente al momento de confirmar " +
+                 "el servicio, garantizando así la correcta ejecución del plan o servicio adquirido."}
+              </Text>
+            </View>
+          )}
 
           {cotizacion.observaciones && (
             <View style={{ marginTop: 20 }}>

@@ -22,7 +22,15 @@ export function calcularPrecios(
   adultos: number,
   menores: number,
   porcentaje: number,
-  planConfig?: { aplicar: boolean; numeroCuotas: number; porcentajes?: number[] },
+  planConfig?: {
+    aplicar: boolean
+    numeroCuotas: number
+    porcentajes?: number[]
+    incremento?: number
+    modalidad?: "mensual" | "quincenal"
+    fechaInicial?: string
+    fechas?: (string | undefined)[]
+  },
   cobrarIva?: boolean,
 ): CalculoPrecios {
   const totalPax = Math.max(adultos + menores, 1)
@@ -43,17 +51,42 @@ export function calcularPrecios(
   const valorFinal = valorConUtilidad + ivaTotal
   const valorPorPersona = totalPax > 0 ? Math.ceil(valorFinal / totalPax) : 0
 
-  const aplicar     = planConfig?.aplicar ?? true
-  const numCuotas   = planConfig?.numeroCuotas ?? 3
-  const porcentajes = planConfig?.porcentajes ?? generarPorcentajesDefault(numCuotas)
+  const aplicar      = planConfig?.aplicar ?? true
+  const numCuotas    = planConfig?.numeroCuotas ?? 3
+  const porcentajes  = planConfig?.porcentajes ?? generarPorcentajesDefault(numCuotas)
+  const incremento   = planConfig?.incremento ?? 0
+  const fechasCuotas = planConfig?.fechas
 
-  const cuotas: CuotaPago[] = porcentajes.map((pct, i) => ({
+  // Compute cuota amounts
+  let montos: number[]
+  if (incremento > 0 && numCuotas > 1) {
+    const factor = 1 + incremento / 100
+    const factorSum = Array.from({ length: numCuotas }, (_, i) => Math.pow(factor, i))
+      .reduce((a, b) => a + b, 0)
+    const base = valorFinal / factorSum
+    montos = Array.from({ length: numCuotas }, (_, i) => Math.ceil(base * Math.pow(factor, i)))
+    // Adjust last to avoid rounding drift
+    const sumExcLast = montos.slice(0, -1).reduce((a, b) => a + b, 0)
+    montos[numCuotas - 1] = Math.max(0, valorFinal - sumExcLast)
+  } else {
+    montos = porcentajes.map(pct => Math.ceil(valorFinal * (pct / 100)))
+  }
+
+  const cuotas: CuotaPago[] = montos.map((monto, i) => ({
     numero: i + 1,
-    porcentaje: pct,
-    valorTotal: Math.ceil(valorFinal * (pct / 100)),
+    porcentaje: Math.round((monto / (valorFinal || 1)) * 100),
+    valorTotal: monto,
+    ...(fechasCuotas?.[i] ? { fecha: fechasCuotas[i] } : {}),
   }))
 
-  const planPagos: PlanPagosConfig = { aplicar, numeroCuotas: numCuotas, cuotas }
+  const planPagos: PlanPagosConfig = {
+    aplicar,
+    numeroCuotas: numCuotas,
+    modalidad:    planConfig?.modalidad,
+    fechaInicial: planConfig?.fechaInicial,
+    incremento:   incremento || undefined,
+    cuotas,
+  }
 
   return { costoNetoTotal, valorConUtilidad, ivaTotal, valorFinal, valorPorPersona, planPagos }
 }

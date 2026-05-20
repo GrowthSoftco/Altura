@@ -41,8 +41,10 @@ export function ResumenCard({
           <span className="text-[#F2F2F2] tabular-nums">{totalPax} pax</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-[#737373]">Utilidad aplicada</span>
-          <span className="text-[#00B4C5] tabular-nums">{porcentaje}%</span>
+          <span className="text-[#737373]">Utilidad ({porcentaje}%)</span>
+          <span className="text-[#00B4C5] tabular-nums">
+            {formatCOP(calculos.valorConUtilidad - calculos.costoNetoTotal)}
+          </span>
         </div>
 
         <Separator className="bg-[#222222]" />
