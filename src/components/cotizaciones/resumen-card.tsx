@@ -93,7 +93,7 @@ export function ResumenCard({
         <button
           type="button"
           onClick={() => onToggleIva(!cobrarIva)}
-          className="flex items-center gap-2 text-xs transition-colors w-full"
+          className="flex items-center gap-2 text-xs transition-colors w-full cursor-pointer"
         >
           {cobrarIva
             ? <ToggleRight className="h-4 w-4 text-amber-400 shrink-0" />
@@ -107,7 +107,7 @@ export function ResumenCard({
         <button
           type="button"
           onClick={() => onTogglePlanPagos(!mostrarPlanPagos)}
-          className="flex items-center gap-2 text-xs text-[#737373] hover:text-[#F2F2F2] transition-colors w-full"
+          className="flex items-center gap-2 text-xs text-[#737373] hover:text-[#F2F2F2] transition-colors w-full cursor-pointer"
         >
           {mostrarPlanPagos
             ? <ToggleRight className="h-4 w-4 text-[#00B4C5]" />

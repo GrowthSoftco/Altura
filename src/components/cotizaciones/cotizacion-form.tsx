@@ -378,7 +378,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     servicios,
     porcentajeGanancia: porcentaje,
     cobrarIva,
-    mostrarPlanPagos: aplicarPlan,
+    mostrarPlanPagos,
     numeroCuotas: numCuotas,
     porcentajesCuotas,
     incrementoCuota,
@@ -436,7 +436,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         valorConPorcentaje: calculos.valorFinal,
         planPagos: calculos.planPagos,
         cobrarIva,
-        mostrarPlanPagos: aplicarPlan,
+        mostrarPlanPagos,
         numeroCuotas: numCuotas,
         asistenciaMedica: servicios.find(s => s.id === "asistencia")?.activo ?? false,
         observaciones: observaciones || null, notasInternas: null,
@@ -847,8 +847,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       <div className="sticky top-6">
         <ResumenCard
           calculos={calculos} porcentaje={porcentaje} adultos={adultos} menores={menores}
-          cobrarIva={cobrarIva} onToggleIva={setCobrarIva}
-          mostrarPlanPagos={mostrarPlanPagos} onTogglePlanPagos={setMostrarPlanPagos}
+          cobrarIva={cobrarIva} onToggleIva={(v) => setCobrarIva(v)}
+          mostrarPlanPagos={mostrarPlanPagos} onTogglePlanPagos={(v) => setMostrarPlanPagos(v)}
           onGuardar={handleGuardar} onGenerarPDF={handleGenerarPDF} isLoading={isLoading}
         />
       </div>
