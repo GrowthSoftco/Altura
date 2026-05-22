@@ -76,20 +76,12 @@ function TramoBlock({
 }: { tramo: Tramo; index: number; onUpdate: (t: Tramo) => void; onRemove: () => void }) {
   const up = (k: keyof Tramo, v: string | number) => onUpdate({ ...tramo, [k]: v })
 
-  // Auto-calc noches when check-in/out change
-  const handleHotelDate = (key: "hotelCheckIn" | "hotelCheckOut", val: string) => {
-    const updated = { ...tramo, [key]: val }
-    if (updated.hotelCheckIn && updated.hotelCheckOut) {
-      const diff = differenceInCalendarDays(new Date(updated.hotelCheckOut), new Date(updated.hotelCheckIn))
-      updated.hotelNoches = Math.max(0, diff)
-    }
-    onUpdate(updated)
-  }
+  const tramoNum = index + 2
 
   return (
     <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-[#00B4C5] uppercase tracking-wider">Tramo {index + 1}</span>
+        <span className="text-xs font-semibold text-[#00B4C5] uppercase tracking-wider">Tramo {tramoNum}</span>
         <button type="button" onClick={onRemove} className="text-[#737373] hover:text-red-400 transition-colors">
           <Trash2 className="h-4 w-4" />
         </button>
@@ -108,42 +100,22 @@ function TramoBlock({
             value={tramo.destino} onChange={e => up("destino", e.target.value)} placeholder="Ciudad destino" />
         </div>
         <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Aerolínea ida</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.aerolineaIda ?? ""} onChange={e => up("aerolineaIda", e.target.value)} placeholder="Avianca..." />
-        </div>
-        <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Aerolínea regreso</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.aerolineaRegreso ?? ""} onChange={e => up("aerolineaRegreso", e.target.value)} placeholder="Latam..." />
-        </div>
-        <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Plataforma</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.plataforma ?? ""} onChange={e => up("plataforma", e.target.value)} placeholder="Despegar..." />
-        </div>
-        <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Escalas</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.escalas ?? ""} onChange={e => up("escalas", e.target.value)} placeholder="Bogotá (1h30)" />
-        </div>
-        <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha salida</Label>
           <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.fechaSalida ?? ""} onChange={e => up("fechaSalida", e.target.value)} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Fecha regreso</Label>
-          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.fechaRegreso ?? ""} onChange={e => up("fechaRegreso", e.target.value)} />
+          <Label className="text-[#737373] text-xs">Aerolínea</Label>
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+            value={tramo.aerolineaIda ?? ""} onChange={e => up("aerolineaIda", e.target.value)} placeholder="Avianca..." />
         </div>
         <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Hora salida (ida)</Label>
+          <Label className="text-[#737373] text-xs">Hora salida</Label>
           <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.horaSalidaIda ?? ""} onChange={e => up("horaSalidaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Hora llegada (ida)</Label>
+          <Label className="text-[#737373] text-xs">Hora llegada</Label>
           <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
             value={tramo.horaLlegadaIda ?? ""} onChange={e => up("horaLlegadaIda", e.target.value)} />
         </div>
@@ -153,40 +125,38 @@ function TramoBlock({
             value={tramo.tiempoVuelo ?? ""} onChange={e => up("tiempoVuelo", e.target.value)} placeholder="4h30m" />
         </div>
         <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Tiempo escala</Label>
+          <Label className="text-[#737373] text-xs">Escalas / conexión</Label>
           <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.tiempoEscala ?? ""} onChange={e => up("tiempoEscala", e.target.value)} placeholder="2h" />
+            value={tramo.escalas ?? ""} onChange={e => up("escalas", e.target.value)} placeholder="Bogotá (1h30)" />
+        </div>
+        <div className="space-y-1 col-span-2">
+          <Label className="text-[#737373] text-xs">Plataforma de reserva</Label>
+          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+            value={tramo.plataforma ?? ""} onChange={e => up("plataforma", e.target.value)} placeholder="Despegar, Avianca.com..." />
         </div>
       </div>
 
       {/* Hotel del tramo */}
       <div className="border-t border-[#262626] pt-3 space-y-2">
-        <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {index + 1}</p>
-        <div className="grid grid-cols-2 gap-2">
+        <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
+        <div className="grid grid-cols-3 gap-2">
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
             <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
               value={tramo.hotelNombre ?? ""} onChange={e => up("hotelNombre", e.target.value)} placeholder="Marriott..." />
           </div>
           <div className="space-y-1">
+            <Label className="text-[#737373] text-xs">Noches</Label>
+            <Input type="number" min={0}
+              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+              value={tramo.hotelNoches ?? ""} onChange={e => up("hotelNoches", parseInt(e.target.value) || 0)} />
+          </div>
+          <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
             <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
               value={tramo.hotelTipo ?? ""} onChange={e => up("hotelTipo", e.target.value)} placeholder="Doble, sencilla..." />
           </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Check-in</Label>
-            <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-              value={tramo.hotelCheckIn ?? ""} onChange={e => handleHotelDate("hotelCheckIn", e.target.value)} />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Check-out</Label>
-            <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-              value={tramo.hotelCheckOut ?? ""} onChange={e => handleHotelDate("hotelCheckOut", e.target.value)} />
-          </div>
         </div>
-        {tramo.hotelNoches !== undefined && tramo.hotelNoches > 0 && (
-          <p className="text-xs text-[#00B4C5] font-medium">🏨 {tramo.hotelNoches} noche{tramo.hotelNoches !== 1 ? "s" : ""}</p>
-        )}
       </div>
     </div>
   )
@@ -237,8 +207,6 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   // ── Hotel principal ──
   const [hotelNombre, setHotelNombre]         = useState(cotizacion?.hotelNombre ?? "")
   const [hotelTipo, setHotelTipo]             = useState(cotizacion?.hotelTipo ?? "")
-  const [hotelCheckIn, setHotelCheckIn]       = useState("")
-  const [hotelCheckOut, setHotelCheckOut]     = useState("")
   const [hotelNoches, setHotelNoches]         = useState<number>(cotizacion?.hotelNoches ?? 0)
 
   // ── Tramos ──
@@ -316,13 +284,12 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     setPorcentajesCuotas(PORCENTAJES_CUOTAS_DEFAULT[numCuotas] ?? Array(numCuotas).fill(Math.floor(100 / numCuotas)))
   }, [numCuotas])
 
-  // Auto-calc hotel noches from check-in/out
+  // Auto-calc hotel noches from trip dates
   useEffect(() => {
-    if (hotelCheckIn && hotelCheckOut) {
-      const diff = differenceInCalendarDays(new Date(hotelCheckOut), new Date(hotelCheckIn))
-      setHotelNoches(Math.max(0, diff))
+    if (fechaSalida && fechaRegreso && fechaRegreso > fechaSalida) {
+      setHotelNoches(differenceInCalendarDays(fechaRegreso, fechaSalida))
     }
-  }, [hotelCheckIn, hotelCheckOut])
+  }, [fechaSalida, fechaRegreso])
 
   // Derived
   const duracion = fechaSalida && fechaRegreso && fechaRegreso > fechaSalida
@@ -346,7 +313,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
 
   const addTramo = () => {
     const tramoId = `tramo_${Date.now()}`
-    const tramoNum = tramos.length + 1
+    const tramoNum = tramos.length + 2
     setTramos(prev => [...prev, { id: tramoId, origen: "", destino: "", aerolineaIda: "", aerolineaRegreso: "", plataforma: "" }])
     setServicios(prev => [...prev,
       { id: `tkt_${tramoId}`,   nombre: `Tiquete Tramo ${tramoNum}`, activo: true,  valorNeto: 0, obs: "", esPorPersona: true  },
@@ -670,26 +637,24 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
 
         {/* HOTEL PRINCIPAL */}
         <Section title="Hotel" />
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
             <Input className={inp} placeholder="Marriott, Hilton..." value={hotelNombre} onChange={e => setHotelNombre(e.target.value)} />
           </div>
           <div className="space-y-1">
+            <Label className="text-[#737373] text-xs">Noches</Label>
+            <Input type="number" min={0} className={inp}
+              value={hotelNoches || ""}
+              onChange={e => setHotelNoches(parseInt(e.target.value) || 0)} />
+          </div>
+          <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
             <Input className={inp} placeholder="Doble, sencilla..." value={hotelTipo} onChange={e => setHotelTipo(e.target.value)} />
           </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Check-in</Label>
-            <Input type="date" className={inp} value={hotelCheckIn} onChange={e => setHotelCheckIn(e.target.value)} />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Check-out</Label>
-            <Input type="date" className={inp} value={hotelCheckOut} onChange={e => setHotelCheckOut(e.target.value)} />
-          </div>
         </div>
         {hotelNoches > 0 && (
-          <p className="text-xs text-[#00B4C5] font-medium mt-1">🏨 {hotelNoches} noche{hotelNoches !== 1 ? "s" : ""} calculadas</p>
+          <p className="text-xs text-[#00B4C5] font-medium mt-1">🏨 {hotelNoches} noche{hotelNoches !== 1 ? "s" : ""}</p>
         )}
 
         {/* TRAMOS */}
