@@ -69,7 +69,10 @@ export function calcularPrecios(
     const sumExcLast = montos.slice(0, -1).reduce((a, b) => a + b, 0)
     montos[numCuotas - 1] = Math.max(0, valorFinal - sumExcLast)
   } else {
+    // Apply ceil to each cuota but fix the last one so cuotas sum exactly to valorFinal
     montos = porcentajes.map(pct => Math.ceil(valorFinal * (pct / 100)))
+    const sumExcLast = montos.slice(0, -1).reduce((a, b) => a + b, 0)
+    montos[montos.length - 1] = Math.max(0, valorFinal - sumExcLast)
   }
 
   const cuotas: CuotaPago[] = montos.map((monto, i) => ({
