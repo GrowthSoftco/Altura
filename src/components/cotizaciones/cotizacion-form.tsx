@@ -478,6 +478,49 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           </div>
         </div>
 
+        {/* PASAJEROS */}
+        <Section title="Pasajeros" />
+        <div className="space-y-3">
+          <div className="flex items-center gap-8">
+            {[
+              { label: "Adultos", value: adultos, set: setAdultos, min: 1 },
+              { label: "Menores", value: menores, set: setMenores, min: 0 },
+            ].map(({ label, value, set, min }) => (
+              <div key={label} className="flex items-center gap-3">
+                <Label className="text-[#737373] text-xs w-14">{label}</Label>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="icon" type="button"
+                    className="h-7 w-7 border-[#262626] bg-[#1C1C1C] text-[#F2F2F2]"
+                    onClick={() => set(Math.max(min, value - 1))}>–</Button>
+                  <span className="w-5 text-center text-sm font-semibold text-[#F2F2F2]">{value}</span>
+                  <Button variant="outline" size="icon" type="button"
+                    className="h-7 w-7 border-[#262626] bg-[#1C1C1C] text-[#F2F2F2]"
+                    onClick={() => set(value + 1)}>+</Button>
+                </div>
+              </div>
+            ))}
+          </div>
+          {menores > 0 && (
+            <div className="space-y-2">
+              <Label className="text-[#737373] text-xs">Edad de cada menor</Label>
+              <div className="flex flex-wrap gap-2">
+                {edadesMenores.map((edad, i) => (
+                  <div key={i} className="flex items-center gap-1.5">
+                    <span className="text-xs text-[#737373]">M{i + 1}:</span>
+                    <Input type="number" min={0} max={17}
+                      className="w-14 h-7 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
+                      value={edad}
+                      onChange={e => {
+                        const n = [...edadesMenores]; n[i] = parseInt(e.target.value) || 0; setEdadesMenores(n)
+                      }} />
+                    <span className="text-xs text-[#737373]">a</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* VIAJE */}
         <Section title="Datos del Viaje" />
         <div className="space-y-2.5">
@@ -590,49 +633,6 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
               <Input className={inp} placeholder="2h" value={tiempoEscala} onChange={e => setTiempoEscala(e.target.value)} />
             </div>
           </div>
-        </div>
-
-        {/* PASAJEROS */}
-        <Section title="Pasajeros" />
-        <div className="space-y-3">
-          <div className="flex items-center gap-8">
-            {[
-              { label: "Adultos", value: adultos, set: setAdultos, min: 1 },
-              { label: "Menores", value: menores, set: setMenores, min: 0 },
-            ].map(({ label, value, set, min }) => (
-              <div key={label} className="flex items-center gap-3">
-                <Label className="text-[#737373] text-xs w-14">{label}</Label>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" size="icon" type="button"
-                    className="h-7 w-7 border-[#262626] bg-[#1C1C1C] text-[#F2F2F2]"
-                    onClick={() => set(Math.max(min, value - 1))}>–</Button>
-                  <span className="w-5 text-center text-sm font-semibold text-[#F2F2F2]">{value}</span>
-                  <Button variant="outline" size="icon" type="button"
-                    className="h-7 w-7 border-[#262626] bg-[#1C1C1C] text-[#F2F2F2]"
-                    onClick={() => set(value + 1)}>+</Button>
-                </div>
-              </div>
-            ))}
-          </div>
-          {menores > 0 && (
-            <div className="space-y-2">
-              <Label className="text-[#737373] text-xs">Edad de cada menor</Label>
-              <div className="flex flex-wrap gap-2">
-                {edadesMenores.map((edad, i) => (
-                  <div key={i} className="flex items-center gap-1.5">
-                    <span className="text-xs text-[#737373]">M{i + 1}:</span>
-                    <Input type="number" min={0} max={17}
-                      className="w-14 h-7 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
-                      value={edad}
-                      onChange={e => {
-                        const n = [...edadesMenores]; n[i] = parseInt(e.target.value) || 0; setEdadesMenores(n)
-                      }} />
-                    <span className="text-xs text-[#737373]">a</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* HOTEL PRINCIPAL */}
