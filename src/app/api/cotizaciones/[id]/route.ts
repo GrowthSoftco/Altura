@@ -12,6 +12,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
   const { id } = await params
   const body = await req.json()
 
@@ -74,6 +75,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     include: { cliente: true },
   })
   return NextResponse.json(cot)
+  } catch (err) {
+    console.error("PUT /api/cotizaciones/[id] error:", err)
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

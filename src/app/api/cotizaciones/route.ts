@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  try {
   const body = await req.json()
   let clienteId = body.clienteId
 
@@ -32,6 +33,12 @@ export async function POST(req: NextRequest) {
     clienteId = cliente.id
   }
   if (!clienteId) return NextResponse.json({ error: "Cliente requerido" }, { status: 400 })
+
+  // Validate required dates
+  const fechaSalida  = body.fechaSalida  ? new Date(body.fechaSalida)  : null
+  const fechaRegreso = body.fechaRegreso ? new Date(body.fechaRegreso) : null
+  if (!fechaSalida  || isNaN(fechaSalida.getTime()))  return NextResponse.json({ error: "Fecha de salida inválida" }, { status: 400 })
+  if (!fechaRegreso || isNaN(fechaRegreso.getTime())) return NextResponse.json({ error: "Fecha de llegada inválida" }, { status: 400 })
 
   const codigo  = await generarCodigoCotizacion(prisma)
   const precios = calcularPrecios(
@@ -50,8 +57,8 @@ export async function POST(req: NextRequest) {
       tipo:               body.tipo,
       origen:             body.origen,
       destino:            body.destino,
-      fechaSalida:        new Date(body.fechaSalida),
-      fechaRegreso:       new Date(body.fechaRegreso),
+      fechaSalida,
+      fechaRegreso,
       aerolinea:          body.aerolineaIda  || null,
       aerolineaIda:       body.aerolineaIda  || null,
       aerolineaRegreso:   body.aerolineaRegreso || null,
@@ -89,4 +96,8 @@ export async function POST(req: NextRequest) {
     include: { cliente: true },
   })
   return NextResponse.json(cotizacion, { status: 201 })
+  } catch (err) {
+    console.error("POST /api/cotizaciones error:", err)
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
 }

@@ -476,9 +476,12 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   }
 
   const handleGuardar = async () => {
-    if (!nombre || !telefono || !t0?.origen || !t0?.destino || !t0?.fechaSalida) {
-      toast.error("Completa los campos requeridos"); return
-    }
+    if (!nombre)           { toast.error("El nombre del cliente es requerido"); return }
+    if (!telefono)         { toast.error("El teléfono del cliente es requerido"); return }
+    if (!t0?.origen)       { toast.error("El origen del viaje es requerido"); return }
+    if (!t0?.destino)      { toast.error("El destino del viaje es requerido"); return }
+    if (!t0?.fechaSalida)  { toast.error("La fecha de salida es requerida"); return }
+    if (!t0?.fechaRegreso) { toast.error("La fecha de llegada es requerida"); return }
     setIsLoading(true)
     try {
       const url    = isEdit ? `/api/cotizaciones/${cotizacion!.id}` : "/api/cotizaciones"
@@ -487,11 +490,19 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         method, headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildPayload()),
       })
-      if (!res.ok) throw new Error(await res.text())
+      if (!res.ok) {
+        const msg = await res.text()
+        console.error("API error:", msg)
+        toast.error(`Error al guardar: ${msg.slice(0, 120)}`)
+        return
+      }
       const saved = await res.json()
       toast.success(isEdit ? "Cotización actualizada" : `Cotización ${saved.codigo} guardada`)
       router.push(`/cotizaciones/${saved.id}`)
-    } catch { toast.error("Error al guardar") } finally { setIsLoading(false) }
+    } catch (e) {
+      console.error("handleGuardar error:", e)
+      toast.error(`Error al guardar: ${e instanceof Error ? e.message : "Error desconocido"}`)
+    } finally { setIsLoading(false) }
   }
 
   const handleGenerarPDF = async () => {
