@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { format, addMonths, addDays, differenceInCalendarDays } from "date-fns"
 import { es } from "date-fns/locale"
@@ -24,6 +24,7 @@ import { ResumenCard } from "@/components/cotizaciones/resumen-card"
 import { CotizacionPDF } from "@/components/cotizaciones/cotizacion-pdf"
 
 import { calcularPrecios, calcularDuracion, SERVICIOS_DEFAULT } from "@/lib/calculos"
+import { AIRPORTS } from "@/lib/iata-airports"
 import { ServicioItem, CalculoPrecios, CotizacionCompleta, ClienteBase, Tramo } from "@/types"
 import { cn } from "@/lib/utils"
 
@@ -70,94 +71,162 @@ function Section({ title }: { title: string }) {
   )
 }
 
-// ─── Tramo block ─────────────────────────────────────────────────────────────
-function TramoBlock({
-  tramo, index, onUpdate, onRemove,
-}: { tramo: Tramo; index: number; onUpdate: (t: Tramo) => void; onRemove: () => void }) {
-  const up = (k: keyof Tramo, v: string | number) => onUpdate({ ...tramo, [k]: v })
+// ─── Airport Combobox ─────────────────────────────────────────────────────────
+function AirportCombobox({ value, onChange, placeholder, className }: {
+  value: string; onChange: (v: string) => void; placeholder?: string; className?: string
+}) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState(value)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  const tramoNum = index + 2
+  // Sync when external value changes (e.g. edit mode pre-fill)
+  useEffect(() => { setQuery(value) }, [value])
+
+  const filtered = query.length >= 1
+    ? AIRPORTS.filter(a => {
+        const q = query.toLowerCase()
+        return a.code.toLowerCase().startsWith(q) ||
+          a.city.toLowerCase().includes(q) ||
+          a.name.toLowerCase().includes(q)
+      }).slice(0, 8)
+    : []
+
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value)
+    onChange(e.target.value)
+    setOpen(true)
+  }
+
+  const handleSelect = (code: string, city: string) => {
+    const display = `${code} - ${city}`
+    setQuery(display)
+    onChange(display)
+    setOpen(false)
+  }
+
+  return (
+    <div ref={containerRef} className="relative">
+      <Input
+        value={query}
+        onChange={handleInput}
+        onFocus={() => query.length >= 1 && setOpen(true)}
+        onBlur={() => setTimeout(() => setOpen(false), 150)}
+        placeholder={placeholder}
+        className={className}
+      />
+      {open && filtered.length > 0 && (
+        <div className="absolute z-50 top-full mt-1 left-0 right-0 rounded-lg border border-[#262626] bg-[#1C1C1C] shadow-xl overflow-hidden">
+          {filtered.map(a => (
+            <button key={a.code} type="button"
+              onMouseDown={e => { e.preventDefault(); handleSelect(a.code, a.city) }}
+              className="w-full text-left px-3 py-2 hover:bg-[#242424] transition-colors flex items-center gap-2">
+              <span className="text-[#00B4C5] font-mono font-bold text-xs w-8 shrink-0">{a.code}</span>
+              <span className="text-[#F2F2F2] text-sm">{a.city}</span>
+              <span className="text-[#4A4A4A] text-xs truncate">— {a.name}, {a.country}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─── Tramo block ─────────────────────────────────────────────────────────────
+const inpT = "bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+
+function TramoBlock({
+  tramo, index, onUpdate, onRemove, isFirst,
+}: { tramo: Tramo; index: number; onUpdate: (t: Tramo) => void; onRemove?: () => void; isFirst?: boolean }) {
+  const up = (k: keyof Tramo, v: string | number) => onUpdate({ ...tramo, [k]: v })
+  const tramoNum = index + 1
 
   return (
     <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold text-[#00B4C5] uppercase tracking-wider">Tramo {tramoNum}</span>
-        <button type="button" onClick={onRemove} className="text-[#737373] hover:text-red-400 transition-colors">
-          <Trash2 className="h-4 w-4" />
-        </button>
+        {!isFirst && onRemove && (
+          <button type="button" onClick={onRemove} className="text-[#737373] hover:text-red-400 transition-colors">
+            <Trash2 className="h-4 w-4" />
+          </button>
+        )}
       </div>
 
-      {/* Vuelo */}
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Origen</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.origen} onChange={e => up("origen", e.target.value)} placeholder="Ciudad origen" />
+          <AirportCombobox value={tramo.origen} onChange={v => up("origen", v)}
+            placeholder="Ciudad o IATA" className={inpT} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Destino</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.destino} onChange={e => up("destino", e.target.value)} placeholder="Ciudad destino" />
+          <AirportCombobox value={tramo.destino} onChange={v => up("destino", v)}
+            placeholder="Ciudad o IATA" className={inpT} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha salida</Label>
-          <Input type="date" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+          <Input type="date" className={inpT}
             value={tramo.fechaSalida ?? ""} onChange={e => up("fechaSalida", e.target.value)} />
         </div>
         <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Fecha regreso</Label>
+          <Input type="date" className={inpT}
+            value={tramo.fechaRegreso ?? ""} onChange={e => up("fechaRegreso", e.target.value)} />
+        </div>
+        <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Aerolínea</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.aerolineaIda ?? ""} onChange={e => up("aerolineaIda", e.target.value)} placeholder="Avianca..." />
+          <Input className={inpT} value={tramo.aerolineaIda ?? ""}
+            onChange={e => up("aerolineaIda", e.target.value)} placeholder="Avianca, Latam..." />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Plataforma de reserva</Label>
+          <Input className={inpT} value={tramo.plataforma ?? ""}
+            onChange={e => up("plataforma", e.target.value)} placeholder="Despegar, Avianca.com..." />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora salida</Label>
-          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+          <Input type="time" className={inpT}
             value={tramo.horaSalidaIda ?? ""} onChange={e => up("horaSalidaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora llegada</Label>
-          <Input type="time" className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+          <Input type="time" className={inpT}
             value={tramo.horaLlegadaIda ?? ""} onChange={e => up("horaLlegadaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Tiempo de vuelo</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.tiempoVuelo ?? ""} onChange={e => up("tiempoVuelo", e.target.value)} placeholder="4h30m" />
+          <Input className={inpT} value={tramo.tiempoVuelo ?? ""}
+            onChange={e => up("tiempoVuelo", e.target.value)} placeholder="4h30m" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Escalas / conexión</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.escalas ?? ""} onChange={e => up("escalas", e.target.value)} placeholder="Bogotá (1h30)" />
-        </div>
-        <div className="space-y-1 col-span-2">
-          <Label className="text-[#737373] text-xs">Plataforma de reserva</Label>
-          <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-            value={tramo.plataforma ?? ""} onChange={e => up("plataforma", e.target.value)} placeholder="Despegar, Avianca.com..." />
+          <Input className={inpT} value={tramo.escalas ?? ""}
+            onChange={e => up("escalas", e.target.value)} placeholder="Bogotá (1h30)" />
         </div>
       </div>
 
-      {/* Hotel del tramo */}
-      <div className="border-t border-[#262626] pt-3 space-y-2">
-        <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
-        <div className="grid grid-cols-3 gap-2">
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
-            <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-              value={tramo.hotelNombre ?? ""} onChange={e => up("hotelNombre", e.target.value)} placeholder="Marriott..." />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Noches</Label>
-            <Input type="number" min={0}
-              className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-              value={tramo.hotelNoches ?? ""} onChange={e => up("hotelNoches", parseInt(e.target.value) || 0)} />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
-            <Input className="bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-              value={tramo.hotelTipo ?? ""} onChange={e => up("hotelTipo", e.target.value)} placeholder="Doble, sencilla..." />
+      {/* Hotel — solo para tramos adicionales */}
+      {!isFirst && (
+        <div className="border-t border-[#262626] pt-3 space-y-2">
+          <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-1">
+              <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
+              <Input className={inpT} value={tramo.hotelNombre ?? ""}
+                onChange={e => up("hotelNombre", e.target.value)} placeholder="Marriott..." />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-[#737373] text-xs">Noches</Label>
+              <Input type="number" min={0} className={inpT}
+                value={tramo.hotelNoches ?? ""} onChange={e => up("hotelNoches", parseInt(e.target.value) || 0)} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
+              <Input className={inpT} value={tramo.hotelTipo ?? ""}
+                onChange={e => up("hotelTipo", e.target.value)} placeholder="Doble, sencilla..." />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }
@@ -182,22 +251,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const [clienteSearch, setClienteSearch] = useState(false)
   const [clientes, setClientes]           = useState<ClienteBase[]>([])
 
-  // ── Viaje ──
-  const [tipo, setTipo]               = useState<"NACIONAL" | "INTERNACIONAL">((cotizacion?.tipo as "NACIONAL" | "INTERNACIONAL") ?? "NACIONAL")
-  const [origen, setOrigen]           = useState(cotizacion?.origen ?? "")
-  const [destino, setDestino]         = useState(cotizacion?.destino ?? "")
-  const [fechaSalida, setFechaSalida] = useState<Date | undefined>(cotizacion ? new Date(cotizacion.fechaSalida) : undefined)
-  const [fechaRegreso, setFechaRegreso] = useState<Date | undefined>(cotizacion ? new Date(cotizacion.fechaRegreso) : undefined)
-  const [plataforma, setPlataforma]   = useState(cotizacion?.plataforma ?? "")
-  const [aerolineaIda, setAerolineaIda]               = useState(cotizacion?.aerolineaIda ?? "")
-  const [aerolineaRegreso, setAerolineaRegreso]       = useState(cotizacion?.aerolineaRegreso ?? "")
-  const [horaSalidaIda, setHoraSalidaIda]             = useState(cotizacion?.horaSalidaIda ?? "")
-  const [horaLlegadaIda, setHoraLlegadaIda]           = useState(cotizacion?.horaLlegadaIda ?? "")
-  const [horaSalidaRegreso, setHoraSalidaRegreso]     = useState(cotizacion?.horaSalidaRegreso ?? "")
-  const [horaLlegadaRegreso, setHoraLlegadaRegreso]   = useState(cotizacion?.horaLlegadaRegreso ?? "")
-  const [tiempoVuelo, setTiempoVuelo]   = useState(cotizacion?.tiempoVuelo ?? "")
-  const [escalas, setEscalas]           = useState(cotizacion?.escalas ?? "")
-  const [tiempoEscala, setTiempoEscala] = useState(cotizacion?.tiempoEscala ?? "")
+  // ── Viaje (tipo) ──
+  const [tipo, setTipo] = useState<"NACIONAL" | "INTERNACIONAL">((cotizacion?.tipo as "NACIONAL" | "INTERNACIONAL") ?? "NACIONAL")
 
   // ── Pasajeros ──
   const [adultos, setAdultos]           = useState(cotizacion?.adultos ?? 1)
@@ -209,12 +264,32 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const [hotelTipo, setHotelTipo]             = useState(cotizacion?.hotelTipo ?? "")
   const [hotelNoches, setHotelNoches]         = useState<number>(cotizacion?.hotelNoches ?? 0)
 
-  // ── Tramos ──
-  const [tramos, setTramos] = useState<Tramo[]>((cotizacion?.tramos as Tramo[]) ?? [])
+  // ── Tramos (tramos[0] = Tramo 1 — siempre presente) ──
+  const [tramos, setTramos] = useState<Tramo[]>(() => {
+    if (!cotizacion) return [{ id: "tramo_1", origen: "", destino: "" }]
+    const existing = cotizacion.tramos as Tramo[] | null
+    if (existing && existing.length > 0) return existing
+    // Backward compat: build tramo 1 from top-level fields
+    return [{
+      id: "tramo_1",
+      origen:       cotizacion.origen ?? "",
+      destino:      cotizacion.destino ?? "",
+      fechaSalida:  cotizacion.fechaSalida  ? format(new Date(cotizacion.fechaSalida),  "yyyy-MM-dd") : undefined,
+      fechaRegreso: cotizacion.fechaRegreso ? format(new Date(cotizacion.fechaRegreso), "yyyy-MM-dd") : undefined,
+      aerolineaIda: cotizacion.aerolineaIda  ?? undefined,
+      horaSalidaIda:    cotizacion.horaSalidaIda  ?? undefined,
+      horaLlegadaIda:   cotizacion.horaLlegadaIda ?? undefined,
+      tiempoVuelo:  cotizacion.tiempoVuelo ?? undefined,
+      escalas:      cotizacion.escalas     ?? undefined,
+      plataforma:   cotizacion.plataforma  ?? undefined,
+    }]
+  })
 
   // ── Servicios ──
   const [servicios, setServicios] = useState<ServicioItem[]>((cotizacion?.servicios as ServicioItem[]) ?? SERVICIOS_DEFAULT)
-  const [porcentaje, setPorcentaje] = useState(cotizacion ? Number(cotizacion.porcentajeGanancia) : 10)
+  const [porcentaje, setPorcentaje]         = useState(cotizacion ? Number(cotizacion.porcentajeGanancia) : 10)
+  const [utilidadModo, setUtilidadModo]     = useState<"porcentaje" | "fijo">("porcentaje")
+  const [utilidadFija, setUtilidadFija]     = useState(0)
 
   // ── Plan de pagos ──
   const initPlan = cotizacion?.planPagos as { aplicar?: boolean; numeroCuotas?: number; cuotas?: { porcentaje: number }[]; modalidad?: "mensual" | "quincenal"; incremento?: number; fechaInicial?: string } | undefined
@@ -256,20 +331,32 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialClienteId])
 
+  // Effective porcentaje — supports both % and fixed-value modes
+  const costoNetoCalc = (() => {
+    const pax = Math.max(adultos + menores, 1)
+    const pp  = servicios.filter(s => s.activo && s.esPorPersona !== false).reduce((s, x) => s + x.valorNeto, 0)
+    const pg  = servicios.filter(s => s.activo && s.esPorPersona === false).reduce((s, x) => s + x.valorNeto, 0)
+    return pp * pax + pg
+  })()
+  const porcentajeEfectivo = utilidadModo === "fijo" && costoNetoCalc > 0
+    ? (utilidadFija / costoNetoCalc) * 100
+    : porcentaje
+
   // Recalculate on any pricing input change
   useEffect(() => {
     const fechas = generarFechasCuotas(fechaInicioPago, modalidadPlan, numCuotas)
-    setCalculos(calcularPrecios(servicios, adultos, menores, porcentaje, {
+    setCalculos(calcularPrecios(servicios, adultos, menores, porcentajeEfectivo, {
       aplicar: aplicarPlan,
       numeroCuotas: numCuotas,
       porcentajes: porcentajesCuotas,
-      incremento: incrementoCuota,
+      incremento: 0,
       modalidad: modalidadPlan,
       fechaInicial: fechaInicioPago ? format(fechaInicioPago, "yyyy-MM-dd") : undefined,
       fechas,
     }, cobrarIva))
-  }, [servicios, adultos, menores, porcentaje, aplicarPlan, numCuotas, porcentajesCuotas,
-      cobrarIva, incrementoCuota, modalidadPlan, fechaInicioPago])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [servicios, adultos, menores, porcentajeEfectivo, aplicarPlan, numCuotas, porcentajesCuotas,
+      cobrarIva, modalidadPlan, fechaInicioPago])
 
   // Sync edades when menores changes
   useEffect(() => {
@@ -284,16 +371,24 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     setPorcentajesCuotas(PORCENTAJES_CUOTAS_DEFAULT[numCuotas] ?? Array(numCuotas).fill(Math.floor(100 / numCuotas)))
   }, [numCuotas])
 
-  // Auto-calc hotel noches from trip dates
+  // Auto-calc hotel noches from Tramo 1 dates
   useEffect(() => {
-    if (fechaSalida && fechaRegreso && fechaRegreso > fechaSalida) {
-      setHotelNoches(differenceInCalendarDays(fechaRegreso, fechaSalida))
+    const t0 = tramos[0]
+    if (t0?.fechaSalida && t0?.fechaRegreso) {
+      const diff = differenceInCalendarDays(
+        new Date(t0.fechaRegreso + "T12:00:00"),
+        new Date(t0.fechaSalida  + "T12:00:00")
+      )
+      if (diff > 0) setHotelNoches(diff)
     }
-  }, [fechaSalida, fechaRegreso])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tramos[0]?.fechaSalida, tramos[0]?.fechaRegreso])
 
-  // Derived
-  const duracion = fechaSalida && fechaRegreso && fechaRegreso > fechaSalida
-    ? calcularDuracion(fechaSalida, fechaRegreso) : null
+  // Derived from Tramo 1
+  const t0           = tramos[0]
+  const fs           = t0?.fechaSalida  ? new Date(t0.fechaSalida  + "T12:00:00") : undefined
+  const fr           = t0?.fechaRegreso ? new Date(t0.fechaRegreso + "T12:00:00") : undefined
+  const duracion     = fs && fr && fr > fs ? calcularDuracion(fs, fr) : null
   const sumaCuotas = porcentajesCuotas.reduce((a, b) => a + b, 0)
 
   // ── Handlers ──
@@ -312,16 +407,17 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   }
 
   const addTramo = () => {
-    const tramoId = `tramo_${Date.now()}`
-    const tramoNum = tramos.length + 2
-    setTramos(prev => [...prev, { id: tramoId, origen: "", destino: "", aerolineaIda: "", aerolineaRegreso: "", plataforma: "" }])
+    const tramoId  = `tramo_${Date.now()}`
+    const tramoNum = tramos.length + 1   // after push: new tramo is at index tramos.length → num = tramos.length+1
+    setTramos(prev => [...prev, { id: tramoId, origen: "", destino: "" }])
     setServicios(prev => [...prev,
-      { id: `tkt_${tramoId}`,   nombre: `Tiquete Tramo ${tramoNum}`, activo: true,  valorNeto: 0, obs: "", esPorPersona: true  },
-      { id: `hotel_${tramoId}`, nombre: `Hotel Tramo ${tramoNum}`,   activo: true,  valorNeto: 0, obs: "", esPorPersona: false },
+      { id: `tkt_${tramoId}`,   nombre: `Tiquete Tramo ${tramoNum}`, activo: true, valorNeto: 0, obs: "", esPorPersona: true  },
+      { id: `hotel_${tramoId}`, nombre: `Hotel Tramo ${tramoNum}`,   activo: true, valorNeto: 0, obs: "", esPorPersona: false },
     ])
   }
 
   const removeTramo = (tramoId: string) => {
+    if (tramoId === "tramo_1") return  // Tramo 1 no se puede eliminar
     setTramos(prev => prev.filter(x => x.id !== tramoId))
     setServicios(prev => prev.filter(s => !s.id.includes(tramoId)))
   }
@@ -330,33 +426,46 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     setPorcentajesCuotas(prev => { const n = [...prev]; n[idx] = val; return n })
   }
 
-  const buildPayload = () => ({
-    clienteId: clienteId ?? undefined,
-    clienteNuevo: clienteId ? undefined : { nombre, telefono, correo, documento },
-    tipo, origen, destino,
-    fechaSalida:  fechaSalida?.toISOString(),
-    fechaRegreso: fechaRegreso?.toISOString(),
-    plataforma, aerolineaIda, aerolineaRegreso,
-    horaSalidaIda, horaLlegadaIda, horaSalidaRegreso, horaLlegadaRegreso,
-    tiempoVuelo, escalas, tiempoEscala,
-    adultos, menores, edadesMenores,
-    hotelNombre, hotelNoches: hotelNoches || null, hotelTipo,
-    tramos,
-    servicios,
-    porcentajeGanancia: porcentaje,
-    cobrarIva,
-    mostrarPlanPagos,
-    numeroCuotas: numCuotas,
-    porcentajesCuotas,
-    incrementoCuota,
-    modalidadPlan,
-    fechaInicioPago: fechaInicioPago ? format(fechaInicioPago, "yyyy-MM-dd") : null,
-    asistenciaMedica: servicios.find(s => s.id === "asistencia")?.activo ?? false,
-    observaciones,
-  })
+  const buildPayload = () => {
+    const t = tramos[0]
+    return {
+      clienteId: clienteId ?? undefined,
+      clienteNuevo: clienteId ? undefined : { nombre, telefono, correo, documento },
+      tipo,
+      // Top-level fields derived from Tramo 1 (backward compat with DB schema)
+      origen:       t?.origen  ?? "",
+      destino:      t?.destino ?? "",
+      fechaSalida:  fs?.toISOString(),
+      fechaRegreso: fr?.toISOString(),
+      aerolineaIda:       t?.aerolineaIda    ?? "",
+      aerolineaRegreso:   "",
+      horaSalidaIda:      t?.horaSalidaIda   ?? "",
+      horaLlegadaIda:     t?.horaLlegadaIda  ?? "",
+      horaSalidaRegreso:  "",
+      horaLlegadaRegreso: "",
+      tiempoVuelo:  t?.tiempoVuelo ?? "",
+      escalas:      t?.escalas     ?? "",
+      tiempoEscala: "",
+      plataforma:   t?.plataforma  ?? "",
+      adultos, menores, edadesMenores,
+      hotelNombre, hotelNoches: hotelNoches || null, hotelTipo,
+      tramos,   // All tramos including tramo_1
+      servicios,
+      porcentajeGanancia: porcentajeEfectivo,
+      cobrarIva,
+      mostrarPlanPagos,
+      numeroCuotas: numCuotas,
+      porcentajesCuotas,
+      incrementoCuota: 0,
+      modalidadPlan,
+      fechaInicioPago: fechaInicioPago ? format(fechaInicioPago, "yyyy-MM-dd") : null,
+      asistenciaMedica: servicios.find(s => s.id === "asistencia")?.activo ?? false,
+      observaciones,
+    }
+  }
 
   const handleGuardar = async () => {
-    if (!nombre || !telefono || !origen || !destino || !fechaSalida || !fechaRegreso) {
+    if (!nombre || !telefono || !t0?.origen || !t0?.destino || !t0?.fechaSalida) {
       toast.error("Completa los campos requeridos"); return
     }
     setIsLoading(true)
@@ -375,7 +484,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   }
 
   const handleGenerarPDF = async () => {
-    if (!nombre || !origen || !destino || !fechaSalida || !fechaRegreso) {
+    if (!nombre || !t0?.origen || !t0?.destino || !t0?.fechaSalida) {
       toast.error("Completa los datos del viaje"); return
     }
     try {
@@ -383,12 +492,13 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         id: "preview", codigo: "COT-PREVIEW", estado: "COTIZADA",
         fechaCreacion: new Date(), clienteId: clienteId ?? "preview",
         cliente: { id: clienteId ?? "preview", nombre, telefono, correo: correo || null, documento: documento || null, fechaRegistro: new Date(), createdAt: new Date(), updatedAt: new Date() },
-        tipo, origen, destino, fechaSalida, fechaRegreso,
-        aerolinea: aerolineaIda || null, aerolineaIda: aerolineaIda || null, aerolineaRegreso: aerolineaRegreso || null,
-        plataforma: plataforma || null,
-        horaSalidaIda: horaSalidaIda || null, horaLlegadaIda: horaLlegadaIda || null,
-        horaSalidaRegreso: horaSalidaRegreso || null, horaLlegadaRegreso: horaLlegadaRegreso || null,
-        tiempoVuelo: tiempoVuelo || null, escalas: escalas || null, tiempoEscala: tiempoEscala || null,
+        tipo, origen: t0?.origen ?? "", destino: t0?.destino ?? "",
+        fechaSalida: fs ?? new Date(), fechaRegreso: fr ?? new Date(),
+        aerolinea: t0?.aerolineaIda || null, aerolineaIda: t0?.aerolineaIda || null, aerolineaRegreso: null,
+        plataforma: t0?.plataforma || null,
+        horaSalidaIda: t0?.horaSalidaIda || null, horaLlegadaIda: t0?.horaLlegadaIda || null,
+        horaSalidaRegreso: null, horaLlegadaRegreso: null,
+        tiempoVuelo: t0?.tiempoVuelo || null, escalas: t0?.escalas || null, tiempoEscala: null,
         numeroVuelo: null, adultos, menores, edadesMenores,
         servicios, itinerario: null,
         hotelNombre: hotelNombre || null, hotelNoches: hotelNoches || null, hotelTipo: hotelTipo || null,
@@ -521,118 +631,29 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           )}
         </div>
 
-        {/* VIAJE */}
-        <Section title="Datos del Viaje" />
-        <div className="space-y-2.5">
-          {/* Tipo */}
-          <div className="grid grid-cols-2 gap-2">
-            {(["NACIONAL", "INTERNACIONAL"] as const).map(t => (
-              <button key={t} type="button" onClick={() => setTipo(t)}
-                className={cn("rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
-                  tipo === t ? "bg-[#00B4C5] border-[#00B4C5] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40 hover:text-[#F2F2F2]")}>
-                {t === "NACIONAL" ? "Nacional" : "Internacional"}
-              </button>
-            ))}
-          </div>
-
-          {/* Origen / Destino */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Origen *</Label>
-              <Input className={inp} placeholder="Ciudad origen" value={origen} onChange={e => setOrigen(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Destino *</Label>
-              <Input className={inp} placeholder="Ciudad destino" value={destino} onChange={e => setDestino(e.target.value)} />
-            </div>
-          </div>
-
-          {/* Fechas salida / regreso */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Fecha de salida *</Label>
-              <Popover>
-                <PopoverTrigger render={
-                  <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                    "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
-                    !fechaSalida && "text-[#737373]")} />
-                }>
-                  <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373]" />
-                  {fechaSalida ? format(fechaSalida, "dd/MM/yyyy") : "Seleccionar"}
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
-                  <Calendar mode="single" selected={fechaSalida}
-                    onSelect={d => { setFechaSalida(d); if (d && fechaRegreso && fechaRegreso <= d) setFechaRegreso(undefined) }}
-                    locale={es} className="bg-[#1C1C1C] text-[#F2F2F2]" />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Fecha de regreso *</Label>
-              <Popover>
-                <PopoverTrigger render={
-                  <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                    "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
-                    !fechaRegreso && "text-[#737373]")} />
-                }>
-                  <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373]" />
-                  {fechaRegreso ? format(fechaRegreso, "dd/MM/yyyy") : "Seleccionar"}
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
-                  {/* defaultMonth abre el calendario en el mes de salida */}
-                  <Calendar mode="single" selected={fechaRegreso} onSelect={setFechaRegreso}
-                    locale={es} className="bg-[#1C1C1C] text-[#F2F2F2]"
-                    defaultMonth={fechaSalida}
-                    disabled={d => fechaSalida ? d <= fechaSalida : false} />
-                </PopoverContent>
-              </Popover>
-            </div>
-          </div>
+        {/* VUELOS */}
+        <Section title="Vuelos" />
+        {/* Tipo de viaje */}
+        <div className="grid grid-cols-2 gap-2 mb-3">
+          {(["NACIONAL", "INTERNACIONAL"] as const).map(t => (
+            <button key={t} type="button" onClick={() => setTipo(t)}
+              className={cn("rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
+                tipo === t ? "bg-[#00B4C5] border-[#00B4C5] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40 hover:text-[#F2F2F2]")}>
+              {t === "NACIONAL" ? "Nacional" : "Internacional"}
+            </button>
+          ))}
+        </div>
+        <div className="space-y-3">
+          {tramos.map((tramo, i) => (
+            <TramoBlock key={tramo.id} tramo={tramo} index={i} isFirst={i === 0}
+              onUpdate={updated => setTramos(prev => prev.map(x => x.id === tramo.id ? updated : x))}
+              onRemove={i === 0 ? undefined : () => removeTramo(tramo.id)} />
+          ))}
           {duracion && <p className="text-xs text-[#00B4C5] font-medium">✈ {duracion.label}</p>}
-
-          {/* Vuelo detalle */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Aerolínea ida</Label>
-              <Input className={inp} placeholder="Avianca, Latam..." value={aerolineaIda} onChange={e => setAerolineaIda(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Aerolínea regreso</Label>
-              <Input className={inp} placeholder="Avianca, Latam..." value={aerolineaRegreso} onChange={e => setAerolineaRegreso(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Hora salida (ida)</Label>
-              <Input type="time" className={inp} value={horaSalidaIda} onChange={e => setHoraSalidaIda(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Hora llegada (ida)</Label>
-              <Input type="time" className={inp} value={horaLlegadaIda} onChange={e => setHoraLlegadaIda(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Hora salida (regreso)</Label>
-              <Input type="time" className={inp} value={horaSalidaRegreso} onChange={e => setHoraSalidaRegreso(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Hora llegada (regreso)</Label>
-              <Input type="time" className={inp} value={horaLlegadaRegreso} onChange={e => setHoraLlegadaRegreso(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Plataforma de reserva</Label>
-              <Input className={inp} placeholder="Despegar, Avianca.com..." value={plataforma} onChange={e => setPlataforma(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Escalas / conexión</Label>
-              <Input className={inp} placeholder="Ej: Bogotá (1h30)" value={escalas} onChange={e => setEscalas(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Tiempo de vuelo</Label>
-              <Input className={inp} placeholder="4h30m" value={tiempoVuelo} onChange={e => setTiempoVuelo(e.target.value)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Tiempo de escala</Label>
-              <Input className={inp} placeholder="2h" value={tiempoEscala} onChange={e => setTiempoEscala(e.target.value)} />
-            </div>
-          </div>
+          <button type="button" onClick={addTramo}
+            className="flex items-center gap-2 text-sm text-[#00B4C5] hover:text-[#009aaa] transition-colors font-medium">
+            <Plus className="h-4 w-4" /> Añadir tramo
+          </button>
         </div>
 
         {/* HOTEL PRINCIPAL */}
@@ -657,37 +678,55 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           <p className="text-xs text-[#00B4C5] font-medium mt-1">🏨 {hotelNoches} noche{hotelNoches !== 1 ? "s" : ""}</p>
         )}
 
-        {/* TRAMOS */}
-        <Section title="Tramos adicionales" />
-        <div className="space-y-3">
-          {tramos.map((t, i) => (
-            <TramoBlock key={t.id} tramo={t} index={i}
-              onUpdate={updated => setTramos(prev => prev.map(x => x.id === t.id ? updated : x))}
-              onRemove={() => removeTramo(t.id)} />
-          ))}
-          <button type="button" onClick={addTramo}
-            className="flex items-center gap-2 text-sm text-[#00B4C5] hover:text-[#009aaa] transition-colors font-medium">
-            <Plus className="h-4 w-4" /> Añadir tramo
-          </button>
-        </div>
-
         {/* SERVICIOS */}
         <Section title="Servicios incluidos" />
         <ServiciosTable servicios={servicios} onChange={setServicios} />
 
         {/* UTILIDAD */}
         <Section title="Utilidad" />
-        <div className="flex items-center gap-4">
-          <Label className="text-[#737373] text-xs w-36 shrink-0">Porcentaje de utilidad</Label>
-          <input type="range" min={0} max={70} value={porcentaje}
-            onChange={e => setPorcentaje(Number(e.target.value))}
-            className="flex-1 accent-[#00B4C5]" />
-          <div className="flex items-center gap-1">
-            <Input type="number" min={0} max={70}
-              className="w-14 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-center h-8 text-sm"
-              value={porcentaje} onChange={e => setPorcentaje(Math.min(70, Math.max(0, Number(e.target.value))))} />
-            <span className="text-[#737373] text-sm">%</span>
+        <div className="space-y-3">
+          {/* Toggle modo */}
+          <div className="flex gap-2">
+            {([["porcentaje", "% Porcentaje"], ["fijo", "$ Valor fijo"]] as const).map(([m, label]) => (
+              <button key={m} type="button"
+                onClick={() => {
+                  if (m === "fijo") setUtilidadFija(Math.round(calculos.valorConUtilidad - calculos.costoNetoTotal))
+                  setUtilidadModo(m)
+                }}
+                className={cn("rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
+                  utilidadModo === m ? "bg-[#00B4C5] border-[#00B4C5] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40")}>
+                {label}
+              </button>
+            ))}
           </div>
+
+          {utilidadModo === "porcentaje" ? (
+            <div className="flex items-center gap-4">
+              <Label className="text-[#737373] text-xs w-36 shrink-0">Porcentaje</Label>
+              <input type="range" min={0} max={70} value={porcentaje}
+                onChange={e => setPorcentaje(Number(e.target.value))}
+                className="flex-1 accent-[#00B4C5]" />
+              <div className="flex items-center gap-1">
+                <Input type="number" min={0} max={70}
+                  className="w-14 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-center h-8 text-sm"
+                  value={porcentaje} onChange={e => setPorcentaje(Math.min(70, Math.max(0, Number(e.target.value))))} />
+                <span className="text-[#737373] text-sm">%</span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Label className="text-[#737373] text-xs w-36 shrink-0">Valor fijo</Label>
+              <Input
+                className="flex-1 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+                value={fmtMiles(utilidadFija)}
+                onChange={e => setUtilidadFija(parseMiles(e.target.value))}
+                placeholder="0" />
+              <span className="text-[#737373] text-sm shrink-0">COP</span>
+              {costoNetoCalc > 0 && (
+                <span className="text-xs text-[#4A4A4A] shrink-0">≈ {Math.round(porcentajeEfectivo)}%</span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* PLAN DE PAGOS */}
@@ -732,64 +771,65 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                 </div>
               </div>
 
-              {/* Fila 2: fecha inicial + incremento */}
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1">
-                  <Label className="text-[#737373] text-xs">Fecha inicial de pago</Label>
-                  <Popover>
-                    <PopoverTrigger render={
-                      <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                        "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
-                        !fechaInicioPago && "text-[#737373]")} />
-                    }>
-                      <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373]" />
-                      {fechaInicioPago ? format(fechaInicioPago, "dd/MM/yyyy") : "Seleccionar"}
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
-                      <Calendar mode="single" selected={fechaInicioPago} onSelect={setFechaInicioPago}
-                        locale={es} className="bg-[#1C1C1C] text-[#F2F2F2]" />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-[#737373] text-xs">Incremento por cuota ({incrementoCuota}%)</Label>
-                  <div className="flex items-center gap-2">
-                    <input type="range" min={0} max={40} step={1} value={incrementoCuota}
-                      onChange={e => setIncrementoCuota(Number(e.target.value))}
-                      className="flex-1 accent-[#00B4C5]" />
-                    <Input type="number" min={0} max={40}
-                      className="w-14 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-center h-8 text-sm"
-                      value={incrementoCuota}
-                      onChange={e => setIncrementoCuota(Math.min(40, Math.max(0, Number(e.target.value))))} />
-                  </div>
-                </div>
+              {/* Fecha inicial */}
+              <div className="space-y-1">
+                <Label className="text-[#737373] text-xs">Fecha inicial de pago</Label>
+                <Popover>
+                  <PopoverTrigger render={
+                    <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                      "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
+                      !fechaInicioPago && "text-[#737373]")} />
+                  }>
+                    <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373]" />
+                    {fechaInicioPago ? format(fechaInicioPago, "dd/MM/yyyy") : "Seleccionar"}
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                    <Calendar mode="single" selected={fechaInicioPago} onSelect={setFechaInicioPago}
+                      locale={es} className="bg-[#1C1C1C] text-[#F2F2F2]" />
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* Cuotas */}
               <div className="space-y-1.5">
                 <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Distribución de cuotas</p>
-                {calculos.planPagos.cuotas.map((c, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="text-xs text-[#737373] w-16 shrink-0">Cuota {i + 1}</span>
-                    {incrementoCuota === 0 && (
-                      <Input type="number" min={0} max={100}
+                {porcentajesCuotas.map((pct, i) => {
+                  const monto = Math.round(calculos.valorFinal * pct / 100)
+                  const fecha = calculos.planPagos.cuotas[i]?.fecha
+                  return (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="text-xs text-[#737373] w-16 shrink-0">Cuota {i + 1}</span>
+                      <Input type="number" min={0} max={200}
                         className="w-16 h-7 bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
-                        value={porcentajesCuotas[i] ?? 0}
+                        value={pct}
                         onChange={e => updatePorcentajeCuota(i, Number(e.target.value))} />
-                    )}
-                    <span className="text-xs text-[#737373]">{incrementoCuota === 0 ? "%" : `${c.porcentaje}%`}</span>
-                    <span className="text-xs text-[#F2F2F2] tabular-nums ml-auto">
-                      ${fmtMiles(c.valorTotal)}
-                    </span>
-                    {c.fecha && (
-                      <span className="text-xs text-[#00B4C5] w-24 text-right">
-                        {format(new Date(c.fecha + "T12:00:00"), "dd/MM/yyyy")}
+                      <span className="text-xs text-[#737373]">%</span>
+                      <span className="text-xs text-[#F2F2F2] tabular-nums ml-auto">${fmtMiles(monto)}</span>
+                      {fecha && (
+                        <span className="text-xs text-[#00B4C5] w-24 text-right">
+                          {format(new Date(fecha + "T12:00:00"), "dd/MM/yyyy")}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })}
+
+                {/* Total del plan */}
+                <div className="flex items-center justify-between pt-1.5 border-t border-[#262626]">
+                  <span className="text-xs text-[#737373]">
+                    Total plan
+                    {sumaCuotas !== 100 && (
+                      <span className={cn("ml-1", sumaCuotas > 100 ? "text-amber-400" : "text-red-400")}>
+                        ({sumaCuotas}%)
                       </span>
                     )}
-                  </div>
-                ))}
-                {incrementoCuota === 0 && sumaCuotas !== 100 && (
-                  <p className="text-xs text-amber-400">Los porcentajes suman {sumaCuotas}% (debe ser 100%)</p>
+                  </span>
+                  <span className={cn("text-sm font-semibold tabular-nums", sumaCuotas > 100 ? "text-amber-400" : "text-[#F2F2F2]")}>
+                    ${fmtMiles(Math.round(calculos.valorFinal * sumaCuotas / 100))}
+                  </span>
+                </div>
+                {sumaCuotas < 100 && (
+                  <p className="text-xs text-red-400">Faltan {100 - sumaCuotas}% por asignar</p>
                 )}
               </div>
 
@@ -811,7 +851,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       {/* ── Right: Resumen sticky ── */}
       <div className="sticky top-6">
         <ResumenCard
-          calculos={calculos} porcentaje={porcentaje} adultos={adultos} menores={menores}
+          calculos={calculos} porcentaje={Math.round(porcentajeEfectivo)} adultos={adultos} menores={menores}
           cobrarIva={cobrarIva} onToggleIva={(v) => setCobrarIva(v)}
           mostrarPlanPagos={mostrarPlanPagos} onTogglePlanPagos={(v) => setMostrarPlanPagos(v)}
           onGuardar={handleGuardar} onGenerarPDF={handleGenerarPDF} isLoading={isLoading}

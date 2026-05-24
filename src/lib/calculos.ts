@@ -69,10 +69,9 @@ export function calcularPrecios(
     const sumExcLast = montos.slice(0, -1).reduce((a, b) => a + b, 0)
     montos[numCuotas - 1] = Math.max(0, valorFinal - sumExcLast)
   } else {
-    // Apply ceil to each cuota but fix the last one so cuotas sum exactly to valorFinal
-    montos = porcentajes.map(pct => Math.ceil(valorFinal * (pct / 100)))
-    const sumExcLast = montos.slice(0, -1).reduce((a, b) => a + b, 0)
-    montos[montos.length - 1] = Math.max(0, valorFinal - sumExcLast)
+    // Each cuota = round(valorFinal × pct%). Intentionally allows sum > 100%
+    // when the user sets a surcharge (e.g. 55% + 50% = 105%).
+    montos = porcentajes.map(pct => Math.round(valorFinal * (pct / 100)))
   }
 
   const cuotas: CuotaPago[] = montos.map((monto, i) => ({
@@ -102,6 +101,8 @@ export async function generarCodigoCotizacion(prisma: {
 }
 
 export const SERVICIOS_DEFAULT: ServicioItem[] = [
+  { id: "todo_incluido",  nombre: "Todo incluido",                activo: false, valorNeto: 0, obs: "", esPorPersona: false },
+  { id: "tkt_ida_reg",    nombre: "Tiquetes ida y regreso",       activo: false, valorNeto: 0, obs: "", esPorPersona: true  },
   { id: "tkt_ida",        nombre: "Tiquete ida",                  activo: true,  valorNeto: 0, obs: "", esPorPersona: true  },
   { id: "tkt_regreso",    nombre: "Tiquete regreso",              activo: true,  valorNeto: 0, obs: "", esPorPersona: true  },
   { id: "hotel",          nombre: "Hotel",                        activo: true,  valorNeto: 0, obs: "", esPorPersona: false, noches: 1 },

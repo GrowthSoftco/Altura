@@ -1,0 +1,126 @@
+export interface Airport {
+  code: string
+  city: string
+  name: string
+  country: string
+}
+
+export const AIRPORTS: Airport[] = [
+  // ── Colombia ────────────────────────────────────────────────────────────────
+  { code: "BOG", city: "Bogotá",          name: "El Dorado",                        country: "Colombia" },
+  { code: "MDE", city: "Medellín",        name: "José María Córdova",               country: "Colombia" },
+  { code: "EOH", city: "Medellín",        name: "Olaya Herrera",                    country: "Colombia" },
+  { code: "CLO", city: "Cali",            name: "Alfonso B. Aragón",                country: "Colombia" },
+  { code: "CTG", city: "Cartagena",       name: "Rafael Núñez",                     country: "Colombia" },
+  { code: "BAQ", city: "Barranquilla",    name: "Ernesto Cortissoz",                country: "Colombia" },
+  { code: "SMR", city: "Santa Marta",     name: "Simón Bolívar",                    country: "Colombia" },
+  { code: "PEI", city: "Pereira",         name: "Matecaña",                         country: "Colombia" },
+  { code: "BGA", city: "Bucaramanga",     name: "Palonegro",                        country: "Colombia" },
+  { code: "ADZ", city: "San Andrés",      name: "Gustavo Rojas Pinilla",            country: "Colombia" },
+  { code: "LET", city: "Leticia",         name: "Alfredo Vásquez Cobo",             country: "Colombia" },
+  { code: "VVC", city: "Villavicencio",   name: "Vanguardia",                       country: "Colombia" },
+  { code: "PSO", city: "Pasto",           name: "Antonio Nariño",                   country: "Colombia" },
+  { code: "CUC", city: "Cúcuta",          name: "Camilo Daza",                      country: "Colombia" },
+  { code: "AXM", city: "Armenia",         name: "El Edén",                          country: "Colombia" },
+  { code: "MTR", city: "Montería",        name: "Los Garzones",                     country: "Colombia" },
+  { code: "MZL", city: "Manizales",       name: "La Nubia",                         country: "Colombia" },
+  { code: "NVA", city: "Neiva",           name: "Benito Salas",                     country: "Colombia" },
+  { code: "IBE", city: "Ibagué",          name: "Perales",                          country: "Colombia" },
+  { code: "UIB", city: "Quibdó",          name: "El Caraño",                        country: "Colombia" },
+  { code: "PCR", city: "Puerto Carreño",  name: "Puerto Carreño",                   country: "Colombia" },
+  { code: "RCH", city: "Riohacha",        name: "Almirante Padilla",                country: "Colombia" },
+  { code: "TCO", city: "Tumaco",          name: "La Florida",                       country: "Colombia" },
+  { code: "PPN", city: "Popayán",         name: "Guillermo León Valencia",          country: "Colombia" },
+  { code: "TLU", city: "Tolú",            name: "Las Flores",                       country: "Colombia" },
+
+  // ── EE.UU. ──────────────────────────────────────────────────────────────────
+  { code: "MIA", city: "Miami",           name: "Miami International",              country: "EE.UU." },
+  { code: "JFK", city: "Nueva York",      name: "John F. Kennedy",                  country: "EE.UU." },
+  { code: "EWR", city: "Nueva York",      name: "Newark Liberty",                   country: "EE.UU." },
+  { code: "LAX", city: "Los Ángeles",     name: "Los Angeles International",        country: "EE.UU." },
+  { code: "ORD", city: "Chicago",         name: "O'Hare International",             country: "EE.UU." },
+  { code: "ATL", city: "Atlanta",         name: "Hartsfield-Jackson",               country: "EE.UU." },
+  { code: "DFW", city: "Dallas",          name: "Dallas/Fort Worth",                country: "EE.UU." },
+  { code: "MCO", city: "Orlando",         name: "Orlando International",            country: "EE.UU." },
+  { code: "FLL", city: "Fort Lauderdale", name: "Fort Lauderdale-Hollywood",        country: "EE.UU." },
+  { code: "IAH", city: "Houston",         name: "George Bush Intercontinental",     country: "EE.UU." },
+  { code: "LAS", city: "Las Vegas",       name: "Harry Reid International",         country: "EE.UU." },
+  { code: "SFO", city: "San Francisco",   name: "San Francisco International",      country: "EE.UU." },
+  { code: "BOS", city: "Boston",          name: "Logan International",              country: "EE.UU." },
+  { code: "SEA", city: "Seattle",         name: "Seattle-Tacoma",                   country: "EE.UU." },
+  { code: "DEN", city: "Denver",          name: "Denver International",             country: "EE.UU." },
+  { code: "CLT", city: "Charlotte",       name: "Douglas International",            country: "EE.UU." },
+  { code: "PHX", city: "Phoenix",         name: "Sky Harbor",                       country: "EE.UU." },
+
+  // ── Canadá ──────────────────────────────────────────────────────────────────
+  { code: "YYZ", city: "Toronto",         name: "Pearson International",            country: "Canadá" },
+  { code: "YUL", city: "Montreal",        name: "Pierre Elliott Trudeau",           country: "Canadá" },
+  { code: "YVR", city: "Vancouver",       name: "Vancouver International",          country: "Canadá" },
+
+  // ── Europa ──────────────────────────────────────────────────────────────────
+  { code: "LHR", city: "Londres",         name: "Heathrow",                         country: "Reino Unido" },
+  { code: "LGW", city: "Londres",         name: "Gatwick",                          country: "Reino Unido" },
+  { code: "CDG", city: "París",           name: "Charles de Gaulle",                country: "Francia" },
+  { code: "MAD", city: "Madrid",          name: "Adolfo Suárez Barajas",            country: "España" },
+  { code: "BCN", city: "Barcelona",       name: "El Prat",                          country: "España" },
+  { code: "FCO", city: "Roma",            name: "Leonardo da Vinci",                country: "Italia" },
+  { code: "MXP", city: "Milán",           name: "Malpensa",                         country: "Italia" },
+  { code: "AMS", city: "Ámsterdam",       name: "Schiphol",                         country: "Países Bajos" },
+  { code: "FRA", city: "Frankfurt",       name: "Frankfurt International",          country: "Alemania" },
+  { code: "MUC", city: "Múnich",          name: "Franz Josef Strauss",              country: "Alemania" },
+  { code: "IST", city: "Estambul",        name: "Istanbul Airport",                 country: "Turquía" },
+  { code: "LIS", city: "Lisboa",          name: "Humberto Delgado",                 country: "Portugal" },
+  { code: "ZRH", city: "Zúrich",          name: "Zurich Airport",                   country: "Suiza" },
+  { code: "VIE", city: "Viena",           name: "Schwechat",                        country: "Austria" },
+
+  // ── Oriente Medio ───────────────────────────────────────────────────────────
+  { code: "DXB", city: "Dubái",           name: "Dubai International",              country: "EAU" },
+  { code: "DOH", city: "Doha",            name: "Hamad International",              country: "Qatar" },
+  { code: "AUH", city: "Abu Dhabi",       name: "Zayed International",              country: "EAU" },
+
+  // ── Asia ────────────────────────────────────────────────────────────────────
+  { code: "SIN", city: "Singapur",        name: "Changi",                           country: "Singapur" },
+  { code: "HKG", city: "Hong Kong",       name: "Hong Kong International",          country: "Hong Kong" },
+  { code: "NRT", city: "Tokio",           name: "Narita",                           country: "Japón" },
+  { code: "HND", city: "Tokio",           name: "Haneda",                           country: "Japón" },
+  { code: "ICN", city: "Seúl",            name: "Incheon",                          country: "Corea del Sur" },
+  { code: "PEK", city: "Pekín",           name: "Capital",                          country: "China" },
+  { code: "PVG", city: "Shanghái",        name: "Pudong",                           country: "China" },
+  { code: "BKK", city: "Bangkok",         name: "Suvarnabhumi",                     country: "Tailandia" },
+
+  // ── Oceanía ─────────────────────────────────────────────────────────────────
+  { code: "SYD", city: "Sídney",          name: "Kingsford Smith",                  country: "Australia" },
+  { code: "MEL", city: "Melbourne",       name: "Melbourne Airport",                country: "Australia" },
+
+  // ── Latinoamérica ───────────────────────────────────────────────────────────
+  { code: "GRU", city: "São Paulo",       name: "Guarulhos",                        country: "Brasil" },
+  { code: "GIG", city: "Río de Janeiro",  name: "Galeão",                           country: "Brasil" },
+  { code: "BSB", city: "Brasilia",        name: "Kubitschek",                       country: "Brasil" },
+  { code: "EZE", city: "Buenos Aires",    name: "Ministro Pistarini",               country: "Argentina" },
+  { code: "AEP", city: "Buenos Aires",    name: "Jorge Newbery",                    country: "Argentina" },
+  { code: "SCL", city: "Santiago",        name: "Arturo Merino Benítez",            country: "Chile" },
+  { code: "LIM", city: "Lima",            name: "Jorge Chávez",                     country: "Perú" },
+  { code: "UIO", city: "Quito",           name: "Mariscal Sucre",                   country: "Ecuador" },
+  { code: "GYE", city: "Guayaquil",       name: "José Joaquín de Olmedo",           country: "Ecuador" },
+  { code: "CCS", city: "Caracas",         name: "Simón Bolívar",                    country: "Venezuela" },
+  { code: "PTY", city: "Ciudad de Panamá",name: "Tocumen",                          country: "Panamá" },
+  { code: "SJO", city: "San José",        name: "Juan Santamaría",                  country: "Costa Rica" },
+  { code: "MEX", city: "Ciudad de México",name: "Benito Juárez",                    country: "México" },
+  { code: "CUN", city: "Cancún",          name: "Cancún International",             country: "México" },
+  { code: "GDL", city: "Guadalajara",     name: "Miguel Hidalgo y Costilla",        country: "México" },
+  { code: "HAV", city: "La Habana",       name: "José Martí",                       country: "Cuba" },
+  { code: "SDQ", city: "Santo Domingo",   name: "Las Américas",                     country: "Rep. Dominicana" },
+  { code: "PUJ", city: "Punta Cana",      name: "Punta Cana International",         country: "Rep. Dominicana" },
+  { code: "NAS", city: "Nassau",          name: "Lynden Pindling",                  country: "Bahamas" },
+  { code: "MBJ", city: "Montego Bay",     name: "Sangster International",           country: "Jamaica" },
+  { code: "SJU", city: "San Juan",        name: "Luis Muñoz Marín",                 country: "Puerto Rico" },
+  { code: "MVD", city: "Montevideo",      name: "Carrasco",                         country: "Uruguay" },
+  { code: "VVI", city: "Santa Cruz",      name: "Viru Viru",                        country: "Bolivia" },
+  { code: "LPB", city: "La Paz",          name: "El Alto",                          country: "Bolivia" },
+  { code: "ASU", city: "Asunción",        name: "Silvio Pettirossi",                country: "Paraguay" },
+  { code: "GUA", city: "Guatemala",       name: "La Aurora",                        country: "Guatemala" },
+  { code: "SAL", city: "San Salvador",    name: "Monseñor Óscar Romero",            country: "El Salvador" },
+  { code: "MGA", city: "Managua",         name: "Augusto C. Sandino",               country: "Nicaragua" },
+  { code: "CUR", city: "Willemstad",      name: "Hato International",               country: "Curazao" },
+  { code: "AUA", city: "Oranjestad",      name: "Reina Beatrix",                    country: "Aruba" },
+]
