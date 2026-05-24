@@ -140,6 +140,20 @@ function TramoBlock({
   const up = (k: keyof Tramo, v: string | number) => onUpdate({ ...tramo, [k]: v })
   const tramoNum = index + 1
 
+  // Auto-calc tiempo de vuelo from hora salida + hora llegada
+  useEffect(() => {
+    if (!tramo.horaSalidaIda || !tramo.horaLlegadaIda) return
+    const [sh, sm] = tramo.horaSalidaIda.split(":").map(Number)
+    const [lh, lm] = tramo.horaLlegadaIda.split(":").map(Number)
+    let totalMin = (lh * 60 + lm) - (sh * 60 + sm)
+    if (totalMin <= 0) totalMin += 24 * 60  // overnight flight
+    const h = Math.floor(totalMin / 60)
+    const m = totalMin % 60
+    const tv = `${h}h${m > 0 ? ` ${m}m` : ""}`
+    if (tv !== tramo.tiempoVuelo) onUpdate({ ...tramo, tiempoVuelo: tv })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tramo.horaSalidaIda, tramo.horaLlegadaIda])
+
   return (
     <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
       <div className="flex items-center justify-between">
@@ -168,7 +182,7 @@ function TramoBlock({
             value={tramo.fechaSalida ?? ""} onChange={e => up("fechaSalida", e.target.value)} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">Fecha regreso</Label>
+          <Label className="text-[#737373] text-xs">{isFirst ? "Fecha de llegada" : "Fecha regreso"}</Label>
           <Input type="date" className={inpT}
             value={tramo.fechaRegreso ?? ""} onChange={e => up("fechaRegreso", e.target.value)} />
         </div>
@@ -195,7 +209,7 @@ function TramoBlock({
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Tiempo de vuelo</Label>
           <Input className={inpT} value={tramo.tiempoVuelo ?? ""}
-            onChange={e => up("tiempoVuelo", e.target.value)} placeholder="4h30m" />
+            onChange={e => up("tiempoVuelo", e.target.value)} placeholder="4h 30m" />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Escalas / conexión</Label>
@@ -204,29 +218,27 @@ function TramoBlock({
         </div>
       </div>
 
-      {/* Hotel — solo para tramos adicionales */}
-      {!isFirst && (
-        <div className="border-t border-[#262626] pt-3 space-y-2">
-          <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
-          <div className="grid grid-cols-3 gap-2">
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
-              <Input className={inpT} value={tramo.hotelNombre ?? ""}
-                onChange={e => up("hotelNombre", e.target.value)} placeholder="Marriott..." />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Noches</Label>
-              <Input type="number" min={0} className={inpT}
-                value={tramo.hotelNoches ?? ""} onChange={e => up("hotelNoches", parseInt(e.target.value) || 0)} />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
-              <Input className={inpT} value={tramo.hotelTipo ?? ""}
-                onChange={e => up("hotelTipo", e.target.value)} placeholder="Doble, sencilla..." />
-            </div>
+      {/* Hotel — todos los tramos */}
+      <div className="border-t border-[#262626] pt-3 space-y-2">
+        <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="space-y-1">
+            <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
+            <Input className={inpT} value={tramo.hotelNombre ?? ""}
+              onChange={e => up("hotelNombre", e.target.value)} placeholder="Marriott..." />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-[#737373] text-xs">Noches</Label>
+            <Input type="number" min={0} className={inpT}
+              value={tramo.hotelNoches ?? ""} onChange={e => up("hotelNoches", parseInt(e.target.value) || 0)} />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
+            <Input className={inpT} value={tramo.hotelTipo ?? ""}
+              onChange={e => up("hotelTipo", e.target.value)} placeholder="Doble, sencilla..." />
           </div>
         </div>
-      )}
+      </div>
     </div>
   )
 }
@@ -259,12 +271,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const [menores, setMenores]           = useState(cotizacion?.menores ?? 0)
   const [edadesMenores, setEdadesMenores] = useState<number[]>(cotizacion?.edadesMenores ?? [])
 
-  // ── Hotel principal ──
-  const [hotelNombre, setHotelNombre]         = useState(cotizacion?.hotelNombre ?? "")
-  const [hotelTipo, setHotelTipo]             = useState(cotizacion?.hotelTipo ?? "")
-  const [hotelNoches, setHotelNoches]         = useState<number>(cotizacion?.hotelNoches ?? 0)
-
-  // ── Tramos (tramos[0] = Tramo 1 — siempre presente) ──
+  // ── Tramos (tramos[0] = Tramo 1 — siempre presente, incluye hotel) ──
   const [tramos, setTramos] = useState<Tramo[]>(() => {
     if (!cotizacion) return [{ id: "tramo_1", origen: "", destino: "" }]
     const existing = cotizacion.tramos as Tramo[] | null
@@ -282,6 +289,9 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       tiempoVuelo:  cotizacion.tiempoVuelo ?? undefined,
       escalas:      cotizacion.escalas     ?? undefined,
       plataforma:   cotizacion.plataforma  ?? undefined,
+      hotelNombre:  cotizacion.hotelNombre ?? undefined,
+      hotelNoches:  cotizacion.hotelNoches ?? undefined,
+      hotelTipo:    cotizacion.hotelTipo   ?? undefined,
     }]
   })
 
@@ -371,7 +381,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     setPorcentajesCuotas(PORCENTAJES_CUOTAS_DEFAULT[numCuotas] ?? Array(numCuotas).fill(Math.floor(100 / numCuotas)))
   }, [numCuotas])
 
-  // Auto-calc hotel noches from Tramo 1 dates
+  // Auto-calc hotel noches from Tramo 1 dates (+1 because arrival day counts)
   useEffect(() => {
     const t0 = tramos[0]
     if (t0?.fechaSalida && t0?.fechaRegreso) {
@@ -379,7 +389,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         new Date(t0.fechaRegreso + "T12:00:00"),
         new Date(t0.fechaSalida  + "T12:00:00")
       )
-      if (diff > 0) setHotelNoches(diff)
+      const noches = diff > 0 ? diff + 1 : 1
+      setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, hotelNoches: noches } : x))
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tramos[0]?.fechaSalida, tramos[0]?.fechaRegreso])
@@ -448,7 +459,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       tiempoEscala: "",
       plataforma:   t?.plataforma  ?? "",
       adultos, menores, edadesMenores,
-      hotelNombre, hotelNoches: hotelNoches || null, hotelTipo,
+      hotelNombre: t?.hotelNombre ?? "", hotelNoches: t?.hotelNoches ?? null, hotelTipo: t?.hotelTipo ?? "",
       tramos,   // All tramos including tramo_1
       servicios,
       porcentajeGanancia: porcentajeEfectivo,
@@ -501,7 +512,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         tiempoVuelo: t0?.tiempoVuelo || null, escalas: t0?.escalas || null, tiempoEscala: null,
         numeroVuelo: null, adultos, menores, edadesMenores,
         servicios, itinerario: null,
-        hotelNombre: hotelNombre || null, hotelNoches: hotelNoches || null, hotelTipo: hotelTipo || null,
+        hotelNombre: t0?.hotelNombre || null, hotelNoches: t0?.hotelNoches || null, hotelTipo: t0?.hotelTipo || null,
         tramos: tramos.length > 0 ? tramos : null,
         porcentajeGanancia: porcentaje,
         costoNetoTotal: calculos.costoNetoTotal,
@@ -526,7 +537,6 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
 
   // ── Input class helpers ──
   const inp = "bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
-  const inpSm = "bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
 
   return (
     <div className="grid grid-cols-3 gap-5 items-start">
@@ -631,6 +641,9 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           )}
         </div>
 
+        {/* DETALLES DEL VIAJE */}
+        <Section title="Detalles del viaje" />
+
         {/* VUELOS */}
         <Section title="Vuelos" />
         {/* Tipo de viaje */}
@@ -655,28 +668,6 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
             <Plus className="h-4 w-4" /> Añadir tramo
           </button>
         </div>
-
-        {/* HOTEL PRINCIPAL */}
-        <Section title="Hotel" />
-        <div className="grid grid-cols-3 gap-2">
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
-            <Input className={inp} placeholder="Marriott, Hilton..." value={hotelNombre} onChange={e => setHotelNombre(e.target.value)} />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Noches</Label>
-            <Input type="number" min={0} className={inp}
-              value={hotelNoches || ""}
-              onChange={e => setHotelNoches(parseInt(e.target.value) || 0)} />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
-            <Input className={inp} placeholder="Doble, sencilla..." value={hotelTipo} onChange={e => setHotelTipo(e.target.value)} />
-          </div>
-        </div>
-        {hotelNoches > 0 && (
-          <p className="text-xs text-[#00B4C5] font-medium mt-1">🏨 {hotelNoches} noche{hotelNoches !== 1 ? "s" : ""}</p>
-        )}
 
         {/* SERVICIOS */}
         <Section title="Servicios incluidos" />
@@ -854,6 +845,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           calculos={calculos} porcentaje={Math.round(porcentajeEfectivo)} adultos={adultos} menores={menores}
           cobrarIva={cobrarIva} onToggleIva={(v) => setCobrarIva(v)}
           mostrarPlanPagos={mostrarPlanPagos} onTogglePlanPagos={(v) => setMostrarPlanPagos(v)}
+          sumaCuotas={sumaCuotas}
           onGuardar={handleGuardar} onGenerarPDF={handleGenerarPDF} isLoading={isLoading}
         />
       </div>

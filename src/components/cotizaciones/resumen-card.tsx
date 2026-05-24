@@ -16,6 +16,7 @@ interface ResumenCardProps {
   onToggleIva: (v: boolean) => void
   mostrarPlanPagos: boolean
   onTogglePlanPagos: (v: boolean) => void
+  sumaCuotas?: number
   onGuardar: () => void
   onGenerarPDF: () => void
   isLoading?: boolean
@@ -25,9 +26,14 @@ export function ResumenCard({
   calculos, porcentaje, adultos, menores,
   cobrarIva, onToggleIva,
   mostrarPlanPagos, onTogglePlanPagos,
+  sumaCuotas = 100,
   onGuardar, onGenerarPDF, isLoading
 }: ResumenCardProps) {
   const totalPax = adultos + menores
+  const hayColchon = sumaCuotas > 100
+  const colchonPct = hayColchon ? sumaCuotas - 100 : 0
+  const totalPlan  = Math.round(calculos.valorFinal * sumaCuotas / 100)
+  const colchonCOP = hayColchon ? totalPlan - calculos.valorFinal : 0
 
   return (
     <Card className="sticky top-6 border-[#222222] bg-[#1C1C1C] overflow-hidden">
@@ -73,6 +79,20 @@ export function ResumenCard({
           <span className="text-[#F2F2F2]">Total</span>
           <span className="text-[#00B4C5] text-lg tabular-nums">{formatCOP(calculos.valorFinal)}</span>
         </div>
+
+        {/* Colchón — cuando suma de cuotas > 100% */}
+        {hayColchon && (
+          <>
+            <div className="flex justify-between text-sm">
+              <span className="text-amber-400">Colchón ({colchonPct}%)</span>
+              <span className="text-amber-400 tabular-nums">+{formatCOP(colchonCOP)}</span>
+            </div>
+            <div className="flex justify-between font-semibold">
+              <span className="text-[#F2F2F2] text-sm">Total plan ({sumaCuotas}%)</span>
+              <span className="text-amber-400 tabular-nums">{formatCOP(totalPlan)}</span>
+            </div>
+          </>
+        )}
 
         {mostrarPlanPagos && calculos.planPagos.aplicar && calculos.planPagos.cuotas.length > 0 && (
           <>

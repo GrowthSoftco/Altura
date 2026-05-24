@@ -261,6 +261,14 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
   const cobrarIva = !!cotizacion.cobrarIva
   const ivaTotal  = cobrarIva ? Math.ceil(Number(cotizacion.valorConUtilidad) * 0.19) : 0
 
+  // Colchón (surcharge when sum of cuota percentages > 100%)
+  const finalTotal  = cobrarIva ? total + ivaTotal : total  // actual total (post-IVA)
+  const sumaCuotas  = cuotas ? cuotas.reduce((acc, c) => acc + c.porcentaje, 0) : 100
+  const hayColchon  = sumaCuotas > 100
+  const colchonPct  = hayColchon ? sumaCuotas - 100 : 0
+  const totalPlan   = hayColchon ? Math.round(finalTotal * sumaCuotas / 100) : finalTotal
+  const colchonCOP  = hayColchon ? totalPlan - finalTotal : 0
+
   const hasVuelo  = !!(cotizacion.aerolineaIda ?? cotizacion.aerolinea ?? cotizacion.horaSalidaIda)
   const hasHotel  = !!cotizacion.hotelNombre
   const hasTramos = Array.isArray(cotizacion.tramos) && cotizacion.tramos.length > 0
@@ -461,6 +469,16 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
               )}
               <Text style={S.bandTotalLbl}>Valor total</Text>
               <Text style={S.bandTotal}>{formatCOP(total)}</Text>
+              {hayColchon && (
+                <>
+                  <Text style={[S.bandTotalLbl, { marginTop: 6 }]}>Colchón ({colchonPct}%)</Text>
+                  <Text style={[S.bandSmall, { textAlign: "right", color: "#C07000", marginBottom: 4 }]}>
+                    +{formatCOP(colchonCOP)}
+                  </Text>
+                  <Text style={S.bandTotalLbl}>Total plan ({sumaCuotas}%)</Text>
+                  <Text style={[S.bandTotal, { color: "#C07000" }]}>{formatCOP(totalPlan)}</Text>
+                </>
+              )}
             </View>
           </View>
         </View>
