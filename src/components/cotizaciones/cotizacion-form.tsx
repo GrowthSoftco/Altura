@@ -355,7 +355,13 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const [cobrarIva, setCobrarIva]               = useState(cotizacion?.cobrarIva ?? false)
   const [mostrarPlanPagos, setMostrarPlanPagos] = useState(cotizacion?.mostrarPlanPagos ?? true)
 
-  // ── Popover open state — Detalles del viaje ──
+  // ── Detalles del viaje — fechas independientes (no ligadas a tramos) ──
+  const [detFechaSalida,  setDetFechaSalida]  = useState<string | undefined>(
+    cotizacion?.fechaSalida  ? format(new Date(cotizacion.fechaSalida),  "yyyy-MM-dd") : undefined
+  )
+  const [detFechaRegreso, setDetFechaRegreso] = useState<string | undefined>(
+    cotizacion?.fechaRegreso ? format(new Date(cotizacion.fechaRegreso), "yyyy-MM-dd") : undefined
+  )
   const [openDetSalida,  setOpenDetSalida]  = useState(false)
   const [openDetLlegada, setOpenDetLlegada] = useState(false)
 
@@ -425,8 +431,9 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
 
   // Derived from Tramo 1
   const t0           = tramos[0]
-  const fs           = t0?.fechaSalida  ? new Date(t0.fechaSalida  + "T12:00:00") : undefined
-  const fr           = t0?.fechaRegreso ? new Date(t0.fechaRegreso + "T12:00:00") : undefined
+  // Detalles del viaje — fechas propias (independientes de tramos)
+  const fs           = detFechaSalida  ? new Date(detFechaSalida  + "T12:00:00") : undefined
+  const fr           = detFechaRegreso ? new Date(detFechaRegreso + "T12:00:00") : undefined
   const duracion     = fs && fr && fr > fs ? calcularDuracion(fs, fr) : null
   const sumaCuotas = porcentajesCuotas.reduce((a, b) => a + b, 0)
 
@@ -471,11 +478,11 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       clienteId: clienteId ?? undefined,
       clienteNuevo: clienteId ? undefined : { nombre, telefono, correo, documento },
       tipo,
-      // Top-level fields derived from Tramo 1 (backward compat with DB schema)
-      origen:       t?.origen  ?? "",
-      destino:      t?.destino ?? "",
-      fechaSalida:  fs?.toISOString(),
-      fechaRegreso: fr?.toISOString(),
+      // Top-level fields derived from Detalles del viaje (backward compat with DB schema)
+      origen:       t0?.origen  ?? "",
+      destino:      t0?.destino ?? "",
+      fechaSalida:  detFechaSalida  ? new Date(detFechaSalida  + "T12:00:00").toISOString() : undefined,
+      fechaRegreso: detFechaRegreso ? new Date(detFechaRegreso + "T12:00:00").toISOString() : undefined,
       aerolineaIda:       t?.aerolineaIda    ?? "",
       aerolineaRegreso:   "",
       horaSalidaIda:      t?.horaSalidaIda   ?? "",
@@ -508,8 +515,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     if (!telefono)         { toast.error("El teléfono del cliente es requerido"); return }
     if (!t0?.origen)       { toast.error("El origen del viaje es requerido"); return }
     if (!t0?.destino)      { toast.error("El destino del viaje es requerido"); return }
-    if (!t0?.fechaSalida)  { toast.error("La fecha de salida es requerida"); return }
-    if (!t0?.fechaRegreso) { toast.error("La fecha de llegada es requerida"); return }
+    if (!detFechaSalida)  { toast.error("La fecha de salida es requerida"); return }
+    if (!detFechaRegreso) { toast.error("La fecha de llegada es requerida"); return }
     setIsLoading(true)
     try {
       const url    = isEdit ? `/api/cotizaciones/${cotizacion!.id}` : "/api/cotizaciones"
@@ -710,7 +717,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                 <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
                   <Calendar mode="single" selected={fs} locale={es}
                     className="bg-[#1C1C1C] text-[#F2F2F2]"
-                    onSelect={d => { if (d) { setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaSalida: format(d, "yyyy-MM-dd") } : x)); setOpenDetSalida(false) } }} />
+                    onSelect={d => { if (d) { setDetFechaSalida(format(d, "yyyy-MM-dd")); setOpenDetSalida(false) } }} />
                 </PopoverContent>
               </Popover>
             </div>
@@ -729,7 +736,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                   <Calendar mode="single" selected={fr} locale={es}
                     disabled={fs ? { before: fs } : undefined}
                     className="bg-[#1C1C1C] text-[#F2F2F2]"
-                    onSelect={d => { if (d) { setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaRegreso: format(d, "yyyy-MM-dd") } : x)); setOpenDetLlegada(false) } }} />
+                    onSelect={d => { if (d) { setDetFechaRegreso(format(d, "yyyy-MM-dd")); setOpenDetLlegada(false) } }} />
                 </PopoverContent>
               </Popover>
             </div>
