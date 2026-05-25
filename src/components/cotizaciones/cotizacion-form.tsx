@@ -748,9 +748,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
             </div>
           </div>
           {duracion && (
-            <p className="text-xs text-[#00B4C5] font-medium">
-              📅 {duracion.label} — {duracion.dias} día{duracion.dias !== 1 ? "s" : ""} / {duracion.noches} noche{duracion.noches !== 1 ? "s" : ""}
-            </p>
+            <p className="text-xs text-[#00B4C5] font-medium">{duracion.label}</p>
           )}
         </div>
 
@@ -772,7 +770,6 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
               onUpdate={updated => setTramos(prev => prev.map(x => x.id === tramo.id ? updated : x))}
               onRemove={i === 0 ? undefined : () => removeTramo(tramo.id)} />
           ))}
-          {duracion && <p className="text-xs text-[#00B4C5] font-medium">✈ {duracion.label}</p>}
           <button type="button" onClick={addTramo}
             className="flex items-center gap-2 text-sm text-[#00B4C5] hover:text-[#009aaa] transition-colors font-medium">
             <Plus className="h-4 w-4" /> Añadir tramo
