@@ -95,10 +95,25 @@ export function calcularPrecios(
 }
 
 export async function generarCodigoCotizacion(prisma: {
-  cotizacion: { count: () => Promise<number> }
+  cotizacion: {
+    findFirst: (args: {
+      where: { codigo: { startsWith: string } }
+      orderBy: { codigo: "desc" }
+      select: { codigo: true }
+    }) => Promise<{ codigo: string } | null>
+  }
 }): Promise<string> {
-  const count = await prisma.cotizacion.count()
-  return `COT-${new Date().getFullYear()}-${String(count + 1).padStart(3, "0")}`
+  const year   = new Date().getFullYear()
+  const prefix = `COT-${year}-`
+  const last   = await prisma.cotizacion.findFirst({
+    where:   { codigo: { startsWith: prefix } },
+    orderBy: { codigo: "desc" },
+    select:  { codigo: true },
+  })
+  const nextNum = last
+    ? (parseInt(last.codigo.replace(prefix, ""), 10) || 0) + 1
+    : 1
+  return `${prefix}${String(nextNum).padStart(3, "0")}`
 }
 
 export const SERVICIOS_DEFAULT: ServicioItem[] = [
