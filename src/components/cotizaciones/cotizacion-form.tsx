@@ -139,6 +139,11 @@ function TramoBlock({
 }: { tramo: Tramo; index: number; onUpdate: (t: Tramo) => void; onRemove?: () => void; isFirst?: boolean }) {
   const up = (k: keyof Tramo, v: string | number) => onUpdate({ ...tramo, [k]: v })
   const tramoNum = index + 1
+  const [openSalida,  setOpenSalida]  = useState(false)
+  const [openLlegada, setOpenLlegada] = useState(false)
+
+  const selSalida  = tramo.fechaSalida  ? new Date(tramo.fechaSalida  + "T12:00:00") : undefined
+  const selLlegada = tramo.fechaRegreso ? new Date(tramo.fechaRegreso + "T12:00:00") : undefined
 
   // Auto-calc tiempo de vuelo from hora salida + hora llegada
   useEffect(() => {
@@ -178,13 +183,40 @@ function TramoBlock({
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha salida</Label>
-          <Input type="date" className={inpT}
-            value={tramo.fechaSalida ?? ""} onChange={e => up("fechaSalida", e.target.value)} />
+          <Popover open={openSalida} onOpenChange={setOpenSalida}>
+            <PopoverTrigger render={
+              <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                !tramo.fechaSalida && "text-[#737373]")} />
+            }>
+              <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
+              {selSalida ? format(selSalida, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+              <Calendar mode="single" selected={selSalida} locale={es}
+                className="bg-[#1C1C1C] text-[#F2F2F2]"
+                onSelect={d => { if (d) { up("fechaSalida", format(d, "yyyy-MM-dd")); setOpenSalida(false) } }} />
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha de llegada</Label>
-          <Input type="date" className={inpT}
-            value={tramo.fechaRegreso ?? ""} onChange={e => up("fechaRegreso", e.target.value)} />
+          <Popover open={openLlegada} onOpenChange={setOpenLlegada}>
+            <PopoverTrigger render={
+              <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                !tramo.fechaRegreso && "text-[#737373]")} />
+            }>
+              <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
+              {selLlegada ? format(selLlegada, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+              <Calendar mode="single" selected={selLlegada} locale={es}
+                fromDate={selSalida}
+                className="bg-[#1C1C1C] text-[#F2F2F2]"
+                onSelect={d => { if (d) { up("fechaRegreso", format(d, "yyyy-MM-dd")); setOpenLlegada(false) } }} />
+            </PopoverContent>
+          </Popover>
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Aerolínea</Label>
@@ -322,6 +354,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   // ── IVA + PDF toggles ──
   const [cobrarIva, setCobrarIva]               = useState(cotizacion?.cobrarIva ?? false)
   const [mostrarPlanPagos, setMostrarPlanPagos] = useState(cotizacion?.mostrarPlanPagos ?? true)
+
+  // ── Popover open state — Detalles del viaje ──
+  const [openDetSalida,  setOpenDetSalida]  = useState(false)
+  const [openDetLlegada, setOpenDetLlegada] = useState(false)
 
   // ── Observaciones ──
   const [observaciones, setObservaciones] = useState(cotizacion?.observaciones ?? "")
@@ -675,15 +711,40 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Fecha de ida *</Label>
-              <Input type="date" className={inp}
-                value={t0?.fechaSalida ?? ""}
-                onChange={e => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaSalida: e.target.value } : x))} />
+              <Popover open={openDetSalida} onOpenChange={setOpenDetSalida}>
+                <PopoverTrigger render={
+                  <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                    "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
+                    !fs && "text-[#737373]")} />
+                }>
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373] shrink-0" />
+                  {fs ? format(fs, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                  <Calendar mode="single" selected={fs} locale={es}
+                    className="bg-[#1C1C1C] text-[#F2F2F2]"
+                    onSelect={d => { if (d) { setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaSalida: format(d, "yyyy-MM-dd") } : x)); setOpenDetSalida(false) } }} />
+                </PopoverContent>
+              </Popover>
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Fecha de llegada *</Label>
-              <Input type="date" className={inp}
-                value={t0?.fechaRegreso ?? ""}
-                onChange={e => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaRegreso: e.target.value } : x))} />
+              <Popover open={openDetLlegada} onOpenChange={setOpenDetLlegada}>
+                <PopoverTrigger render={
+                  <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                    "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
+                    !fr && "text-[#737373]")} />
+                }>
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373] shrink-0" />
+                  {fr ? format(fr, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                  <Calendar mode="single" selected={fr} locale={es}
+                    fromDate={fs}
+                    className="bg-[#1C1C1C] text-[#F2F2F2]"
+                    onSelect={d => { if (d) { setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaRegreso: format(d, "yyyy-MM-dd") } : x)); setOpenDetLlegada(false) } }} />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
           {duracion && (
