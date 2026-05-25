@@ -267,12 +267,12 @@ function TramoBlock({
         </div>
         {(() => {
           if (!tramo.fechaSalida || !tramo.fechaRegreso) return null
-          const noches = differenceInCalendarDays(
+          const diff   = differenceInCalendarDays(
             new Date(tramo.fechaRegreso + "T12:00:00"),
             new Date(tramo.fechaSalida  + "T12:00:00")
           )
-          if (noches <= 0) return null
-          const dias = noches + 1
+          const noches = Math.max(diff, 1)
+          const dias   = noches + 1
           return (
             <p className="text-[11px] text-[#00B4C5] font-medium mt-1">
               {dias} día{dias !== 1 ? "s" : ""} / {noches} noche{noches !== 1 ? "s" : ""}
