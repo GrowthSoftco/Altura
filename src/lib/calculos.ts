@@ -3,8 +3,9 @@ import { formatCOP } from "@/lib/utils"
 export { formatCOP }
 
 export function calcularDuracion(salida: Date, regreso: Date) {
-  const dias = Math.ceil((regreso.getTime() - salida.getTime()) / (1000 * 60 * 60 * 24))
-  return { dias, noches: dias - 1, label: `${dias} días / ${dias - 1} noches` }
+  const noches = Math.ceil((regreso.getTime() - salida.getTime()) / (1000 * 60 * 60 * 24))
+  const dias   = noches + 1  // el día de llegada también cuenta
+  return { dias, noches, label: `${dias} días / ${noches} noches` }
 }
 
 function generarPorcentajesDefault(n: number): number[] {
