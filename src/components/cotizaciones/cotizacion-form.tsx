@@ -265,7 +265,7 @@ function TramoBlock({
               value={tramo.hotelNoches ?? ""} onChange={e => up("hotelNoches", parseInt(e.target.value) || 0)} />
             {(tramo.hotelNoches ?? 0) > 0 && (
               <p className="text-[10px] text-[#00B4C5] mt-0.5">
-                {tramo.hotelNoches} noche{tramo.hotelNoches !== 1 ? "s" : ""} / {(tramo.hotelNoches ?? 0) + 1} días
+                {(tramo.hotelNoches ?? 0) + 1} día{(tramo.hotelNoches ?? 0) + 1 !== 1 ? "s" : ""} / {tramo.hotelNoches} noche{tramo.hotelNoches !== 1 ? "s" : ""}
               </p>
             )}
           </div>
@@ -422,19 +422,6 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     setPorcentajesCuotas(PORCENTAJES_CUOTAS_DEFAULT[numCuotas] ?? Array(numCuotas).fill(Math.floor(100 / numCuotas)))
   }, [numCuotas])
 
-  // Auto-calc hotel noches from Tramo 1 dates (+1 because arrival day counts)
-  useEffect(() => {
-    const t0 = tramos[0]
-    if (t0?.fechaSalida && t0?.fechaRegreso) {
-      const diff = differenceInCalendarDays(
-        new Date(t0.fechaRegreso + "T12:00:00"),
-        new Date(t0.fechaSalida  + "T12:00:00")
-      )
-      const noches = diff > 0 ? diff + 1 : 1
-      setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, hotelNoches: noches } : x))
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tramos[0]?.fechaSalida, tramos[0]?.fechaRegreso])
 
   // Derived from Tramo 1
   const t0           = tramos[0]
