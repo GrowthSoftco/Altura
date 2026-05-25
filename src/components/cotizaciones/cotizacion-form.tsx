@@ -654,6 +654,39 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
 
         {/* DETALLES DEL VIAJE */}
         <Section title="Detalles del viaje" />
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <Label className="text-[#737373] text-xs">Origen *</Label>
+              <AirportCombobox value={t0?.origen ?? ""} className={inp}
+                placeholder="Ciudad o IATA"
+                onChange={v => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, origen: v } : x))} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-[#737373] text-xs">Destino *</Label>
+              <AirportCombobox value={t0?.destino ?? ""} className={inp}
+                placeholder="Ciudad o IATA"
+                onChange={v => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, destino: v } : x))} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-[#737373] text-xs">Fecha de ida *</Label>
+              <Input type="date" className={inp}
+                value={t0?.fechaSalida ?? ""}
+                onChange={e => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaSalida: e.target.value } : x))} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-[#737373] text-xs">Fecha de regreso *</Label>
+              <Input type="date" className={inp}
+                value={t0?.fechaRegreso ?? ""}
+                onChange={e => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaRegreso: e.target.value } : x))} />
+            </div>
+          </div>
+          {duracion && (
+            <p className="text-xs text-[#00B4C5] font-medium">
+              📅 {duracion.label} — {duracion.dias} día{duracion.dias !== 1 ? "s" : ""} / {duracion.noches} noche{duracion.noches !== 1 ? "s" : ""}
+            </p>
+          )}
+        </div>
 
         {/* VUELOS */}
         <Section title="Vuelos" />
