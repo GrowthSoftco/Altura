@@ -355,7 +355,9 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const [cobrarIva, setCobrarIva]               = useState(cotizacion?.cobrarIva ?? false)
   const [mostrarPlanPagos, setMostrarPlanPagos] = useState(cotizacion?.mostrarPlanPagos ?? true)
 
-  // ── Detalles del viaje — fechas independientes (no ligadas a tramos) ──
+  // ── Detalles del viaje — completamente independientes de los tramos ──
+  const [detOrigen,       setDetOrigen]       = useState<string>(cotizacion?.origen ?? "")
+  const [detDestino,      setDetDestino]      = useState<string>(cotizacion?.destino ?? "")
   const [detFechaSalida,  setDetFechaSalida]  = useState<string | undefined>(
     cotizacion?.fechaSalida  ? format(new Date(cotizacion.fechaSalida),  "yyyy-MM-dd") : undefined
   )
@@ -478,9 +480,9 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       clienteId: clienteId ?? undefined,
       clienteNuevo: clienteId ? undefined : { nombre, telefono, correo, documento },
       tipo,
-      // Top-level fields derived from Detalles del viaje (backward compat with DB schema)
-      origen:       t0?.origen  ?? "",
-      destino:      t0?.destino ?? "",
+      // Top-level fields — Detalles del viaje (independientes de tramos)
+      origen:       detOrigen,
+      destino:      detDestino,
       fechaSalida:  detFechaSalida  ? new Date(detFechaSalida  + "T12:00:00").toISOString() : undefined,
       fechaRegreso: detFechaRegreso ? new Date(detFechaRegreso + "T12:00:00").toISOString() : undefined,
       aerolineaIda:       t?.aerolineaIda    ?? "",
@@ -513,8 +515,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const handleGuardar = async () => {
     if (!nombre)           { toast.error("El nombre del cliente es requerido"); return }
     if (!telefono)         { toast.error("El teléfono del cliente es requerido"); return }
-    if (!t0?.origen)       { toast.error("El origen del viaje es requerido"); return }
-    if (!t0?.destino)      { toast.error("El destino del viaje es requerido"); return }
+    if (!detOrigen)  { toast.error("El origen del viaje es requerido"); return }
+    if (!detDestino) { toast.error("El destino del viaje es requerido"); return }
     if (!detFechaSalida)  { toast.error("La fecha de salida es requerida"); return }
     if (!detFechaRegreso) { toast.error("La fecha de llegada es requerida"); return }
     setIsLoading(true)
@@ -541,7 +543,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   }
 
   const handleGenerarPDF = async () => {
-    if (!nombre || !t0?.origen || !t0?.destino || !t0?.fechaSalida) {
+    if (!nombre || !detOrigen || !detDestino || !detFechaSalida) {
       toast.error("Completa los datos del viaje"); return
     }
     try {
@@ -549,7 +551,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         id: "preview", codigo: "COT-PREVIEW", estado: "COTIZADA",
         fechaCreacion: new Date(), clienteId: clienteId ?? "preview",
         cliente: { id: clienteId ?? "preview", nombre, telefono, correo: correo || null, documento: documento || null, fechaRegistro: new Date(), createdAt: new Date(), updatedAt: new Date() },
-        tipo, origen: t0?.origen ?? "", destino: t0?.destino ?? "",
+        tipo, origen: detOrigen, destino: detDestino,
         fechaSalida: fs ?? new Date(), fechaRegreso: fr ?? new Date(),
         aerolinea: t0?.aerolineaIda || null, aerolineaIda: t0?.aerolineaIda || null, aerolineaRegreso: null,
         plataforma: t0?.plataforma || null,
@@ -693,15 +695,15 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Origen *</Label>
-              <AirportCombobox value={t0?.origen ?? ""} className={inp}
+              <AirportCombobox value={detOrigen} className={inp}
                 placeholder="Ciudad o IATA"
-                onChange={v => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, origen: v } : x))} />
+                onChange={v => setDetOrigen(v)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Destino *</Label>
-              <AirportCombobox value={t0?.destino ?? ""} className={inp}
+              <AirportCombobox value={detDestino} className={inp}
                 placeholder="Ciudad o IATA"
-                onChange={v => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, destino: v } : x))} />
+                onChange={v => setDetDestino(v)} />
             </div>
             <div className="space-y-1">
               <Label className="text-[#737373] text-xs">Fecha de ida *</Label>
