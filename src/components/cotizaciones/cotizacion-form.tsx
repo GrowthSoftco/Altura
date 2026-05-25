@@ -231,6 +231,11 @@ function TramoBlock({
             <Label className="text-[#737373] text-xs">Noches</Label>
             <Input type="number" min={0} className={inpT}
               value={tramo.hotelNoches ?? ""} onChange={e => up("hotelNoches", parseInt(e.target.value) || 0)} />
+            {(tramo.hotelNoches ?? 0) > 0 && (
+              <p className="text-[10px] text-[#00B4C5] mt-0.5">
+                {tramo.hotelNoches} noche{tramo.hotelNoches !== 1 ? "s" : ""} / {(tramo.hotelNoches ?? 0) + 1} días
+              </p>
+            )}
           </div>
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
