@@ -212,7 +212,7 @@ function TramoBlock({
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
               <Calendar mode="single" selected={selLlegada} locale={es}
-                fromDate={selSalida}
+                disabled={selSalida ? { before: selSalida } : undefined}
                 className="bg-[#1C1C1C] text-[#F2F2F2]"
                 onSelect={d => { if (d) { up("fechaRegreso", format(d, "yyyy-MM-dd")); setOpenLlegada(false) } }} />
             </PopoverContent>
@@ -740,7 +740,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
                   <Calendar mode="single" selected={fr} locale={es}
-                    fromDate={fs}
+                    disabled={fs ? { before: fs } : undefined}
                     className="bg-[#1C1C1C] text-[#F2F2F2]"
                     onSelect={d => { if (d) { setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaRegreso: format(d, "yyyy-MM-dd") } : x)); setOpenDetLlegada(false) } }} />
                 </PopoverContent>
