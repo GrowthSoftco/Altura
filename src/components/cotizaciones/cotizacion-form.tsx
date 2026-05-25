@@ -253,21 +253,11 @@ function TramoBlock({
       {/* Hotel — todos los tramos */}
       <div className="border-t border-[#262626] pt-3 space-y-2">
         <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
             <Input className={inpT} value={tramo.hotelNombre ?? ""}
               onChange={e => up("hotelNombre", e.target.value)} placeholder="Marriott..." />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Noches</Label>
-            <Input type="number" min={0} className={inpT}
-              value={tramo.hotelNoches ?? ""} onChange={e => up("hotelNoches", parseInt(e.target.value) || 0)} />
-            {(tramo.hotelNoches ?? 0) > 0 && (
-              <p className="text-[10px] text-[#00B4C5] mt-0.5">
-                {(tramo.hotelNoches ?? 0) + 1} día{(tramo.hotelNoches ?? 0) + 1 !== 1 ? "s" : ""} / {tramo.hotelNoches} noche{tramo.hotelNoches !== 1 ? "s" : ""}
-              </p>
-            )}
           </div>
           <div className="space-y-1">
             <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
@@ -275,6 +265,20 @@ function TramoBlock({
               onChange={e => up("hotelTipo", e.target.value)} placeholder="Doble, sencilla..." />
           </div>
         </div>
+        {(() => {
+          if (!tramo.fechaSalida || !tramo.fechaRegreso) return null
+          const noches = differenceInCalendarDays(
+            new Date(tramo.fechaRegreso + "T12:00:00"),
+            new Date(tramo.fechaSalida  + "T12:00:00")
+          )
+          if (noches <= 0) return null
+          const dias = noches + 1
+          return (
+            <p className="text-[11px] text-[#00B4C5] font-medium mt-1">
+              {dias} día{dias !== 1 ? "s" : ""} / {noches} noche{noches !== 1 ? "s" : ""}
+            </p>
+          )
+        })()}
       </div>
     </div>
   )
