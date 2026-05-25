@@ -182,7 +182,7 @@ function TramoBlock({
             value={tramo.fechaSalida ?? ""} onChange={e => up("fechaSalida", e.target.value)} />
         </div>
         <div className="space-y-1">
-          <Label className="text-[#737373] text-xs">{isFirst ? "Fecha de llegada" : "Fecha regreso"}</Label>
+          <Label className="text-[#737373] text-xs">Fecha de llegada</Label>
           <Input type="date" className={inpT}
             value={tramo.fechaRegreso ?? ""} onChange={e => up("fechaRegreso", e.target.value)} />
         </div>
@@ -675,7 +675,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                 onChange={e => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaSalida: e.target.value } : x))} />
             </div>
             <div className="space-y-1">
-              <Label className="text-[#737373] text-xs">Fecha de regreso *</Label>
+              <Label className="text-[#737373] text-xs">Fecha de llegada *</Label>
               <Input type="date" className={inp}
                 value={t0?.fechaRegreso ?? ""}
                 onChange={e => setTramos(prev => prev.map((x, i) => i === 0 ? { ...x, fechaRegreso: e.target.value } : x))} />
