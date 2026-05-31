@@ -360,6 +360,8 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
         {/* Header: nubes + logo centrado */}
         <View style={{ height: 120, position: "relative" }}>
           <Image src={cloudsUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 120 }} />
+          {/* Overlay oscuro */}
+          <View style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 120, backgroundColor: "#000000", opacity: 0.25 }} />
           <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 98, alignItems: "center", justifyContent: "center" }}>
             <LogoFull color={T.white} width={140} />
           </View>
