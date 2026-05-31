@@ -405,7 +405,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
                 { label: "Origen",    val: cotizacion.origen,   w: 80 },
                 { label: "Destino",   val: cotizacion.destino,  w: 88 },
                 { label: "Pasajeros", val: paxLabel,            w: 105 },
-                { label: "Fechas",    val: `${fmtF(cotizacion.fechaSalida)}  —  ${fmtF(cotizacion.fechaRegreso)}`, w: 112 },
+                { label: "Fechas",    val: `${format(new Date(cotizacion.fechaSalida), "dd MMM", { locale: es })}  —  ${format(new Date(cotizacion.fechaRegreso), "dd MMM", { locale: es })}`, w: 112 },
                 { label: "Duración",  val: duracion.label,      w: 0, flex: 1, aqua: true },
               ] as { label: string; val: string; w: number; flex?: number; aqua?: boolean }[]).map(({ label, val, w, flex, aqua }) => (
                 <View key={label} style={{ width: w || undefined, flex: flex }}>
