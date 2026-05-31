@@ -214,40 +214,28 @@ const ICON_FB       = "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 
 const ICON_TIKTOK   = "M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"
 
 function Footer({ codigo }: { codigo?: string }) {
+  const row = (label: string, value: string) => (
+    <View style={{ flexDirection: "row", width: "48%", marginBottom: 3 }}>
+      <Text style={{ fontSize: 7, fontWeight: 600, color: T.navy, width: 52 }}>{label}</Text>
+      <Text style={{ fontSize: 7, color: T.g1, flex: 1 }}>{value}</Text>
+    </View>
+  )
   return (
-    <View style={{ borderTopWidth: 0.5, borderTopColor: T.g3, paddingTop: 10, paddingHorizontal: PAD, paddingBottom: 10, marginTop: 8 }} fixed>
-      {/* Título */}
-      <Text style={{ fontSize: 9, fontWeight: 600, color: T.navy, textAlign: "center", marginBottom: 8, letterSpacing: 0.5 }}>
+    <View style={{ borderTopWidth: 0.5, borderTopColor: T.g3, paddingTop: 10, paddingHorizontal: PAD, paddingBottom: 10 }} fixed>
+      <Text style={{ fontSize: 9, fontWeight: 600, color: T.navy, textAlign: "center", marginBottom: 10, letterSpacing: 0.5 }}>
         Ven y viaja con Altura
       </Text>
-      {/* Contacto en 2 columnas */}
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4 }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
-          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_MAIL} fill={T.navy} /></Svg>
-          <Text style={{ fontSize: 7, color: T.g1 }}>agenciaviajesaltura@gmail.com</Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
-          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_LOCATION} fill={T.navy} /></Svg>
-          <Text style={{ fontSize: 7, color: T.g1 }}>Calle 16#6-34 CC. Pasarela – Local 47 - Pereira</Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
-          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_WHATSAPP} fill={T.navy} /></Svg>
-          <Text style={{ fontSize: 7, color: T.g1 }}>304 208 6768  –  323 726 1564</Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
-          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_IG} fill={T.navy} /></Svg>
-          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_TIKTOK} fill={T.navy} /></Svg>
-          <Text style={{ fontSize: 7, color: T.g1 }}>Instagram – TikTok: @av.altura</Text>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
-          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_FB} fill={T.navy} /></Svg>
-          <Text style={{ fontSize: 7, color: T.g1 }}>Facebook: Altura agencia de viajes</Text>
-        </View>
-        {codigo && (
+      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+        {row("Email:", "agenciaviajesaltura@gmail.com")}
+        {row("WhatsApp:", "304 208 6768  –  323 726 1564")}
+        {row("Dirección:", "Calle 16#6-34 CC. Pasarela – Local 47 - Pereira")}
+        {row("Facebook:", "Altura agencia de viajes")}
+        {row("Instagram:", "@av.altura  ·  TikTok: @av.altura")}
+        {codigo ? (
           <View style={{ width: "48%", alignItems: "flex-end" }}>
             <Text style={{ fontSize: 7, color: T.g2 }}>{codigo}</Text>
           </View>
-        )}
+        ) : null}
       </View>
     </View>
   )
@@ -362,22 +350,20 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
       <Page size="A4" style={S.page}>
         <Watermark />
 
-        {/* Header: nubes + logo centrado en la zona de cielo */}
-        <View style={{ height: 100, position: "relative" }}>
-          <Image src={cloudsUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 100 }} />
-          {/* Logo centrado en los 80px de cielo (sobre el ribbon de 20px) */}
-          <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 80, alignItems: "center", justifyContent: "center" }}>
-            <LogoFull color={T.white} width={130} />
+        {/* Header: nubes + logo centrado */}
+        <View style={{ height: 120, position: "relative" }}>
+          <Image src={cloudsUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 120 }} />
+          <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 98, alignItems: "center", justifyContent: "center" }}>
+            <LogoFull color={T.white} width={140} />
           </View>
         </View>
-        {/* Ribbon */}
-        <View style={{ backgroundColor: T.navy, paddingVertical: 5 }}>
+        <View style={{ backgroundColor: T.navy, paddingVertical: 6 }}>
           <Text style={{ fontSize: 8, fontWeight: 600, color: T.aqua, textAlign: "center", letterSpacing: 1.5 }}>
             COTIZACIÓN DE VIAJE
           </Text>
         </View>
 
-        <View style={S.content}>
+        <View style={[S.content, { marginTop: 6 }]}>
 
           {/* ── Cliente (ref 1: nombre + meta lines) ── */}
           <View style={{ marginTop: 18, marginBottom: 20 }}>
