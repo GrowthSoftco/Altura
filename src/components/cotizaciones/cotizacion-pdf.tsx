@@ -265,9 +265,9 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
     { label: "Escala",    val: tramo.escalas },
   ]
   const hotelCols = [
-    { label: "Hotel",         val: tramo.hotelNombre,                                           aqua: false },
-    { label: "Habitación",    val: tramo.hotelTipo,                                             aqua: false },
-    { label: "Días / Noches", val: dias && noches ? `${dias} días / ${noches} noches` : null,   aqua: true  },
+    { label: "Hotel",         val: tramo.hotelNombre,                                           aqua: false, flex: 2 },
+    { label: "Habitación",    val: tramo.hotelTipo,                                             aqua: false, flex: 2 },
+    { label: "Días / Noches", val: dias && noches ? `${dias} días / ${noches} noches` : null,   aqua: true,  flex: 3 },
   ]
 
   return (
@@ -289,8 +289,8 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
         <>
           <View style={S.tramoHr} />
           <View style={S.tramoRow}>
-            {hotelCols.map(({ label, val, aqua }) => (
-              <View key={label} style={{ flex: 1 }}>
+            {hotelCols.map(({ label, val, aqua, flex }) => (
+              <View key={label} style={{ flex }}>
                 <Text style={S.tramoColH}>{label}</Text>
                 <Text style={aqua ? S.tramoColVAqua : S.tramoColV}>{val || "—"}</Text>
               </View>
