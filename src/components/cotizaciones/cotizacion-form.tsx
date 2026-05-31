@@ -434,8 +434,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     })
   }, [menores])
 
-  // Sync cuota percentages when numCuotas changes
+  // Sync cuota percentages when numCuotas changes — skip on initial mount
+  const isMountedCuotas = useRef(false)
   useEffect(() => {
+    if (!isMountedCuotas.current) { isMountedCuotas.current = true; return }
     setPorcentajesCuotas(PORCENTAJES_CUOTAS_DEFAULT[numCuotas] ?? Array(numCuotas).fill(Math.floor(100 / numCuotas)))
   }, [numCuotas])
 
