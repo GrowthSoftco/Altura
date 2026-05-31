@@ -30,7 +30,7 @@ function ensureFonts() {
   })
   Font.register({
     family: "EduNSW",
-    src: `${origin}/fonts/edu-nsw-act.ttf`,
+    src: `${origin}/fonts/edu-nsw-cursive.ttf`,
   })
   _fontsRegistered = true
 }
