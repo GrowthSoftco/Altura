@@ -265,10 +265,9 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
     { label: "Escala",    val: tramo.escalas },
   ]
   const hotelCols = [
-    { label: "Hotel",         val: tramo.hotelNombre,                              aqua: false },
-    { label: "Habitación",    val: tramo.hotelTipo,                                aqua: false },
-    { label: "Días / Noches", val: dias && noches ? `${dias} días / ${noches} noches` : null, aqua: true },
-    { label: "Servicios",     val: null,                                           aqua: false },
+    { label: "Hotel",         val: tramo.hotelNombre,                                           aqua: false },
+    { label: "Habitación",    val: tramo.hotelTipo,                                             aqua: false },
+    { label: "Días / Noches", val: dias && noches ? `${dias} días / ${noches} noches` : null,   aqua: true  },
   ]
 
   return (
