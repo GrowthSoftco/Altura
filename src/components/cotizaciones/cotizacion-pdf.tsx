@@ -208,19 +208,47 @@ function IconItem({ icon, text }: { icon: string; text: string }) {
   )
 }
 
+const ICON_WHATSAPP = "M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z M11.42 0C5.17 0 0 5.17 0 11.42c0 2.02.53 3.91 1.44 5.55L0 23l6.19-1.42c1.58.86 3.38 1.35 5.23 1.35C17.67 22.93 23 17.76 23 11.42 23 5.08 17.67 0 11.42 0z"
+const ICON_LOCATION = "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+const ICON_FB       = "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+const ICON_TIKTOK   = "M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.27 8.27 0 004.84 1.55V6.79a4.85 4.85 0 01-1.07-.1z"
+
 function Footer({ codigo }: { codigo?: string }) {
   return (
-    <View style={S.footerBar} fixed>
-      <IconItem icon={ICON_PHONE} text="304 208 6768  ·  323 726 1564" />
-      <View style={S.footerItem}>
-        <Text style={S.footerSep}>·</Text>
+    <View style={{ borderTopWidth: 0.5, borderTopColor: T.g3, paddingTop: 10, paddingHorizontal: PAD, paddingBottom: 10, marginTop: 8 }} fixed>
+      {/* Título */}
+      <Text style={{ fontSize: 9, fontWeight: 600, color: T.navy, textAlign: "center", marginBottom: 8, letterSpacing: 0.5 }}>
+        Ven y viaja con Altura
+      </Text>
+      {/* Contacto en 2 columnas */}
+      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4 }}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
+          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_MAIL} fill={T.navy} /></Svg>
+          <Text style={{ fontSize: 7, color: T.g1 }}>agenciaviajesaltura@gmail.com</Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
+          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_LOCATION} fill={T.navy} /></Svg>
+          <Text style={{ fontSize: 7, color: T.g1 }}>Calle 16#6-34 CC. Pasarela – Local 47 - Pereira</Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
+          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_WHATSAPP} fill={T.navy} /></Svg>
+          <Text style={{ fontSize: 7, color: T.g1 }}>304 208 6768  –  323 726 1564</Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
+          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_IG} fill={T.navy} /></Svg>
+          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_TIKTOK} fill={T.navy} /></Svg>
+          <Text style={{ fontSize: 7, color: T.g1 }}>Instagram – TikTok: @av.altura</Text>
+        </View>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, width: "48%" }}>
+          <Svg width={8} height={8} viewBox="0 0 24 24"><Path d={ICON_FB} fill={T.navy} /></Svg>
+          <Text style={{ fontSize: 7, color: T.g1 }}>Facebook: Altura agencia de viajes</Text>
+        </View>
+        {codigo && (
+          <View style={{ width: "48%", alignItems: "flex-end" }}>
+            <Text style={{ fontSize: 7, color: T.g2 }}>{codigo}</Text>
+          </View>
+        )}
       </View>
-      <IconItem icon={ICON_MAIL} text="altura.agencia@gmail.com" />
-      <View style={S.footerItem}>
-        <Text style={S.footerSep}>·</Text>
-      </View>
-      <IconItem icon={ICON_IG} text="@altura.viajes" />
-      {codigo && <Text style={[S.footerTxt, { marginLeft: 12, color: T.aqua }]}>{codigo}</Text>}
     </View>
   )
 }
@@ -503,9 +531,9 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
 
         <View style={[S.content, { marginTop: 32 }]}>
 
-          {/* Logo + título (ref 5 y 7) */}
-          <View style={{ marginBottom: 16 }}>
-            <LogoFull color={T.navy} width={110} />
+          {/* Logo centrado + título */}
+          <View style={{ alignItems: "center", marginBottom: 16 }}>
+            <LogoFull color={T.navy} width={130} />
           </View>
           <Text style={S.tcTitle}>Términos y Condiciones</Text>
           <View style={S.tcHr} />
@@ -518,22 +546,6 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
             </View>
           ))}
 
-          {/* Nota plan de pagos */}
-          {mostrar && (
-            <View style={{ marginTop: 14, backgroundColor: "#F0EEE9", borderRadius: 4, padding: 12 }}>
-              <Text style={{ fontSize: 6.5, fontWeight: 500, color: T.g2, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 5 }}>
-                Nota sobre el plan de pagos
-              </Text>
-              <Text style={{ fontSize: 7.5, color: T.g1, lineHeight: 1.75, textAlign: "justify" }}>
-                {"El plan de pagos fraccionado no corresponde a un crédito bancario ni genera intereses. " +
-                 "Debido a que los servicios turísticos están sujetos a variaciones del mercado, el valor final de los tiquetes " +
-                 "y hoteles puede presentar cambios al momento de la emisión o del pago total del plan o servicio adquirido. " +
-                 "En consecuencia, el ajuste en el costo obedecerá a la diferencia de la tarifa vigente al momento de confirmar " +
-                 "el servicio, garantizando así la correcta ejecución del plan o servicio adquirido."}
-              </Text>
-            </View>
-          )}
-
           {cotizacion.observaciones && (
             <View style={{ marginTop: 18 }}>
               <View style={{ borderTopWidth: 0.5, borderTopColor: T.g3, marginBottom: 8 }} />
@@ -542,15 +554,13 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
             </View>
           )}
 
-          {/* Firma cliente */}
+          {/* Firma — dueño de la agencia */}
           <View style={{ marginTop: 28, borderTopWidth: 0.5, borderTopColor: T.g3, paddingTop: 16 }}>
             <Text style={{ fontSize: 13, fontWeight: 600, color: T.black, marginBottom: 4 }}>
-              {cotizacion.cliente.nombre}
+              Cristian Camilo Correa Vanegas
             </Text>
-            <Text style={{ fontSize: 8, color: T.g1 }}>Cliente</Text>
-            {cotizacion.cliente.telefono && (
-              <Text style={{ fontSize: 8, color: T.g2, marginTop: 3 }}>{cotizacion.cliente.telefono}</Text>
-            )}
+            <Text style={{ fontSize: 8.5, color: T.g1 }}>Representante Legal — ALTURA Agencia de Viajes</Text>
+            <Text style={{ fontSize: 8, color: T.g2, marginTop: 3 }}>304 208 6768  ·  323 726 1564</Text>
           </View>
         </View>
 
