@@ -265,9 +265,9 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
     { label: "Escala",    val: tramo.escalas },
   ]
   const hotelCols = [
-    { label: "Hotel",         val: tramo.hotelNombre,                                           aqua: false, flex: 2 },
-    { label: "Habitación",    val: tramo.hotelTipo,                                             aqua: false, flex: 2 },
-    { label: "Días / Noches", val: dias && noches ? `${dias} días / ${noches} noches` : null,   aqua: true,  flex: 3 },
+    { label: "Hotel",         val: tramo.hotelNombre,                                           aqua: false },
+    { label: "Habitación",    val: tramo.hotelTipo,                                             aqua: false },
+    { label: "Días / Noches", val: dias && noches ? `${dias} días / ${noches} noches` : null,   aqua: true  },
   ]
 
   return (
@@ -289,8 +289,8 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
         <>
           <View style={S.tramoHr} />
           <View style={S.tramoRow}>
-            {hotelCols.map(({ label, val, aqua, flex }) => (
-              <View key={label} style={{ flex }}>
+            {hotelCols.map(({ label, val, aqua }) => (
+              <View key={label} style={{ flex: 1 }}>
                 <Text style={S.tramoColH}>{label}</Text>
                 <Text style={aqua ? S.tramoColVAqua : S.tramoColV}>{val || "—"}</Text>
               </View>
@@ -298,6 +298,31 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
           </View>
         </>
       )}
+    </View>
+  )
+}
+
+const HEADER_H = 120
+const RIBBON_H = 22
+const HEADER_TOTAL = HEADER_H + RIBBON_H
+
+function PageHeader({ cloudsUrl }: { cloudsUrl: string }) {
+  return (
+    <View fixed>
+      {/* Nubes */}
+      <View style={{ height: HEADER_H, position: "relative" }}>
+        <Image src={cloudsUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: HEADER_H }} />
+        <View style={{ position: "absolute", top: 0, left: 0, width: "100%", height: HEADER_H, backgroundColor: "#000000", opacity: 0.25 }} />
+        <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: HEADER_H - RIBBON_H, alignItems: "center", justifyContent: "center" }}>
+          <LogoFull color={T.white} width={140} />
+        </View>
+      </View>
+      {/* Ribbon */}
+      <View style={{ backgroundColor: T.navy, paddingVertical: 6 }}>
+        <Text style={{ fontSize: 8, fontWeight: 600, color: T.aqua, textAlign: "center", letterSpacing: 1.5 }}>
+          COTIZACIÓN DE VIAJE
+        </Text>
+      </View>
     </View>
   )
 }
@@ -355,21 +380,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
       {/* ══ PÁGINA 1 ══ */}
       <Page size="A4" style={S.page}>
         <Watermark />
-
-        {/* Header: nubes + logo centrado */}
-        <View style={{ height: 120, position: "relative" }}>
-          <Image src={cloudsUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 120 }} />
-          {/* Overlay oscuro */}
-          <View style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 120, backgroundColor: "#000000", opacity: 0.25 }} />
-          <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 98, alignItems: "center", justifyContent: "center" }}>
-            <LogoFull color={T.white} width={140} />
-          </View>
-        </View>
-        <View style={{ backgroundColor: T.navy, paddingVertical: 6 }}>
-          <Text style={{ fontSize: 8, fontWeight: 600, color: T.aqua, textAlign: "center", letterSpacing: 1.5 }}>
-            COTIZACIÓN DE VIAJE
-          </Text>
-        </View>
+        <PageHeader cloudsUrl={cloudsUrl} />
 
         <View style={[S.content, { marginTop: 6 }]}>
 
@@ -522,13 +533,9 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
       {/* ══ PÁGINA 2 — T&C ══ */}
       <Page size="A4" style={S.page}>
         <Watermark />
+        <PageHeader cloudsUrl={cloudsUrl} />
 
-        <View style={[S.content, { marginTop: 32 }]}>
-
-          {/* Logo centrado + título */}
-          <View style={{ alignItems: "center", marginBottom: 16 }}>
-            <LogoFull color={T.navy} width={130} />
-          </View>
+        <View style={[S.content, { marginTop: 20 }]}>
           <Text style={S.tcTitle}>Términos y Condiciones</Text>
           <View style={S.tcHr} />
 
