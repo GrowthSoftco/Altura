@@ -42,91 +42,84 @@ const T = {
   bg:     "#F8F8F6",
   border: "#E2E2DE",
   white:  "#FFFFFF",
-  band:   "#E6E5E1",
   amber:  "#C07000",
 }
 
-const PAD = 28  // horizontal page padding
+const PAD = 28
 
 // ─── Stylesheet ───────────────────────────────────────────────────────────────
 const S = StyleSheet.create({
   page:    { fontFamily: "Poppins", backgroundColor: T.white, padding: 0 },
   content: { paddingHorizontal: PAD },
 
-  // Section label
   secLabel: {
     fontSize: 6.5, fontWeight: 500, color: T.g2,
-    letterSpacing: 1.6, textTransform: "uppercase",
-    marginBottom: 6,
+    letterSpacing: 1.6, textTransform: "uppercase", marginBottom: 6,
   },
 
-  // Info box (rounded container)
-  box: {
-    backgroundColor: T.bg,
-    borderWidth: 0.5,
-    borderColor: T.border,
-    borderRadius: 6,
-    marginBottom: 18,
-  },
+  // Info box
+  box:        { backgroundColor: T.bg, borderWidth: 0.5, borderColor: T.border, borderRadius: 6, marginBottom: 18 },
   boxRow:     { flexDirection: "row" },
-  boxCell:    { flex: 1, paddingHorizontal: 14, paddingVertical: 10 },
-  boxDividerH: { borderTopWidth: 0.4,  borderTopColor:  T.g3 },
-  boxDividerV: { borderLeftWidth: 0.4, borderLeftColor: T.g3 },
-  boxLabel:   { fontSize: 6.5, color: T.g2, marginBottom: 4 },
-  boxValue:   { fontSize: 10, fontWeight: 600, color: T.black },
+  boxCell:    { flex: 1, paddingHorizontal: 14, paddingVertical: 11 },
+  boxDivH:    { borderTopWidth: 0.4, borderTopColor: T.g3 },
+  boxDivV:    { borderLeftWidth: 0.4, borderLeftColor: T.g3 },
+  boxLabel:   { fontSize: 6.5, color: T.g2, marginBottom: 5 },
+  boxValue:   { fontSize: 10.5, fontWeight: 600, color: T.black },
 
-  // Detalles col header
-  detColH: { fontSize: 6.5, fontWeight: 500, color: T.g2, letterSpacing: 1.4, textTransform: "uppercase" },
-  detColV: { fontSize: 10, fontWeight: 600, color: T.black },
-  detColVAqua: { fontSize: 9, fontWeight: 600, color: T.aqua },
+  // Detalles col
+  detColH:      { fontSize: 6.5, fontWeight: 500, color: T.g2, letterSpacing: 1.4, textTransform: "uppercase" },
+  detColV:      { fontSize: 10, fontWeight: 600, color: T.black },
+  detColVAqua:  { fontSize: 9, fontWeight: 600, color: T.aqua },
 
-  // Servicios
-  svcGrid: { flexDirection: "row", flexWrap: "wrap", paddingHorizontal: 14, paddingVertical: 10 },
+  // Servicios 3-col
+  svcGrid: { flexDirection: "row", flexWrap: "wrap", paddingHorizontal: 14, paddingVertical: 12 },
   svcItem: { width: "33%", flexDirection: "row", paddingVertical: 5, paddingRight: 8 },
-  svcCheck: { fontSize: 8, fontWeight: 600, color: T.aqua, marginRight: 5 },
+  svcCheck: { fontSize: 8, fontWeight: 600, color: T.aqua, marginRight: 6 },
   svcText:  { fontSize: 8, color: T.g1, flex: 1 },
 
-  // Tramo
-  tramoBox:    { backgroundColor: T.bg, borderWidth: 0.5, borderColor: T.border, borderRadius: 6, marginBottom: 12 },
-  tramoHeader: { backgroundColor: T.navy, borderRadius: 6, paddingVertical: 5, paddingHorizontal: 12 },
-  tramoHeaderFlat: { backgroundColor: T.navy, paddingBottom: 6, marginTop: -6, paddingHorizontal: 12 },
-  tramoHeaderText: { fontSize: 7.5, fontWeight: 600, color: T.white },
-  tramoRow:    { flexDirection: "row", paddingHorizontal: 10, paddingTop: 7, paddingBottom: 6 },
-  tramoHr:     { borderTopWidth: 0.4, borderTopColor: T.g3, marginHorizontal: 10 },
-  tramoColH:   { fontSize: 6, fontWeight: 500, color: T.g2, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 3 },
-  tramoColV:   { fontSize: 8.5, fontWeight: 600, color: T.black },
-  tramoColVAqua: { fontSize: 8, fontWeight: 600, color: T.aqua },
+  // Tramo block
+  tramoBox:        { backgroundColor: T.bg, borderWidth: 0.5, borderColor: T.border, borderRadius: 6, marginBottom: 12 },
+  tramoHeader:     { backgroundColor: T.navy, borderRadius: 6, paddingVertical: 6, paddingHorizontal: 12 },
+  tramoHeaderFlat: { backgroundColor: T.navy, height: 6, marginTop: -6 },
+  tramoHeaderTxt:  { fontSize: 7.5, fontWeight: 600, color: T.white },
+  tramoRow:        { flexDirection: "row", paddingHorizontal: 10, paddingTop: 8, paddingBottom: 7 },
+  tramoHr:         { borderTopWidth: 0.4, borderTopColor: T.g3, marginHorizontal: 10 },
+  tramoColH:       { fontSize: 6, fontWeight: 500, color: T.g2, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 4 },
+  tramoColV:       { fontSize: 8.5, fontWeight: 600, color: T.black },
+  tramoColVAqua:   { fontSize: 8, fontWeight: 600, color: T.aqua },
 
-  // Valor/Plan de pagos
-  planBox: {
-    backgroundColor: T.bg, borderWidth: 0.5, borderColor: T.border,
-    borderRadius: 6, flexDirection: "row", marginBottom: 18,
-  },
-  planLeft:  { width: 155, paddingHorizontal: 14, paddingVertical: 12 },
+  // Plan de pagos
+  planBox:   { backgroundColor: T.bg, borderWidth: 0.5, borderColor: T.border, borderRadius: 6, flexDirection: "row", marginBottom: 0 },
+  planLeft:  { width: 150, paddingHorizontal: 14, paddingVertical: 14 },
   planDivV:  { borderLeftWidth: 0.4, borderLeftColor: T.g3 },
   planRight: { flex: 1, paddingHorizontal: 12, paddingVertical: 12 },
   planSmall: { fontSize: 6.5, color: T.g2, marginBottom: 3 },
   planMed:   { fontSize: 9, fontWeight: 600, color: T.black },
   planBig:   { fontSize: 17, fontWeight: 600, color: T.navy },
-  planSep:   { marginBottom: 10 },
+  planSep:   { marginBottom: 12 },
+
   cuotaRow:  { flexDirection: "row", alignItems: "center", paddingVertical: 5 },
   cuotaHr:   { borderTopWidth: 0.3, borderTopColor: T.g3 },
-  cuotaNum:  { width: 20, fontSize: 8, color: T.g1 },
+  cuotaNum:  { width: 22, fontSize: 8, color: T.g1 },
   cuotaDate: { flex: 1, fontSize: 8, color: T.g1 },
   cuotaVal:  { fontSize: 8.5, fontWeight: 600, color: T.navy },
   cuotaHdrH: { fontSize: 6, fontWeight: 500, color: T.g2, letterSpacing: 1.2, textTransform: "uppercase" },
 
   // Footer
-  footerHr: { borderTopWidth: 0.5, borderTopColor: T.g3, marginTop: 10 },
-  footerRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: PAD, paddingVertical: 8 },
-  footerL:   { fontSize: 8.5, fontWeight: 600, color: T.black },
-  footerR:   { fontSize: 7.5, color: T.g2 },
+  footerBar: { backgroundColor: T.navy, paddingHorizontal: PAD, paddingVertical: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
+  footerItem: { flexDirection: "row", alignItems: "center", gap: 5 },
+  footerTxt:  { fontSize: 7.5, color: T.white },
+  footerSep:  { fontSize: 7.5, color: T.aqua, marginHorizontal: 6 },
 
   // T&C
-  tc: { fontSize: 7.5, color: T.g1, lineHeight: 1.75, marginBottom: 5 },
+  tcTitle:  { fontSize: 20, fontWeight: 600, color: T.black, marginBottom: 10 },
+  tcHr:     { borderBottomWidth: 0.8, borderBottomColor: T.g3, marginBottom: 14 },
+  tcItem:   { flexDirection: "row", marginBottom: 9 },
+  tcCheck:  { fontSize: 8, fontWeight: 600, color: T.aqua, marginRight: 8, marginTop: 1 },
+  tcText:   { fontSize: 8, color: T.g1, lineHeight: 1.75, flex: 1 },
 })
 
-// ─── Full ALTURALOGO paths (412×127 viewBox) ──────────────────────────────────
+// ─── ALTURALOGO paths (412×127 viewBox) ───────────────────────────────────────
 const LOGO_PATHS = [
   "M378.702 21.7567C372.13 17.1767 364.951 15.1931 357.764 11.9118C356.957 11.5426 356.303 10.9906 356.048 10.1076C357.153 5.13658 381.689 10.0288 386.069 10.1681C394.297 10.4296 404.113 -5.29253 411.803 1.87307V2.13846C410.738 3.65186 409.916 5.6391 408.626 7.23939C406.027 10.4628 400.185 15.9446 398.615 19.4443C396.452 24.2645 404.03 42.3236 401.628 46.2098C399.881 47.5192 398.418 46.3874 397.168 45.0555C393.552 41.2073 390.795 31.6527 386.601 28.8695C384.152 29.9107 377.16 34.7474 375.956 37.2998C375.076 39.1711 376.865 46.5612 375.281 48.0655C374.816 48.0095 374.427 47.9163 374.122 47.4944C371.689 44.106 371.736 42.4759 368.583 39.3863C365.174 36.0464 358.097 35.4859 355.985 33.1069C355.364 30.0376 368.518 30.8446 370.484 30.3121C373.288 29.553 377.241 23.9778 378.702 21.7567Z",
   "M236.2 0.580078C237.519 0.69226 240.794 0.592258 242.281 0.590756L255.422 0.594938C262.627 0.619766 266.802 0.318949 273.669 2.52913C289.881 7.74655 293.989 31.1637 279.681 40.7962C277.282 42.4109 275.115 43.2767 272.541 44.4938C278.275 49.8525 283.339 56.5776 288.88 62.2074C290.92 64.2793 292.358 66.5903 294.69 68.4618C296.733 64.0905 298.94 57.2926 300.86 52.5345L321.138 0.792972C322.79 0.630424 323.749 0.635479 325.397 0.673847C327.347 4.49311 329.041 8.55163 330.81 12.4667L339.251 30.8748L345.062 43.5388C346.744 47.1282 348.859 51.2764 350.005 55.0656C348.601 55.1624 347.195 55.2359 345.789 55.2862C344.393 52.6642 343.332 49.9528 342.063 47.2721L332.318 26.4801C330.612 22.8312 329.333 19.7185 327.454 16.0883C321.377 28.8679 317.366 43.5715 311.768 56.6389C310.238 60.2082 309.207 65.1954 307.272 68.4501C306.811 68.8557 306.099 68.7889 305.462 68.8114L302.394 68.6435C302.826 67.1953 303.83 64.8852 304.396 63.3858L309.057 51.2009L323.504 13.6236C324.068 12.1942 325.677 8.80054 323.477 8.11852C322.159 9.17347 319.15 18.536 318.397 20.4621L308.213 46.603C306.762 50.3554 305.269 54.1863 303.812 57.9296C302.225 62.0094 300.982 64.3635 299.878 68.7728C296.11 68.6868 292.322 68.8479 288.653 68.7444C285.062 65.3347 281.787 60.913 278.38 57.3098C273.687 52.3455 269.331 47.0831 264.692 42.0891C269.564 41.3833 275.085 39.4391 278.611 35.8653C281.84 32.6038 283.631 28.1851 283.583 23.5945C283.546 18.5721 281.669 13.812 278.037 10.3207C271.512 4.04554 261.862 4.37165 253.498 4.3708L240.808 4.41217C240.38 20.9094 241.05 37.6532 240.764 54.1784C240.683 58.872 240.626 64.1428 240.987 68.7937C239.339 68.8183 237.722 68.7641 236.077 68.717L236.127 18.9359L236.054 7.14772C236.044 5.64522 235.955 1.86881 236.2 0.580078Z",
@@ -174,28 +167,22 @@ const LOGO_PATHS = [
   "M148.16 91.165C150.497 91.3721 150.309 93.9901 148.555 94.9739C148.349 94.9111 148.144 94.8429 147.941 94.7692C147.178 94.4844 147.116 94.2739 146.836 93.6598C146.817 92.608 147.481 91.905 148.16 91.165Z",
 ]
 
-// Mountain mark path (for watermark)
 const MARK_PATH =
   "M274.866 2.40356C277.385 4.64385 429.959 284.497 436.638 299.756C430.768 303.016 418.432 307.249 411.842 309.708C398.823 314.552 385.831 319.467 372.867 324.454C323.892 343.421 275.075 362.802 226.421 382.579C205.375 391.099 175.281 401.307 156.185 411.852C177.9 406.414 202.658 400.413 223.588 393.056C251 383.426 278.354 373.016 305.693 363.086L442.521 313.849L500.262 293.37C510.971 289.625 525.122 284.395 535.962 281.61C508.414 296.286 480.967 311.149 453.621 326.194C461.784 344.097 480.254 375.417 490.257 393.634L559.023 519.064C560.44 521.614 563.254 526.159 563.074 528.836C560.051 530.006 450.447 500.366 437.535 497.014C429.421 482.224 421.281 464.884 413.73 449.666L374.539 370.496C363.525 375.401 346.375 385.361 335.415 391.354L264.011 430.624L116.339 510.514C79.9349 530.284 39.9455 553.084 2.96304 571.264C6.89625 562.031 12.6953 550.826 17.1056 541.564L133.097 298.197L213.043 132.043C232.591 90.6936 253.96 42.7985 274.866 2.40356ZM276.812 171.826C275.784 180.241 274.695 209.13 272.278 214.564C253.606 256.53 228.192 301.285 209.914 343.301C220.806 337.076 231.134 330.641 241.886 324.329L294.513 292.827C305.251 286.353 316.866 278.929 327.821 273.042C322.359 261.396 281.008 175.468 276.812 171.826ZM668.917 206.917C673.523 206.475 681.483 206.188 684.236 210.238C684.889 224.047 646.577 243.962 635.204 249.748C629.188 263.464 624.139 277.534 617.98 291.322C613.359 294.451 610.568 296.322 605.489 298.854C604.672 289.822 605.377 273.094 605.497 263.186C594.297 267.266 580.479 271.792 569.586 276.924C565.243 278.971 561.881 286.739 555.077 285.957C553.855 284.909 551.972 277.096 551.192 274.679L532.152 261.848C534.312 260.625 536.488 259.671 538.738 258.632C546.99 259.854 556.255 261.775 564.529 263.294C572.714 258.528 581.303 252.909 589.375 247.847C578.715 241.53 563.734 236.122 552.024 230.197C564.994 223.981 568.775 225.033 583.126 226.975C593.666 228.401 605.265 230.574 615.782 230.94C634.214 219.625 646.944 209.854 668.917 206.917Z"
 
-// ─── Logo component (full ALTURALOGO) ─────────────────────────────────────────
-function LogoFull({ color = T.white, width = 150 }: { color?: string; width?: number }) {
+// ─── Components ───────────────────────────────────────────────────────────────
+function LogoFull({ color = T.white, width = 120 }: { color?: string; width?: number }) {
   const height = Math.round(width * (127 / 412))
   return (
     <Svg width={width} height={height} viewBox="0 0 412 127">
-      {LOGO_PATHS.map((d, i) => (
-        <Path key={i} d={d} fill={color} />
-      ))}
+      {LOGO_PATHS.map((d, i) => <Path key={i} d={d} fill={color} />)}
     </Svg>
   )
 }
 
-// ─── Watermark ────────────────────────────────────────────────────────────────
 function Watermark() {
-  const W = 360
-  const H = Math.round(W * (575 / 686))
-  const top  = Math.round((842 - H) / 2)
-  const left = Math.round((595 - W) / 2)
+  const W = 360; const H = Math.round(W * (575 / 686))
+  const top = Math.round((842 - H) / 2); const left = Math.round((595 - W) / 2)
   return (
     <View style={{ position: "absolute", top, left, width: W, height: H }}>
       <Svg width={W} height={H} viewBox="0 0 686 575">
@@ -205,58 +192,83 @@ function Watermark() {
   )
 }
 
-// ─── TramoBlock ───────────────────────────────────────────────────────────────
-function TramoBlock({ tramo, num, fmtF }: { tramo: Tramo; num: number; fmtF: (d: string) => string }) {
-  const hasHotel  = !!tramo.hotelNombre
-  const noches    = (tramo.fechaSalida && tramo.fechaRegreso)
-    ? Math.max(
-        Math.round((new Date(tramo.fechaRegreso + "T12:00:00").getTime() - new Date(tramo.fechaSalida + "T12:00:00").getTime()) / 86400000),
-        1
-      )
+// SVG icon paths (24×24 viewBox, scaled down)
+const ICON_PHONE = "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+const ICON_MAIL  = "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+const ICON_IG    = "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+
+function IconItem({ icon, text }: { icon: string; text: string }) {
+  return (
+    <View style={S.footerItem}>
+      <Svg width={10} height={10} viewBox="0 0 24 24">
+        <Path d={icon} fill={T.white} />
+      </Svg>
+      <Text style={S.footerTxt}>{text}</Text>
+    </View>
+  )
+}
+
+function Footer({ codigo }: { codigo?: string }) {
+  return (
+    <View style={S.footerBar} fixed>
+      <IconItem icon={ICON_PHONE} text="304 208 6768  ·  323 726 1564" />
+      <View style={S.footerItem}>
+        <Text style={S.footerSep}>·</Text>
+      </View>
+      <IconItem icon={ICON_MAIL} text="altura.agencia@gmail.com" />
+      <View style={S.footerItem}>
+        <Text style={S.footerSep}>·</Text>
+      </View>
+      <IconItem icon={ICON_IG} text="@altura.viajes" />
+      {codigo && <Text style={[S.footerTxt, { marginLeft: 12, color: T.aqua }]}>{codigo}</Text>}
+    </View>
+  )
+}
+
+function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
+  const hasHotel = !!tramo.hotelNombre
+  const noches = (tramo.fechaSalida && tramo.fechaRegreso)
+    ? Math.max(Math.round((new Date(tramo.fechaRegreso + "T12:00:00").getTime() - new Date(tramo.fechaSalida + "T12:00:00").getTime()) / 86400000), 1)
     : null
   const dias = noches ? noches + 1 : null
 
+  const flightCols = [
+    { label: "Origen",    val: tramo.origen },
+    { label: "Destino",   val: tramo.destino },
+    { label: "Aerolínea", val: tramo.aerolineaIda },
+    { label: "Salida",    val: tramo.horaSalidaIda },
+    { label: "Llegada",   val: tramo.horaLlegadaIda },
+    { label: "Tiempo",    val: tramo.tiempoVuelo },
+    { label: "Escala",    val: tramo.escalas },
+  ]
+  const hotelCols = [
+    { label: "Hotel",         val: tramo.hotelNombre,                              aqua: false },
+    { label: "Habitación",    val: tramo.hotelTipo,                                aqua: false },
+    { label: "Días / Noches", val: dias && noches ? `${dias} días / ${noches} noches` : null, aqua: true },
+    { label: "Servicios",     val: null,                                           aqua: false },
+  ]
+
   return (
     <View style={S.tramoBox}>
-      {/* Navy header */}
       <View style={S.tramoHeader}>
-        <Text style={S.tramoHeaderText}>
-          TRAMO {num}  ·  {tramo.origen || "—"}  →  {tramo.destino || "—"}
-        </Text>
+        <Text style={S.tramoHeaderTxt}>TRAMO {num}  ·  {tramo.origen || "—"}  →  {tramo.destino || "—"}</Text>
       </View>
-      {/* Flat extension to avoid gap */}
       <View style={S.tramoHeaderFlat} />
-
-      {/* Flight column headers */}
+      {/* Flight row — evenly distributed */}
       <View style={S.tramoRow}>
-        {[
-          { label: "Origen",    val: tramo.origen,       w: 50 },
-          { label: "Destino",   val: tramo.destino,      w: 50 },
-          { label: "Aerolínea", val: tramo.aerolineaIda, w: 65 },
-          { label: "Salida",    val: tramo.horaSalidaIda, w: 44 },
-          { label: "Llegada",   val: tramo.horaLlegadaIda, w: 44 },
-          { label: "Tiempo",    val: tramo.tiempoVuelo,  w: 52 },
-          { label: "Escala",    val: tramo.escalas,      w: 0, flex: 1 },
-        ].map(({ label, val, w, flex }) => (
-          <View key={label} style={{ width: w || undefined, flex: flex }}>
+        {flightCols.map(({ label, val }) => (
+          <View key={label} style={{ flex: 1 }}>
             <Text style={S.tramoColH}>{label}</Text>
             <Text style={S.tramoColV}>{val || "—"}</Text>
           </View>
         ))}
       </View>
-
-      {/* Hotel */}
       {hasHotel && (
         <>
           <View style={S.tramoHr} />
           <View style={S.tramoRow}>
-            {[
-              { label: "Hotel",         val: tramo.hotelNombre, w: 130 },
-              { label: "Habitación",    val: tramo.hotelTipo,   w: 100 },
-              { label: "Días / Noches", val: dias && noches ? `${dias} días / ${noches} noches` : null, w: 95, aqua: true },
-              { label: "Servicios",     val: null,              w: 0, flex: 1 },
-            ].map(({ label, val, w, flex, aqua }) => (
-              <View key={label} style={{ width: w || undefined, flex: flex }}>
+            {hotelCols.map(({ label, val, aqua }) => (
+              <View key={label} style={{ flex: 1 }}>
                 <Text style={S.tramoColH}>{label}</Text>
                 <Text style={aqua ? S.tramoColVAqua : S.tramoColV}>{val || "—"}</Text>
               </View>
@@ -268,25 +280,25 @@ function TramoBlock({ tramo, num, fmtF }: { tramo: Tramo; num: number; fmtF: (d:
   )
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// ─── Main ─────────────────────────────────────────────────────────────────────
 export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }) {
   ensureFonts()
 
-  const origin     = typeof window !== "undefined" ? window.location.origin : ""
-  const cloudsUrl  = `${origin}/nubes.jpg`
+  const origin    = typeof window !== "undefined" ? window.location.origin : ""
+  const cloudsUrl = `${origin}/nubes.jpg`
 
-  const duracion   = calcularDuracion(new Date(cotizacion.fechaSalida), new Date(cotizacion.fechaRegreso))
-  const totalPax   = cotizacion.adultos + cotizacion.menores
-  const activos    = (cotizacion.servicios as ServicioItem[]).filter(s => s.activo)
-  const total      = Number(cotizacion.valorConUtilidad ?? cotizacion.valorConPorcentaje ?? 0)
-  const perPax     = Number(cotizacion.valorPorPersona  ?? cotizacion.valorNetoIndividual ?? 0)
+  const duracion  = calcularDuracion(new Date(cotizacion.fechaSalida), new Date(cotizacion.fechaRegreso))
+  const totalPax  = cotizacion.adultos + cotizacion.menores
+  const activos   = (cotizacion.servicios as ServicioItem[]).filter(s => s.activo)
+  const total     = Number(cotizacion.valorConUtilidad ?? cotizacion.valorConPorcentaje ?? 0)
+  const perPax    = Number(cotizacion.valorPorPersona  ?? cotizacion.valorNetoIndividual ?? 0)
 
   const fmtF     = (d: string | Date) => format(new Date(d), "dd/MM/yyyy")
-  const fmtFLong = (d: string | Date) => format(new Date(d), "dd 'de' MMMM yyyy", { locale: es })
+  const fmtFLong = (d: string | Date) => format(new Date(d), "dd 'de' MMMM, yyyy", { locale: es })
 
-  const plan     = cotizacion.planPagos as { cuotas?: Array<{ numero: number; porcentaje: number; valorTotal: number; fecha?: string }> } | null
-  const cuotas   = plan?.cuotas ?? null
-  const mostrar  = cotizacion.mostrarPlanPagos !== false && cuotas && cuotas.length > 0
+  const plan      = cotizacion.planPagos as { cuotas?: Array<{ numero: number; porcentaje: number; valorTotal: number; fecha?: string }> } | null
+  const cuotas    = plan?.cuotas ?? null
+  const mostrar   = cotizacion.mostrarPlanPagos !== false && cuotas && cuotas.length > 0
   const cobrarIva = !!cotizacion.cobrarIva
   const ivaTotal  = cobrarIva ? Math.ceil(Number(cotizacion.valorConUtilidad) * 0.19) : 0
   const finalTotal = cobrarIva ? total + ivaTotal : total
@@ -302,6 +314,19 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
     cotizacion.menores > 0 ? ` / ${cotizacion.menores} niño${cotizacion.menores !== 1 ? "s" : ""}` : ""
   }`
 
+  const tcItems = [
+    "Tarifas sujetas a disponibilidad y cambios sin previo aviso.",
+    "No incluye servicios no especificados en esta cotización.",
+    "En caso de cancelación o modificación del viaje, el cliente asumirá el costo total del nuevo tiquete o la penalidad que aplique la aerolínea.",
+    "Esta agencia no se responsabiliza por variaciones tarifarias ajenas a su control.",
+    "Servicios extras como maletas adicionales o visas se cotizan aparte.",
+    "Los precios cotizados son válidos por 24 horas desde la fecha de emisión.",
+    "El plan de pagos acordado deberá respetarse para mantener la reserva activa.",
+    "En caso de no pago oportuno, la reserva podrá ser cancelada sin reembolso.",
+    "ALTURA Agencia de Viajes actúa como intermediario entre el cliente y los proveedores de servicios turísticos.",
+    "Cualquier reclamo por servicios de terceros (aerolíneas, hoteles) deberá gestionarse directamente con el proveedor.",
+  ]
+
   return (
     <Document title={`Cotización ${cotizacion.codigo}`} author="Altura Agencia de Viajes">
 
@@ -309,15 +334,14 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
       <Page size="A4" style={S.page}>
         <Watermark />
 
-        {/* ── Header: imagen nubes + logo + ribbon ── */}
+        {/* Header: nubes + logo centrado */}
         <View style={{ height: 90, position: "relative" }}>
           <Image src={cloudsUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 90 }} />
-          {/* Logo centrado */}
-          <View style={{ position: "absolute", top: 14, left: 0, right: 0, alignItems: "center" }}>
-            <LogoFull color={T.white} width={148} />
+          <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" }}>
+            <LogoFull color={T.white} width={120} />
           </View>
         </View>
-        {/* Ribbon navy */}
+        {/* Ribbon */}
         <View style={{ backgroundColor: T.navy, paddingVertical: 5 }}>
           <Text style={{ fontSize: 8, fontWeight: 600, color: T.aqua, textAlign: "center", letterSpacing: 1.5 }}>
             COTIZACIÓN DE VIAJE
@@ -326,49 +350,30 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
 
         <View style={S.content}>
 
-          {/* ── Cliente (nombre prominente) ── */}
-          <View style={{ marginTop: 16, marginBottom: 18 }}>
-            <Text style={{ fontSize: 22, fontWeight: 600, color: T.navy }}>{cotizacion.cliente.nombre}</Text>
-            <Text style={{ fontSize: 8.5, color: T.g2, marginTop: 3 }}>{cotizacion.cliente.telefono}</Text>
+          {/* ── Cliente (ref 1: nombre + meta lines) ── */}
+          <View style={{ marginTop: 18, marginBottom: 20 }}>
+            <Text style={{ fontSize: 18, fontWeight: 600, color: T.black, flexShrink: 1 }}>
+              {cotizacion.cliente.nombre}
+            </Text>
+            <Text style={{ fontSize: 8, color: T.g2, marginTop: 7, lineHeight: 1.9 }}>
+              {"Fecha:  "}{fmtFLong(cotizacion.fechaCreacion)}
+              {"\nCódigo:  "}{cotizacion.codigo}
+              {cotizacion.cliente.telefono ? `\nTel:  ${cotizacion.cliente.telefono}` : ""}
+              {cotizacion.cliente.correo ? `\n${cotizacion.cliente.correo}` : ""}
+            </Text>
           </View>
 
-          {/* ── Información General ── */}
-          <Text style={S.secLabel}>Información General</Text>
-          <View style={S.box}>
-            <View style={S.boxRow}>
-              <View style={S.boxCell}>
-                <Text style={S.boxLabel}>Fecha de emisión</Text>
-                <Text style={S.boxValue}>{fmtFLong(cotizacion.fechaCreacion)}</Text>
-              </View>
-              <View style={[S.boxCell, S.boxDividerV]}>
-                <Text style={S.boxLabel}>Código de cotización</Text>
-                <Text style={S.boxValue}>{cotizacion.codigo}</Text>
-              </View>
-            </View>
-            <View style={S.boxDividerH} />
-            <View style={S.boxRow}>
-              <View style={S.boxCell}>
-                <Text style={S.boxLabel}>Cliente</Text>
-                <Text style={S.boxValue}>{cotizacion.cliente.nombre}</Text>
-              </View>
-              <View style={[S.boxCell, S.boxDividerV]}>
-                <Text style={S.boxLabel}>Teléfono</Text>
-                <Text style={S.boxValue}>{cotizacion.cliente.telefono || "—"}</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* ── Detalles del Viaje ── */}
+          {/* ── Detalles del Viaje (ref 2) ── */}
           <Text style={S.secLabel}>Detalles del Viaje</Text>
           <View style={S.box}>
-            <View style={[S.boxRow, { paddingHorizontal: 14, paddingTop: 10, paddingBottom: 6 }]}>
-              {[
-                { label: "Origen",    val: cotizacion.origen,             w: 80 },
-                { label: "Destino",   val: cotizacion.destino,            w: 88 },
-                { label: "Pasajeros", val: paxLabel,                      w: 105 },
-                { label: "Fechas",    val: `${fmtF(cotizacion.fechaSalida)}  —  ${fmtF(cotizacion.fechaRegreso)}`, w: 110 },
-                { label: "Duración",  val: duracion.label,                w: 0, flex: 1, aqua: true },
-              ].map(({ label, val, w, flex, aqua }) => (
+            <View style={[S.boxRow, { paddingHorizontal: 14, paddingTop: 11, paddingBottom: 9 }]}>
+              {([
+                { label: "Origen",    val: cotizacion.origen,   w: 80 },
+                { label: "Destino",   val: cotizacion.destino,  w: 88 },
+                { label: "Pasajeros", val: paxLabel,            w: 105 },
+                { label: "Fechas",    val: `${fmtF(cotizacion.fechaSalida)}  —  ${fmtF(cotizacion.fechaRegreso)}`, w: 112 },
+                { label: "Duración",  val: duracion.label,      w: 0, flex: 1, aqua: true },
+              ] as { label: string; val: string; w: number; flex?: number; aqua?: boolean }[]).map(({ label, val, w, flex, aqua }) => (
                 <View key={label} style={{ width: w || undefined, flex: flex }}>
                   <Text style={S.detColH}>{label}</Text>
                   <View style={{ borderTopWidth: 0.4, borderTopColor: T.g3, marginTop: 5, marginBottom: 6 }} />
@@ -378,7 +383,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
             </View>
           </View>
 
-          {/* ── Servicios Incluidos ── */}
+          {/* ── Servicios (ref 3: 3 cols + checkmarks) ── */}
           {activos.length > 0 && (
             <>
               <Text style={S.secLabel}>Servicios Incluidos</Text>
@@ -395,20 +400,20 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
             </>
           )}
 
-          {/* ── Itinerario ── */}
+          {/* ── Itinerario (ref 4: columnas uniformes) ── */}
           {hasTramos && (
             <>
               <Text style={S.secLabel}>Itinerario</Text>
               {(cotizacion.tramos as Tramo[]).map((t, i) => (
-                <TramoBlock key={t.id} tramo={t} num={i + 1} fmtF={(d) => fmtF(d)} />
+                <TramoBlock key={t.id} tramo={t} num={i + 1} />
               ))}
             </>
           )}
 
-          {/* ── Valor y Plan de Pagos ── */}
+          {/* ── Valor y Plan de Pagos (punto 7: wrap=false) ── */}
           <Text style={S.secLabel}>Valor y Plan de Pagos</Text>
-          <View style={S.planBox}>
-            {/* Left: valores */}
+          <View style={S.planBox} wrap={false}>
+            {/* Left */}
             <View style={S.planLeft}>
               <View style={S.planSep}>
                 <Text style={S.planSmall}>Valor por persona</Text>
@@ -423,27 +428,25 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
                 <Text style={S.planBig}>{formatCOP(finalTotal)}</Text>
               </View>
               {cobrarIva && (
-                <View style={{ marginTop: 8 }}>
+                <View style={{ marginTop: 10 }}>
                   <Text style={S.planSmall}>IVA (19%)</Text>
                   <Text style={[S.planMed, { fontSize: 8 }]}>+{formatCOP(ivaTotal)}</Text>
                 </View>
               )}
               {hayColchon && (
-                <View style={{ marginTop: 8 }}>
+                <View style={{ marginTop: 10 }}>
                   <Text style={S.planSmall}>Colchón ({sumaCuotas - 100}%)</Text>
                   <Text style={[S.planMed, { color: T.amber }]}>+{formatCOP(colchonCOP)}</Text>
-                  <Text style={[S.planSmall, { marginTop: 4 }]}>Total plan</Text>
+                  <Text style={[S.planSmall, { marginTop: 6 }]}>Total plan</Text>
                   <Text style={[S.planBig, { color: T.amber }]}>{formatCOP(totalPlan)}</Text>
                 </View>
               )}
             </View>
 
-            {/* Vertical divider */}
             <View style={S.planDivV} />
 
             {/* Right: cuotas + nota */}
             <View style={S.planRight}>
-              {/* Header */}
               <View style={[S.cuotaRow, { paddingVertical: 0, marginBottom: 4 }]}>
                 <Text style={[S.cuotaHdrH, { width: 22 }]}>Cuota</Text>
                 <Text style={[S.cuotaHdrH, { flex: 1 }]}>Fecha</Text>
@@ -452,16 +455,14 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
               <View style={S.cuotaHr} />
 
               {mostrar && cuotas
-                ? cuotas.map((c, i) => (
-                  <View key={c.numero}>
+                ? cuotas.map((cu, i) => (
+                  <View key={cu.numero}>
                     <View style={S.cuotaRow}>
-                      <Text style={S.cuotaNum}>{c.numero}</Text>
+                      <Text style={S.cuotaNum}>{cu.numero}</Text>
                       <Text style={S.cuotaDate}>
-                        {c.fecha
-                          ? format(new Date(c.fecha + "T12:00:00"), "dd MMM yyyy", { locale: es })
-                          : "—"}
+                        {cu.fecha ? format(new Date(cu.fecha + "T12:00:00"), "dd MMM yyyy", { locale: es }) : "—"}
                       </Text>
-                      <Text style={S.cuotaVal}>{formatCOP(c.valorTotal)}</Text>
+                      <Text style={S.cuotaVal}>{formatCOP(cu.valorTotal)}</Text>
                     </View>
                     {i < cuotas.length - 1 && <View style={S.cuotaHr} />}
                   </View>
@@ -474,14 +475,17 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
                 )
               }
 
-              {/* Nota — justo debajo de las cuotas */}
-              <View style={{ borderTopWidth: 0.4, borderTopColor: T.g3, marginTop: 6, paddingTop: 6 }}>
-                <Text style={{ fontSize: 6, fontWeight: 500, color: T.g2, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 3 }}>
-                  Nota
+              {/* Nota punto 8 — justificada */}
+              <View style={{ borderTopWidth: 0.4, borderTopColor: T.g3, marginTop: 8, paddingTop: 7 }}>
+                <Text style={{ fontSize: 6, fontWeight: 500, color: T.g2, letterSpacing: 1.1, textTransform: "uppercase", marginBottom: 4 }}>
+                  Nota importante
                 </Text>
-                <Text style={{ fontSize: 6.5, color: T.g1, lineHeight: 1.6 }}>
-                  {"Precios válidos por 24 h. El plan de pagos no genera intereses. " +
-                   "El valor final puede ajustarse según tarifas vigentes al confirmar el servicio."}
+                <Text style={{ fontSize: 6.5, color: T.g1, lineHeight: 1.65, textAlign: "justify" }}>
+                  {"El plan de pagos fraccionado no corresponde a un crédito bancario ni genera intereses. " +
+                   "Debido a que los servicios turísticos están sujetos a variaciones del mercado, el valor final de los tiquetes " +
+                   "y hoteles puede presentar cambios al momento de la emisión o del pago total del plan o servicio adquirido. " +
+                   "En consecuencia, el ajuste en el costo obedecerá a la diferencia de la tarifa vigente al momento de confirmar " +
+                   "el servicio, garantizando así la correcta ejecución del plan o servicio adquirido."}
                 </Text>
               </View>
             </View>
@@ -489,51 +493,42 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
 
         </View>
 
-        {/* ── Footer ── */}
-        <View style={S.footerHr} />
-        <View style={S.footerRow}>
-          <Text style={S.footerL}>Ven y viaja con Altura</Text>
-          <Text style={S.footerR}>304 208 6768  ·  323 726 1564</Text>
-        </View>
+        <Footer codigo={cotizacion.codigo} />
       </Page>
 
       {/* ══ PÁGINA 2 — T&C ══ */}
       <Page size="A4" style={S.page}>
         <Watermark />
 
-        {/* Header compacto */}
-        <View style={{ backgroundColor: T.navy, paddingVertical: 10, paddingHorizontal: PAD, flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-          <LogoFull color={T.white} width={90} />
-          <View style={{ alignItems: "flex-end" }}>
-            <Text style={{ fontSize: 10, fontWeight: 600, color: T.white }}>Términos y Condiciones</Text>
-            <Text style={{ fontSize: 7, color: T.aqua, marginTop: 2 }}>{cotizacion.codigo}  ·  {cotizacion.cliente.nombre}</Text>
-          </View>
-        </View>
+        <View style={[S.content, { marginTop: 32 }]}>
 
-        <View style={[S.content, { marginTop: 20 }]}>
-          {[
-            "Tarifas sujetas a disponibilidad y cambios sin previo aviso.",
-            "No incluye servicios no especificados en esta cotización.",
-            "En caso de cancelación, el cliente asumirá la penalidad que aplique la aerolínea.",
-            "Esta agencia no se responsabiliza por variaciones tarifarias ajenas a su control.",
-            "Servicios extras como maletas adicionales o visas se cotizan aparte.",
-            "Los precios cotizados son válidos por 24 horas desde la fecha de emisión.",
-            "El plan de pagos acordado deberá respetarse para mantener la reserva activa.",
-            "En caso de no pago oportuno, la reserva podrá ser cancelada sin reembolso.",
-            "ALTURA actúa como intermediario entre el cliente y los proveedores turísticos.",
-            "Cualquier reclamo por servicios de terceros se gestiona directamente con el proveedor.",
-          ].map((tc, i) => (
-            <Text key={i} style={S.tc}>{i + 1}.{"  "}{tc}</Text>
+          {/* Logo + título (ref 5 y 7) */}
+          <View style={{ marginBottom: 16 }}>
+            <LogoFull color={T.navy} width={110} />
+          </View>
+          <Text style={S.tcTitle}>Términos y Condiciones</Text>
+          <View style={S.tcHr} />
+
+          {/* Items con checkmarks (punto 10) */}
+          {tcItems.map((tc, i) => (
+            <View key={i} style={S.tcItem}>
+              <Text style={S.tcCheck}>✓</Text>
+              <Text style={S.tcText}>{tc}</Text>
+            </View>
           ))}
 
+          {/* Nota plan de pagos */}
           {mostrar && (
-            <View style={{ marginTop: 14, backgroundColor: "#F0EEE9", borderRadius: 4, padding: 10 }}>
-              <Text style={{ fontSize: 6.5, fontWeight: 500, color: T.g2, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 4 }}>
+            <View style={{ marginTop: 14, backgroundColor: "#F0EEE9", borderRadius: 4, padding: 12 }}>
+              <Text style={{ fontSize: 6.5, fontWeight: 500, color: T.g2, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 5 }}>
                 Nota sobre el plan de pagos
               </Text>
-              <Text style={{ fontSize: 7.5, color: T.g1, lineHeight: 1.7 }}>
-                {"El plan de pagos fraccionado no genera intereses. Los servicios turísticos están sujetos a variaciones " +
-                 "del mercado; el valor final puede cambiar al momento de la emisión o del pago total del servicio adquirido."}
+              <Text style={{ fontSize: 7.5, color: T.g1, lineHeight: 1.75, textAlign: "justify" }}>
+                {"El plan de pagos fraccionado no corresponde a un crédito bancario ni genera intereses. " +
+                 "Debido a que los servicios turísticos están sujetos a variaciones del mercado, el valor final de los tiquetes " +
+                 "y hoteles puede presentar cambios al momento de la emisión o del pago total del plan o servicio adquirido. " +
+                 "En consecuencia, el ajuste en el costo obedecerá a la diferencia de la tarifa vigente al momento de confirmar " +
+                 "el servicio, garantizando así la correcta ejecución del plan o servicio adquirido."}
               </Text>
             </View>
           )}
@@ -546,18 +541,19 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
             </View>
           )}
 
+          {/* Firma cliente */}
           <View style={{ marginTop: 28, borderTopWidth: 0.5, borderTopColor: T.g3, paddingTop: 16 }}>
-            <Text style={{ fontSize: 12, fontWeight: 600, color: T.black, marginBottom: 4 }}>{cotizacion.cliente.nombre}</Text>
+            <Text style={{ fontSize: 13, fontWeight: 600, color: T.black, marginBottom: 4 }}>
+              {cotizacion.cliente.nombre}
+            </Text>
             <Text style={{ fontSize: 8, color: T.g1 }}>Cliente</Text>
-            <Text style={{ fontSize: 8, color: T.g2, marginTop: 3 }}>{cotizacion.cliente.telefono}</Text>
+            {cotizacion.cliente.telefono && (
+              <Text style={{ fontSize: 8, color: T.g2, marginTop: 3 }}>{cotizacion.cliente.telefono}</Text>
+            )}
           </View>
         </View>
 
-        <View style={S.footerHr} />
-        <View style={S.footerRow}>
-          <Text style={S.footerL}>Ven y viaja con Altura</Text>
-          <Text style={S.footerR}>304 208 6768  ·  323 726 1564</Text>
-        </View>
+        <Footer codigo={cotizacion.codigo} />
       </Page>
     </Document>
   )
