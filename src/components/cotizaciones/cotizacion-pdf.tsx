@@ -334,11 +334,12 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
       <Page size="A4" style={S.page}>
         <Watermark />
 
-        {/* Header: nubes + logo centrado */}
-        <View style={{ height: 90, position: "relative" }}>
-          <Image src={cloudsUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 90 }} />
-          <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, alignItems: "center", justifyContent: "center" }}>
-            <LogoFull color={T.white} width={120} />
+        {/* Header: nubes + logo centrado en la zona de cielo */}
+        <View style={{ height: 100, position: "relative" }}>
+          <Image src={cloudsUrl} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 100 }} />
+          {/* Logo centrado en los 80px de cielo (sobre el ribbon de 20px) */}
+          <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 80, alignItems: "center", justifyContent: "center" }}>
+            <LogoFull color={T.white} width={130} />
           </View>
         </View>
         {/* Ribbon */}
