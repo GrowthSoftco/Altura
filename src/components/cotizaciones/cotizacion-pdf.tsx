@@ -28,6 +28,10 @@ function ensureFonts() {
       { src: `${origin}/fonts/poppins-semibold.ttf`, fontWeight: 600 },
     ],
   })
+  Font.register({
+    family: "EduNSW",
+    src: `${origin}/fonts/edu-nsw-act.ttf`,
+  })
   _fontsRegistered = true
 }
 
@@ -232,7 +236,7 @@ function FooterRow({ icon, text }: { icon: string; text: string }) {
 function Footer({ codigo }: { codigo?: string }) {
   return (
     <View style={{ borderTopWidth: 0.5, borderTopColor: T.g3, paddingTop: 10, paddingHorizontal: PAD, paddingBottom: 8 }} fixed>
-      <Text style={{ fontSize: 9, fontWeight: 600, color: T.navy, textAlign: "center", marginBottom: 10, letterSpacing: 0.5 }}>
+      <Text style={{ fontFamily: "EduNSW", fontSize: 13, color: T.navy, textAlign: "center", marginBottom: 10 }}>
         Ven y viaja con Altura
       </Text>
       <FooterRow icon={ICO_MAIL}   text="agenciaviajesaltura@gmail.com" />
