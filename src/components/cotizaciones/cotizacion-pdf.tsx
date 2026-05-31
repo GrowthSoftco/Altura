@@ -382,7 +382,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
         <Watermark />
         <PageHeader cloudsUrl={cloudsUrl} />
 
-        <View style={[S.content, { marginTop: 6 }]}>
+        <View style={[S.content, { marginTop: 18 }]}>
 
           {/* ── Cliente (ref 1: nombre + meta lines) ── */}
           <View style={{ marginTop: 18, marginBottom: 20 }}>
@@ -535,7 +535,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
         <Watermark />
         <PageHeader cloudsUrl={cloudsUrl} />
 
-        <View style={[S.content, { marginTop: 20 }]}>
+        <View style={[S.content, { marginTop: 18 }]}>
           <Text style={S.tcTitle}>Términos y Condiciones</Text>
           <View style={S.tcHr} />
 
