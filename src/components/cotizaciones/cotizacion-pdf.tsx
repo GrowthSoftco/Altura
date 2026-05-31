@@ -288,9 +288,9 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
       {hasHotel && (
         <>
           <View style={S.tramoHr} />
-          <View style={S.tramoRow}>
+          <View style={[S.tramoRow, { width: "100%" }]}>
             {hotelCols.map(({ label, val, aqua }) => (
-              <View key={label} style={{ flex: 1 }}>
+              <View key={label} style={{ flex: 1, minWidth: 0 }}>
                 <Text style={S.tramoColH}>{label}</Text>
                 <Text style={aqua ? S.tramoColVAqua : S.tramoColV}>{val || "—"}</Text>
               </View>
