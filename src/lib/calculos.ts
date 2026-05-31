@@ -8,7 +8,7 @@ export function calcularDuracion(salida: Date, regreso: Date) {
   return { dias, noches, label: `${dias} días / ${noches} noches` }
 }
 
-function generarPorcentajesDefault(n: number): number[] {
+export function generarPorcentajesDefault(n: number): number[] {
   if (n === 1) return [100]
   if (n === 2) return [50, 50]
   if (n === 3) return [50, 30, 20]

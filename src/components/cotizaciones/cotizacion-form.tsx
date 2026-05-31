@@ -23,7 +23,7 @@ import { ServiciosTable } from "@/components/cotizaciones/servicios-table"
 import { ResumenCard } from "@/components/cotizaciones/resumen-card"
 import { CotizacionPDF } from "@/components/cotizaciones/cotizacion-pdf"
 
-import { calcularPrecios, calcularDuracion, SERVICIOS_DEFAULT } from "@/lib/calculos"
+import { calcularPrecios, calcularDuracion, SERVICIOS_DEFAULT, generarPorcentajesDefault } from "@/lib/calculos"
 import { AIRPORTS } from "@/lib/iata-airports"
 import { ServicioItem, CalculoPrecios, CotizacionCompleta, ClienteBase, Tramo } from "@/types"
 import { cn } from "@/lib/utils"
@@ -338,17 +338,20 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
 
   // ── Servicios ──
   const [servicios, setServicios] = useState<ServicioItem[]>((cotizacion?.servicios as ServicioItem[]) ?? SERVICIOS_DEFAULT)
-  const [porcentaje, setPorcentaje]         = useState(cotizacion ? Number(cotizacion.porcentajeGanancia) : 10)
+  const [porcentaje, setPorcentaje]         = useState(cotizacion ? Number(cotizacion.porcentajeGanancia) : 0)
   const [utilidadModo, setUtilidadModo]     = useState<"porcentaje" | "fijo">("porcentaje")
   const [utilidadFija, setUtilidadFija]     = useState(0)
 
   // ── Plan de pagos ──
-  const initPlan = cotizacion?.planPagos as { aplicar?: boolean; numeroCuotas?: number; cuotas?: { porcentaje: number }[]; modalidad?: "mensual" | "quincenal"; incremento?: number; fechaInicial?: string } | undefined
+  const initPlan = cotizacion?.planPagos as { aplicar?: boolean; numeroCuotas?: number; cuotas?: { porcentaje: number; fecha?: string }[]; modalidad?: "mensual" | "quincenal"; incremento?: number; fechaInicial?: string } | undefined
+  const initN    = cotizacion?.numeroCuotas ?? initPlan?.numeroCuotas ?? 3
   const [aplicarPlan, setAplicarPlan]       = useState(initPlan?.aplicar ?? true)
-  const [numCuotas, setNumCuotas]           = useState(cotizacion?.numeroCuotas ?? initPlan?.numeroCuotas ?? 3)
-  const [porcentajesCuotas, setPorcentajesCuotas] = useState<number[]>(
-    initPlan?.cuotas?.map(c => c.porcentaje) ?? [50, 30, 20]
-  )
+  const [numCuotas, setNumCuotas]           = useState(initN)
+  const [porcentajesCuotas, setPorcentajesCuotas] = useState<number[]>(() => {
+    const stored = initPlan?.cuotas?.map(c => c.porcentaje) ?? []
+    // Use stored if length matches, otherwise generate defaults
+    return stored.length === initN ? stored : generarPorcentajesDefault(initN)
+  })
   const [modalidadPlan, setModalidadPlan]   = useState<"mensual" | "quincenal">(initPlan?.modalidad ?? "mensual")
   const [fechaInicioPago, setFechaInicioPago] = useState<Date | undefined>(
     initPlan?.fechaInicial ? new Date(initPlan.fechaInicial) : undefined
@@ -377,9 +380,11 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   // ── Calculos ──
   const [calculos, setCalculos] = useState<CalculoPrecios>(() => {
     const initServicios = (cotizacion?.servicios as ServicioItem[]) ?? SERVICIOS_DEFAULT
-    const initPct = cotizacion ? Number(cotizacion.porcentajeGanancia) : 10
+    const initPct       = cotizacion ? Number(cotizacion.porcentajeGanancia) : 0
+    const storedPcts    = initPlan?.cuotas?.map(c => c.porcentaje) ?? []
+    const initPcts      = storedPcts.length === initN ? storedPcts : generarPorcentajesDefault(initN)
     return calcularPrecios(initServicios, cotizacion?.adultos ?? 1, cotizacion?.menores ?? 0, initPct,
-      { aplicar: true, numeroCuotas: cotizacion?.numeroCuotas ?? 3 }, cotizacion?.cobrarIva ?? false)
+      { aplicar: initPlan?.aplicar ?? true, numeroCuotas: initN, porcentajes: initPcts }, cotizacion?.cobrarIva ?? false)
   })
 
   // ── Effects ──
