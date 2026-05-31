@@ -236,7 +236,7 @@ function FooterRow({ icon, text }: { icon: string; text: string }) {
 function Footer({ codigo }: { codigo?: string }) {
   return (
     <View style={{ borderTopWidth: 0.5, borderTopColor: T.g3, paddingTop: 10, paddingHorizontal: PAD, paddingBottom: 8 }} fixed>
-      <Text style={{ fontFamily: "EduNSW", fontSize: 13, color: T.navy, textAlign: "center", marginBottom: 10 }}>
+      <Text style={{ fontFamily: "EduNSW", fontSize: 11, color: T.navy, textAlign: "center", marginBottom: 10, letterSpacing: 1.5 }}>
         Ven y viaja con Altura
       </Text>
       <FooterRow icon={ICO_MAIL}   text="agenciaviajesaltura@gmail.com" />
