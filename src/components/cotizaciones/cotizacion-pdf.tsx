@@ -148,11 +148,11 @@ function Watermark() {
 function PageHeader({ url }: { url: string }) {
   return (
     <View fixed>
-      <View style={{ height: 100, position: "relative" }}>
-        <Image src={url} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 100 }} />
-        <View style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 100, backgroundColor: "#000", opacity: 0.25 }} />
-        <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 78, alignItems: "center", justifyContent: "center" }}>
-          <LogoFull color={T.white} width={140} />
+      <View style={{ height: 110, position: "relative" }}>
+        <Image src={url} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 110 }} />
+        <View style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 110, backgroundColor: "#000", opacity: 0.25 }} />
+        <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 88, alignItems: "center", justifyContent: "center" }}>
+          <LogoFull color={T.white} width={120} />
         </View>
       </View>
       <View style={{ backgroundColor: T.navy, paddingVertical: 6 }}>
@@ -184,8 +184,12 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
 
   return (
     <View style={S.tramoBox}>
-      <View style={S.tramoHdr}>
-        <Text style={S.tramoHdrTxt}>TRAMO {num}  ·  {tramo.origen || "—"}  →  {tramo.destino || "—"}</Text>
+      <View style={[S.tramoHdr, { flexDirection: "row", alignItems: "center" }]}>
+        <Text style={S.tramoHdrTxt}>TRAMO {num}  ·  {tramo.origen || "—"}  </Text>
+        <Svg width={10} height={10} viewBox="0 0 24 24">
+          <Path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" fill={T.white} />
+        </Svg>
+        <Text style={S.tramoHdrTxt}>  {tramo.destino || "—"}</Text>
       </View>
       <View style={S.tramoHdrFlat} />
       <View style={S.tramoRow}>
@@ -217,26 +221,36 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
   )
 }
 
-function Footer({ codigo }: { codigo?: string }) {
-  const row = (label: string, value: string) => (
-    <View style={{ flexDirection: "row", width: "48%", marginBottom: 3 }}>
-      <Text style={{ fontSize: 7, fontWeight: 600, color: T.navy, width: 56 }}>{label}</Text>
-      <Text style={{ fontSize: 7, color: T.g1, flex: 1 }}>{value}</Text>
+// Footer icon paths
+const ICO_MAIL  = "M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"
+const ICO_LOC   = "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"
+const ICO_PHONE = "M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"
+const ICO_IG    = "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"
+const ICO_FB    = "M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"
+
+function FooterIconRow({ icon, text }: { icon: string; text: string }) {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 4 }}>
+      <Svg width={9} height={9} viewBox="0 0 24 24" style={{ marginRight: 7 }}>
+        <Path d={icon} fill={T.navy} />
+      </Svg>
+      <Text style={{ fontSize: 7.5, color: T.g1 }}>{text}</Text>
     </View>
   )
+}
+
+function Footer({ codigo }: { codigo?: string }) {
   return (
     <View style={{ borderTopWidth: 0.5, borderTopColor: T.g3, paddingTop: 10, paddingHorizontal: PAD, paddingBottom: 8 }} fixed>
-      <Text style={{ fontFamily: "EduNSW", fontSize: 11, color: T.navy, textAlign: "center", marginBottom: 8, letterSpacing: 1.5 }}>
+      <Text style={{ fontFamily: "EduNSW", fontSize: 11, color: T.navy, textAlign: "center", marginBottom: 10, letterSpacing: 1.5 }}>
         Ven y viaja con Altura
       </Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-        {row("Email:", "agenciaviajesaltura@gmail.com")}
-        {row("WhatsApp:", "304 208 6768  –  323 726 1564")}
-        {row("Dirección:", "Calle 16#6-34 CC. Pasarela – Local 47 - Pereira")}
-        {row("Facebook:", "Altura agencia de viajes")}
-        {row("Instagram:", "@av.altura  ·  TikTok: @av.altura")}
-        {codigo ? <View style={{ width: "48%", alignItems: "flex-end" }}><Text style={{ fontSize: 7, color: T.g2 }}>{codigo}</Text></View> : null}
-      </View>
+      <FooterIconRow icon={ICO_MAIL}  text="agenciaviajesaltura@gmail.com" />
+      <FooterIconRow icon={ICO_LOC}   text="Calle 16#6-34 CC. Pasarela – Local 47 - Pereira" />
+      <FooterIconRow icon={ICO_PHONE} text="304 208 6768  –  323 726 1564" />
+      <FooterIconRow icon={ICO_IG}    text="Instagram – TikTok: @av.altura" />
+      <FooterIconRow icon={ICO_FB}    text="Facebook: Altura agencia de viajes" />
+      {codigo && <Text style={{ fontSize: 6.5, color: T.g2, textAlign: "right", marginTop: 4 }}>{codigo}</Text>}
     </View>
   )
 }
