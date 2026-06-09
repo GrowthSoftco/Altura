@@ -472,6 +472,19 @@ function HospedajeSection({
           <Input type="time" className={inpT} value={h.horaCheckOut ?? ""} onChange={e => up("horaCheckOut", e.target.value)} />
         </div>
       </div>
+      {(() => {
+        if (!h.checkIn || !h.checkOut) return null
+        const noches = Math.max(differenceInCalendarDays(
+          new Date(h.checkOut + "T12:00:00"),
+          new Date(h.checkIn  + "T12:00:00")
+        ), 1)
+        const dias = noches + 1
+        return (
+          <p className="text-[11px] text-[#00B4C5] font-medium mt-1">
+            {dias} día{dias !== 1 ? "s" : ""} / {noches} noche{noches !== 1 ? "s" : ""}
+          </p>
+        )
+      })()}
       <div className="space-y-1">
         <Label className="text-[#737373] text-xs">Notas / detalles</Label>
         <Input className={inpT} value={h.notas ?? ""} onChange={e => up("notas", e.target.value)} placeholder="Desayuno incluido, parqueadero..." />
