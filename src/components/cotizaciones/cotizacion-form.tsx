@@ -553,7 +553,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   })
   const [modalidadPlan, setModalidadPlan]   = useState<"mensual" | "quincenal">(initPlan?.modalidad ?? "mensual")
   const [fechaInicioPago, setFechaInicioPago] = useState<Date | undefined>(
-    initPlan?.fechaInicial ? new Date(initPlan.fechaInicial) : undefined
+    initPlan?.fechaInicial ? new Date(initPlan.fechaInicial + "T12:00:00") : undefined
   )
   const [incrementoCuota, setIncrementoCuota] = useState(initPlan?.incremento ?? 0)
 
