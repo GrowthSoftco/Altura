@@ -395,6 +395,12 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
   const cobrarIva = !!cotizacion.cobrarIva
   const ivaTotal  = cobrarIva ? Math.ceil(Number(cotizacion.valorConUtilidad) * 0.19) : 0
   const finalTotal = cobrarIva ? total + ivaTotal : total
+  // El colchón se SUMA al total y a las cuotas, pero no se muestra como línea aparte.
+  const sumaPcts   = cuotas ? cuotas.reduce((a, c) => a + c.porcentaje, 0) : 100
+  const hayColchon = sumaPcts > 100
+  const totalPax   = Math.max(cotizacion.adultos + cotizacion.menores, 1)
+  const totalAPagar  = hayColchon ? Math.round(finalTotal * sumaPcts / 100) : finalTotal
+  const perPaxAPagar = hayColchon ? Math.round(totalAPagar / totalPax) : perPax
 
   const hasTramos = Array.isArray(cotizacion.tramos) && cotizacion.tramos.length > 0
   const hosp      = cotizacion.hospedaje as Hospedaje | null
@@ -493,7 +499,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
             <View style={S.planL}>
               <View style={{ marginBottom: 12 }}>
                 <Text style={S.planSm}>Valor por persona</Text>
-                <Text style={[S.planBig, { fontSize: 13 }]}>{formatCOP(perPax)}</Text>
+                <Text style={[S.planBig, { fontSize: 13 }]}>{formatCOP(perPaxAPagar)}</Text>
               </View>
               <View style={{ marginBottom: 12 }}>
                 <Text style={S.planSm}>Total pasajeros</Text>
@@ -501,7 +507,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
               </View>
               <View>
                 <Text style={S.planSm}>Valor total</Text>
-                <Text style={S.planBig}>{formatCOP(finalTotal)}</Text>
+                <Text style={S.planBig}>{formatCOP(totalAPagar)}</Text>
               </View>
               {cobrarIva && (
                 <View style={{ marginTop: 8 }}>
@@ -534,7 +540,7 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
                     {i < cuotas.length - 1 && <View style={S.cuotaHr} />}
                   </View>
                 ))
-                : <View style={S.cuotaRow}><Text style={S.cuotaFch}>Pago único</Text><Text style={S.cuotaVal}>{formatCOP(finalTotal)}</Text></View>
+                : <View style={S.cuotaRow}><Text style={S.cuotaFch}>Pago único</Text><Text style={S.cuotaVal}>{formatCOP(totalAPagar)}</Text></View>
               }
 
               <View style={{ borderTopWidth: 0.4, borderTopColor: T.g3, marginTop: 8, paddingTop: 7 }}>
