@@ -395,10 +395,6 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
   const cobrarIva = !!cotizacion.cobrarIva
   const ivaTotal  = cobrarIva ? Math.ceil(Number(cotizacion.valorConUtilidad) * 0.19) : 0
   const finalTotal = cobrarIva ? total + ivaTotal : total
-  const sumaPcts  = cuotas ? cuotas.reduce((a, c) => a + c.porcentaje, 0) : 100
-  const hayColchon = sumaPcts > 100
-  const totalPlan  = hayColchon ? Math.round(finalTotal * sumaPcts / 100) : finalTotal
-  const colchonCOP = hayColchon ? totalPlan - finalTotal : 0
 
   const hasTramos = Array.isArray(cotizacion.tramos) && cotizacion.tramos.length > 0
   const hosp      = cotizacion.hospedaje as Hospedaje | null
@@ -511,14 +507,6 @@ export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }
                 <View style={{ marginTop: 8 }}>
                   <Text style={S.planSm}>IVA (19%)</Text>
                   <Text style={[S.planMed, { fontSize: 8 }]}>+{formatCOP(ivaTotal)}</Text>
-                </View>
-              )}
-              {hayColchon && (
-                <View style={{ marginTop: 8 }}>
-                  <Text style={S.planSm}>Colchón ({sumaPcts - 100}%)</Text>
-                  <Text style={[S.planMed, { color: T.amber }]}>+{formatCOP(colchonCOP)}</Text>
-                  <Text style={[S.planSm, { marginTop: 4 }]}>Total plan</Text>
-                  <Text style={[S.planBig, { color: T.amber }]}>{formatCOP(totalPlan)}</Text>
                 </View>
               )}
             </View>
