@@ -4,8 +4,8 @@ import { FileText, Users, CheckCircle, TrendingUp } from "lucide-react"
 import { prisma } from "@/lib/prisma"
 import { MetricCard } from "@/components/dashboard/metric-card"
 import { RecientesTable } from "@/components/dashboard/recientes-table"
+import { serializeCotizaciones } from "@/lib/serialize"
 import { formatCOP } from "@/lib/utils"
-import { CotizacionCompleta } from "@/types"
 
 async function getDashboardData() {
   const now   = new Date()
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
             {recientes.length} registros
           </span>
         </div>
-        <RecientesTable cotizaciones={recientes as unknown as CotizacionCompleta[]} />
+        <RecientesTable cotizaciones={serializeCotizaciones(recientes)} />
       </div>
 
     </div>

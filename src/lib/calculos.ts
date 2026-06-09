@@ -1,6 +1,16 @@
 import { ServicioItem, CalculoPrecios, PlanPagosConfig, CuotaPago } from "@/types"
 import { formatCOP } from "@/lib/utils"
+import { addMonths, addDays, format } from "date-fns"
 export { formatCOP }
+
+/** Fecha de la cuota i (0-based) a partir de la fecha inicial y la modalidad. */
+function fechaCuota(fechaInicial: string | undefined, modalidad: "mensual" | "quincenal" | undefined, i: number): string | undefined {
+  if (!fechaInicial) return undefined
+  const base = new Date(fechaInicial + "T12:00:00")
+  if (isNaN(base.getTime())) return undefined
+  const d = modalidad === "quincenal" ? addDays(base, i * 15) : addMonths(base, i)
+  return format(d, "yyyy-MM-dd")
+}
 
 export function calcularDuracion(salida: Date, regreso: Date) {
   const noches = Math.ceil((regreso.getTime() - salida.getTime()) / (1000 * 60 * 60 * 24))
@@ -75,12 +85,16 @@ export function calcularPrecios(
     montos = porcentajes.map(pct => Math.round(valorFinal * (pct / 100)))
   }
 
-  const cuotas: CuotaPago[] = montos.map((monto, i) => ({
-    numero: i + 1,
-    porcentaje: Math.round((monto / (valorFinal || 1)) * 100),
-    valorTotal: monto,
-    ...(fechasCuotas?.[i] ? { fecha: fechasCuotas[i] } : {}),
-  }))
+  const cuotas: CuotaPago[] = montos.map((monto, i) => {
+    // Prioridad: fecha explícita del array → derivada de fechaInicial + modalidad
+    const fecha = fechasCuotas?.[i] ?? fechaCuota(planConfig?.fechaInicial, planConfig?.modalidad, i)
+    return {
+      numero: i + 1,
+      porcentaje: Math.round((monto / (valorFinal || 1)) * 100),
+      valorTotal: monto,
+      ...(fecha ? { fecha } : {}),
+    }
+  })
 
   const planPagos: PlanPagosConfig = {
     aplicar,

@@ -1,9 +1,12 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import { Eye } from "lucide-react"
+import { Eye, Copy, Trash2, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import {
   Table,
   TableBody,
@@ -19,6 +22,39 @@ import { formatCOP } from "@/lib/utils"
 import { CotizacionCompleta } from "@/types"
 
 export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompleta[] }) {
+  const router = useRouter()
+  const [busyId, setBusyId] = useState<string | null>(null)
+
+  const duplicar = async (id: string) => {
+    setBusyId(id)
+    try {
+      const res = await fetch(`/api/cotizaciones/${id}/duplicate`, { method: "POST" })
+      if (!res.ok) throw new Error(await res.text())
+      const nueva = await res.json()
+      toast.success(`Cotización duplicada: ${nueva.codigo}`)
+      router.refresh()
+    } catch (e) {
+      toast.error(`Error al duplicar: ${e instanceof Error ? e.message.slice(0, 100) : "desconocido"}`)
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const eliminar = async (id: string, codigo: string) => {
+    if (!window.confirm(`¿Eliminar la cotización ${codigo}? Esta acción no se puede deshacer.`)) return
+    setBusyId(id)
+    try {
+      const res = await fetch(`/api/cotizaciones/${id}`, { method: "DELETE" })
+      if (!res.ok) throw new Error(await res.text())
+      toast.success(`Cotización ${codigo} eliminada`)
+      router.refresh()
+    } catch (e) {
+      toast.error(`Error al eliminar: ${e instanceof Error ? e.message.slice(0, 100) : "desconocido"}`)
+    } finally {
+      setBusyId(null)
+    }
+  }
+
   return (
     <div className="rounded-xl border border-[#222222] overflow-hidden bg-[#1C1C1C]">
       <Table>
@@ -30,7 +66,7 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
             <TableHead className="text-[#4A4A4A] text-[11px] uppercase tracking-wider font-medium h-10">Fecha</TableHead>
             <TableHead className="text-[#4A4A4A] text-[11px] uppercase tracking-wider font-medium h-10">Valor</TableHead>
             <TableHead className="text-[#4A4A4A] text-[11px] uppercase tracking-wider font-medium h-10">Estado</TableHead>
-            <TableHead className="w-10" />
+            <TableHead className="w-28" />
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,15 +101,42 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
                 <EstadoBadge estado={cot.estado} />
               </TableCell>
               <TableCell className="py-3">
-                <Link
-                  href={`/cotizaciones/${cot.id}`}
-                  className={cn(
-                    buttonVariants({ variant: "ghost", size: "icon" }),
-                    "h-7 w-7 text-[#4A4A4A] hover:text-[#F2F2F2] hover:bg-[#2A2A2A]"
-                  )}
-                >
-                  <Eye className="h-3.5 w-3.5" />
-                </Link>
+                <div className="flex items-center justify-end gap-0.5">
+                  <Link
+                    href={`/cotizaciones/${cot.id}`}
+                    title="Ver"
+                    className={cn(
+                      buttonVariants({ variant: "ghost", size: "icon" }),
+                      "h-7 w-7 text-[#4A4A4A] hover:text-[#F2F2F2] hover:bg-[#2A2A2A]"
+                    )}
+                  >
+                    <Eye className="h-3.5 w-3.5" />
+                  </Link>
+                  <button
+                    type="button"
+                    title="Duplicar"
+                    disabled={busyId === cot.id}
+                    onClick={() => duplicar(cot.id)}
+                    className={cn(
+                      buttonVariants({ variant: "ghost", size: "icon" }),
+                      "h-7 w-7 text-[#4A4A4A] hover:text-[#00B4C5] hover:bg-[#2A2A2A] disabled:opacity-50"
+                    )}
+                  >
+                    {busyId === cot.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Copy className="h-3.5 w-3.5" />}
+                  </button>
+                  <button
+                    type="button"
+                    title="Eliminar"
+                    disabled={busyId === cot.id}
+                    onClick={() => eliminar(cot.id, cot.codigo)}
+                    className={cn(
+                      buttonVariants({ variant: "ghost", size: "icon" }),
+                      "h-7 w-7 text-[#4A4A4A] hover:text-red-400 hover:bg-[#2A2A2A] disabled:opacity-50"
+                    )}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </TableCell>
             </TableRow>
           ))}

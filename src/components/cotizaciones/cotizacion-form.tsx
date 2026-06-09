@@ -25,7 +25,7 @@ import { CotizacionPDF } from "@/components/cotizaciones/cotizacion-pdf"
 
 import { calcularPrecios, calcularDuracion, SERVICIOS_DEFAULT, generarPorcentajesDefault } from "@/lib/calculos"
 import { AIRPORTS } from "@/lib/iata-airports"
-import { ServicioItem, CalculoPrecios, CotizacionCompleta, ClienteBase, Tramo } from "@/types"
+import { ServicioItem, CalculoPrecios, CotizacionCompleta, ClienteBase, Tramo, Hospedaje } from "@/types"
 import { cn } from "@/lib/utils"
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
@@ -141,9 +141,30 @@ function TramoBlock({
   const tramoNum = index + 1
   const [openSalida,  setOpenSalida]  = useState(false)
   const [openLlegada, setOpenLlegada] = useState(false)
+  const [openCheckIn,  setOpenCheckIn]  = useState(false)
+  const [openCheckOut, setOpenCheckOut] = useState(false)
+
+  // Hotel opcional — visible solo si el usuario lo añade o ya tiene datos guardados
+  const [showHotel, setShowHotel] = useState(
+    Boolean(tramo.hotelNombre || tramo.hotelTipo || tramo.hotelCheckIn || tramo.hotelCheckOut)
+  )
+
+  const addHotel = () => setShowHotel(true)
+  const removeHotel = () => {
+    setShowHotel(false)
+    onUpdate({
+      ...tramo,
+      hotelNombre: undefined, hotelTipo: undefined,
+      hotelCheckIn: undefined, hotelCheckOut: undefined,
+      hotelHoraCheckIn: undefined, hotelHoraCheckOut: undefined,
+      hotelNoches: undefined,
+    })
+  }
 
   const selSalida  = tramo.fechaSalida  ? new Date(tramo.fechaSalida  + "T12:00:00") : undefined
   const selLlegada = tramo.fechaRegreso ? new Date(tramo.fechaRegreso + "T12:00:00") : undefined
+  const selCheckIn  = tramo.hotelCheckIn  ? new Date(tramo.hotelCheckIn  + "T12:00:00") : undefined
+  const selCheckOut = tramo.hotelCheckOut ? new Date(tramo.hotelCheckOut + "T12:00:00") : undefined
 
   // Auto-calc tiempo de vuelo from hora salida + hora llegada
   useEffect(() => {
@@ -158,6 +179,17 @@ function TramoBlock({
     if (tv !== tramo.tiempoVuelo) onUpdate({ ...tramo, tiempoVuelo: tv })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tramo.horaSalidaIda, tramo.horaLlegadaIda])
+
+  // Auto-calc noches del hotel desde check-in + check-out
+  useEffect(() => {
+    if (!tramo.hotelCheckIn || !tramo.hotelCheckOut) return
+    const noches = Math.max(differenceInCalendarDays(
+      new Date(tramo.hotelCheckOut + "T12:00:00"),
+      new Date(tramo.hotelCheckIn  + "T12:00:00")
+    ), 1)
+    if (noches !== tramo.hotelNoches) onUpdate({ ...tramo, hotelNoches: noches })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tramo.hotelCheckIn, tramo.hotelCheckOut])
 
   return (
     <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
@@ -250,35 +282,199 @@ function TramoBlock({
         </div>
       </div>
 
-      {/* Hotel — todos los tramos */}
-      <div className="border-t border-[#262626] pt-3 space-y-2">
-        <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
-        <div className="grid grid-cols-2 gap-2">
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
-            <Input className={inpT} value={tramo.hotelNombre ?? ""}
-              onChange={e => up("hotelNombre", e.target.value)} placeholder="Marriott..." />
+      {/* Hotel — opcional, independiente del vuelo */}
+      <div className="border-t border-[#262626] pt-3">
+        {!showHotel ? (
+          <button type="button" onClick={addHotel}
+            className="flex items-center gap-1.5 text-xs font-medium text-[#00B4C5] hover:text-[#00d4e8] transition-colors">
+            <Plus className="h-3.5 w-3.5" />
+            Añadir hotel
+          </button>
+        ) : (
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
+              <button type="button" onClick={removeHotel}
+                className="text-[#737373] hover:text-red-400 transition-colors" title="Quitar hotel">
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label className="text-[#737373] text-xs">Nombre del hotel</Label>
+                <Input className={inpT} value={tramo.hotelNombre ?? ""}
+                  onChange={e => up("hotelNombre", e.target.value)} placeholder="Marriott..." />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[#737373] text-xs">Nombre de la habitación</Label>
+                <Input className={inpT} value={tramo.hotelTipo ?? ""}
+                  onChange={e => up("hotelTipo", e.target.value)} placeholder="Twin Economy, Doble..." />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <div className="space-y-1">
+                <Label className="text-[#737373] text-xs">Fecha check-in</Label>
+                <Popover open={openCheckIn} onOpenChange={setOpenCheckIn}>
+                  <PopoverTrigger render={
+                    <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                      "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                      !tramo.hotelCheckIn && "text-[#737373]")} />
+                  }>
+                    <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
+                    {selCheckIn ? format(selCheckIn, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                    <Calendar mode="single" selected={selCheckIn} locale={es}
+                      className="bg-[#1C1C1C] text-[#F2F2F2]"
+                      onSelect={d => { if (d) { up("hotelCheckIn", format(d, "yyyy-MM-dd")); setOpenCheckIn(false) } }} />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[#737373] text-xs">Hora check-in</Label>
+                <Input type="time" className={inpT}
+                  value={tramo.hotelHoraCheckIn ?? ""} onChange={e => up("hotelHoraCheckIn", e.target.value)} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[#737373] text-xs">Fecha check-out</Label>
+                <Popover open={openCheckOut} onOpenChange={setOpenCheckOut}>
+                  <PopoverTrigger render={
+                    <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                      "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                      !tramo.hotelCheckOut && "text-[#737373]")} />
+                  }>
+                    <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
+                    {selCheckOut ? format(selCheckOut, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                    <Calendar mode="single" selected={selCheckOut} locale={es}
+                      disabled={selCheckIn ? { before: selCheckIn } : undefined}
+                      className="bg-[#1C1C1C] text-[#F2F2F2]"
+                      onSelect={d => { if (d) { up("hotelCheckOut", format(d, "yyyy-MM-dd")); setOpenCheckOut(false) } }} />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[#737373] text-xs">Hora check-out</Label>
+                <Input type="time" className={inpT}
+                  value={tramo.hotelHoraCheckOut ?? ""} onChange={e => up("hotelHoraCheckOut", e.target.value)} />
+              </div>
+            </div>
+            {(() => {
+              if (!tramo.hotelCheckIn || !tramo.hotelCheckOut) return null
+              const noches = Math.max(differenceInCalendarDays(
+                new Date(tramo.hotelCheckOut + "T12:00:00"),
+                new Date(tramo.hotelCheckIn  + "T12:00:00")
+              ), 1)
+              const dias = noches + 1
+              return (
+                <p className="text-[11px] text-[#00B4C5] font-medium mt-1">
+                  {dias} día{dias !== 1 ? "s" : ""} / {noches} noche{noches !== 1 ? "s" : ""}
+                </p>
+              )
+            })()}
           </div>
-          <div className="space-y-1">
-            <Label className="text-[#737373] text-xs">Tipo de habitación</Label>
-            <Input className={inpT} value={tramo.hotelTipo ?? ""}
-              onChange={e => up("hotelTipo", e.target.value)} placeholder="Doble, sencilla..." />
-          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+// ─── Hospedaje (sección independiente, opcional) ──────────────────────────────
+function HospedajeSection({
+  hospedaje, onChange,
+}: { hospedaje: Hospedaje | null; onChange: (h: Hospedaje | null) => void }) {
+  const [openIn,  setOpenIn]  = useState(false)
+  const [openOut, setOpenOut] = useState(false)
+  const h = hospedaje ?? {}
+  const up = (k: keyof Hospedaje, v: string) => onChange({ ...h, [k]: v })
+
+  const selIn  = h.checkIn  ? new Date(h.checkIn  + "T12:00:00") : undefined
+  const selOut = h.checkOut ? new Date(h.checkOut + "T12:00:00") : undefined
+
+  if (!hospedaje) {
+    return (
+      <button type="button" onClick={() => onChange({})}
+        className="flex items-center gap-1.5 text-sm font-medium text-[#00B4C5] hover:text-[#00d4e8] transition-colors">
+        <Plus className="h-4 w-4" /> Añadir hospedaje
+      </button>
+    )
+  }
+
+  return (
+    <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-[#00B4C5] uppercase tracking-wider">Hospedaje</span>
+        <button type="button" onClick={() => onChange(null)}
+          className="text-[#737373] hover:text-red-400 transition-colors" title="Quitar hospedaje">
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Nombre del hospedaje</Label>
+          <Input className={inpT} value={h.nombre ?? ""} onChange={e => up("nombre", e.target.value)} placeholder="Hotel, Airbnb, finca..." />
         </div>
-        {(() => {
-          if (!tramo.fechaSalida || !tramo.fechaRegreso) return null
-          const diff   = differenceInCalendarDays(
-            new Date(tramo.fechaRegreso + "T12:00:00"),
-            new Date(tramo.fechaSalida  + "T12:00:00")
-          )
-          const noches = Math.max(diff, 1)
-          const dias   = noches + 1
-          return (
-            <p className="text-[11px] text-[#00B4C5] font-medium mt-1">
-              {dias} día{dias !== 1 ? "s" : ""} / {noches} noche{noches !== 1 ? "s" : ""}
-            </p>
-          )
-        })()}
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Habitación / tipo</Label>
+          <Input className={inpT} value={h.habitacion ?? ""} onChange={e => up("habitacion", e.target.value)} placeholder="Suite, doble..." />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Ciudad</Label>
+          <Input className={inpT} value={h.ciudad ?? ""} onChange={e => up("ciudad", e.target.value)} placeholder="Cartagena..." />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Dirección</Label>
+          <Input className={inpT} value={h.direccion ?? ""} onChange={e => up("direccion", e.target.value)} placeholder="Calle 1 #2-3..." />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Fecha check-in</Label>
+          <Popover open={openIn} onOpenChange={setOpenIn}>
+            <PopoverTrigger render={
+              <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                !h.checkIn && "text-[#737373]")} />
+            }>
+              <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
+              {selIn ? format(selIn, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+              <Calendar mode="single" selected={selIn} locale={es} className="bg-[#1C1C1C] text-[#F2F2F2]"
+                onSelect={d => { if (d) { up("checkIn", format(d, "yyyy-MM-dd")); setOpenIn(false) } }} />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Hora check-in</Label>
+          <Input type="time" className={inpT} value={h.horaCheckIn ?? ""} onChange={e => up("horaCheckIn", e.target.value)} />
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Fecha check-out</Label>
+          <Popover open={openOut} onOpenChange={setOpenOut}>
+            <PopoverTrigger render={
+              <button type="button" className={cn(buttonVariants({ variant: "outline" }),
+                "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                !h.checkOut && "text-[#737373]")} />
+            }>
+              <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
+              {selOut ? format(selOut, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+              <Calendar mode="single" selected={selOut} locale={es}
+                disabled={selIn ? { before: selIn } : undefined}
+                className="bg-[#1C1C1C] text-[#F2F2F2]"
+                onSelect={d => { if (d) { up("checkOut", format(d, "yyyy-MM-dd")); setOpenOut(false) } }} />
+            </PopoverContent>
+          </Popover>
+        </div>
+        <div className="space-y-1">
+          <Label className="text-[#737373] text-xs">Hora check-out</Label>
+          <Input type="time" className={inpT} value={h.horaCheckOut ?? ""} onChange={e => up("horaCheckOut", e.target.value)} />
+        </div>
+      </div>
+      <div className="space-y-1">
+        <Label className="text-[#737373] text-xs">Notas / detalles</Label>
+        <Input className={inpT} value={h.notas ?? ""} onChange={e => up("notas", e.target.value)} placeholder="Desayuno incluido, parqueadero..." />
       </div>
     </div>
   )
@@ -335,6 +531,9 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       hotelTipo:    cotizacion.hotelTipo   ?? undefined,
     }]
   })
+
+  // ── Hospedaje (sección independiente, opcional) ──
+  const [hospedaje, setHospedaje] = useState<Hospedaje | null>((cotizacion?.hospedaje as Hospedaje) ?? null)
 
   // ── Servicios ──
   const [servicios, setServicios] = useState<ServicioItem[]>((cotizacion?.servicios as ServicioItem[]) ?? SERVICIOS_DEFAULT)
@@ -509,6 +708,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       adultos, menores, edadesMenores,
       hotelNombre: t?.hotelNombre ?? "", hotelNoches: t?.hotelNoches ?? null, hotelTipo: t?.hotelTipo ?? "",
       tramos,   // All tramos including tramo_1
+      hospedaje,  // Sección de hospedaje independiente (null si no se usa)
       servicios,
       porcentajeGanancia: porcentajeEfectivo,
       cobrarIva,
@@ -573,6 +773,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         servicios, itinerario: null,
         hotelNombre: t0?.hotelNombre || null, hotelNoches: t0?.hotelNoches || null, hotelTipo: t0?.hotelTipo || null,
         tramos: tramos.length > 0 ? tramos : null,
+        hospedaje,
         porcentajeGanancia: porcentaje,
         costoNetoTotal: calculos.costoNetoTotal,
         valorConUtilidad: calculos.valorConUtilidad,
@@ -782,6 +983,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
             <Plus className="h-4 w-4" /> Añadir tramo
           </button>
         </div>
+
+        {/* HOSPEDAJE */}
+        <Section title="Hospedaje" />
+        <HospedajeSection hospedaje={hospedaje} onChange={setHospedaje} />
 
         {/* SERVICIOS */}
         <Section title="Servicios incluidos" />

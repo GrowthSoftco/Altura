@@ -40,12 +40,26 @@ export interface Tramo {
   tiempoVuelo?: string
   escalas?: string
   tiempoEscala?: string
-  // Hotel por tramo
+  // Hotel por tramo (opcional — independiente del vuelo)
   hotelNombre?: string
-  hotelCheckIn?: string
-  hotelCheckOut?: string
+  hotelCheckIn?: string       // fecha check-in (yyyy-MM-dd)
+  hotelCheckOut?: string      // fecha check-out (yyyy-MM-dd)
+  hotelHoraCheckIn?: string   // hora check-in (HH:mm)
+  hotelHoraCheckOut?: string  // hora check-out (HH:mm)
   hotelNoches?: number
   hotelTipo?: string
+}
+
+export interface Hospedaje {
+  nombre?: string         // nombre del hospedaje / hotel
+  habitacion?: string     // tipo o nombre de la habitación
+  direccion?: string      // dirección / ubicación
+  ciudad?: string         // ciudad
+  checkIn?: string        // fecha check-in (yyyy-MM-dd)
+  horaCheckIn?: string    // hora check-in (HH:mm)
+  checkOut?: string       // fecha check-out (yyyy-MM-dd)
+  horaCheckOut?: string   // hora check-out (HH:mm)
+  notas?: string          // notas / detalles adicionales
 }
 
 export interface CalculoPrecios {
@@ -106,6 +120,7 @@ export interface CotizacionBase {
   hotelNoches: number | null
   hotelTipo: string | null
   tramos: Tramo[] | null
+  hospedaje: Hospedaje | null
   porcentajeGanancia: number
   costoNetoTotal: number
   valorConUtilidad: number

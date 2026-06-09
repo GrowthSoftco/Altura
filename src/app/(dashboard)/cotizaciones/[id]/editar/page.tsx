@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { prisma } from "@/lib/prisma"
 import { CotizacionForm } from "@/components/cotizaciones/cotizacion-form"
-import { CotizacionCompleta } from "@/types"
+import { serializeCotizacion } from "@/lib/serialize"
 
 export default async function EditarCotizacionPage({
   params,
@@ -42,7 +42,7 @@ export default async function EditarCotizacionPage({
 
       <div className="h-px bg-[#1E1E1E]" />
 
-      <CotizacionForm cotizacion={cot as unknown as CotizacionCompleta} />
+      <CotizacionForm cotizacion={serializeCotizacion(cot)} />
     </div>
   )
 }

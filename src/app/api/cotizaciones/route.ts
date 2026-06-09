@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     body.adultos,
     body.menores,
     body.porcentajeGanancia,
-    { aplicar: body.mostrarPlanPagos ?? true, numeroCuotas: body.numeroCuotas ?? 3, porcentajes: body.porcentajesCuotas },
+    { aplicar: body.mostrarPlanPagos ?? true, numeroCuotas: body.numeroCuotas ?? 3, porcentajes: body.porcentajesCuotas, modalidad: body.modalidadPlan, fechaInicial: body.fechaInicioPago, fechas: body.fechas },
     body.cobrarIva ?? false,
   )
 
@@ -80,6 +80,7 @@ export async function POST(req: NextRequest) {
       hotelNoches:        body.hotelNoches  || null,
       hotelTipo:          body.hotelTipo    || null,
       tramos:             body.tramos       || [],
+      hospedaje:          body.hospedaje    || undefined,
       mostrarPlanPagos:   body.mostrarPlanPagos ?? true,
       numeroCuotas:       body.numeroCuotas ?? 3,
       porcentajeGanancia:  body.porcentajeGanancia,

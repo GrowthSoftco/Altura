@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic"
 
 import { NextRequest, NextResponse } from "next/server"
+import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { calcularPrecios } from "@/lib/calculos"
 
@@ -24,7 +25,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       body.adultos ?? 1,
       body.menores ?? 0,
       body.porcentajeGanancia ?? 0,
-      { aplicar: body.mostrarPlanPagos ?? true, numeroCuotas: body.numeroCuotas ?? 3, porcentajes: body.porcentajesCuotas },
+      { aplicar: body.mostrarPlanPagos ?? true, numeroCuotas: body.numeroCuotas ?? 3, porcentajes: body.porcentajesCuotas, modalidad: body.modalidadPlan, fechaInicial: body.fechaInicioPago, fechas: body.fechas },
       body.cobrarIva ?? false,
     )
     preciosData = {
@@ -65,6 +66,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       ...(body.hotelNoches         !== undefined && { hotelNoches: body.hotelNoches }),
       ...(body.hotelTipo           !== undefined && { hotelTipo: body.hotelTipo }),
       ...(body.tramos              !== undefined && { tramos: body.tramos }),
+      ...(body.hospedaje           !== undefined && { hospedaje: body.hospedaje ?? Prisma.JsonNull }),
       ...(body.mostrarPlanPagos    !== undefined && { mostrarPlanPagos: body.mostrarPlanPagos }),
       ...(body.numeroCuotas        !== undefined && { numeroCuotas: body.numeroCuotas }),
       ...(body.cobrarIva           !== undefined && { cobrarIva: body.cobrarIva }),

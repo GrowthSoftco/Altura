@@ -51,6 +51,7 @@ model Cotizacion {
   hotelNoches        Int?
   hotelTipo          String?
   tramos             Json?
+  hospedaje          Json?
   mostrarPlanPagos   Boolean @default(true)
   numeroCuotas       Int     @default(3)
   numeroVuelo        String?

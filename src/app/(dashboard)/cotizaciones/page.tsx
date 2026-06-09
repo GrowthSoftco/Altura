@@ -6,7 +6,8 @@ import { prisma } from "@/lib/prisma"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { RecientesTable } from "@/components/dashboard/recientes-table"
-import { CotizacionCompleta, EstadoCotizacion } from "@/types"
+import { serializeCotizaciones } from "@/lib/serialize"
+import { EstadoCotizacion } from "@/types"
 
 const ESTADOS: { label: string; value: EstadoCotizacion | "ALL" }[] = [
   { label: "Todas",       value: "ALL"         },
@@ -75,7 +76,7 @@ export default async function CotizacionesPage({
         })}
       </div>
 
-      <RecientesTable cotizaciones={cotizaciones as unknown as CotizacionCompleta[]} />
+      <RecientesTable cotizaciones={serializeCotizaciones(cotizaciones)} />
     </div>
   )
 }
