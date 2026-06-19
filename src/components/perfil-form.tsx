@@ -1,37 +1,31 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { Loader2, Upload } from "lucide-react"
+import { Loader2 } from "lucide-react"
 
 const inp = "w-full h-10 rounded-lg bg-[#161616] border border-[#262626] px-3 text-sm text-[#F2F2F2] placeholder:text-[#4A4A4A] outline-none focus:border-[#00B4C5] transition-colors"
 
 export function PerfilForm({ debeCambiar, isAdmin = false }: { debeCambiar: boolean; isAdmin?: boolean }) {
   const router = useRouter()
   const [actual, setActual] = useState("")
-  const fileRef = useRef<HTMLInputElement>(null)
-  const [uploadingPortada, setUploadingPortada] = useState(false)
+  const [portadaUrl, setPortadaUrl] = useState("")
+  const [savingPortada, setSavingPortada] = useState(false)
 
-  const subirPortada = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (!file.type.startsWith("image/")) { toast.error("Solo se aceptan imágenes"); return }
-    setUploadingPortada(true)
+  const guardarPortada = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!portadaUrl.startsWith("http")) { toast.error("Ingresa una URL válida"); return }
+    setSavingPortada(true)
     try {
-      const reader = new FileReader()
-      reader.onload = async (ev) => {
-        const dataUrl = ev.target?.result as string
-        const res = await fetch("/api/configuracion/portada", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ dataUrl }),
-        })
-        if (!res.ok) { toast.error("Error al subir imagen"); return }
-        toast.success("Imagen de portada actualizada")
-        setUploadingPortada(false)
-      }
-      reader.readAsDataURL(file)
-    } catch { toast.error("Error al subir imagen"); setUploadingPortada(false) }
+      const res = await fetch("/api/configuracion/portada", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ dataUrl: portadaUrl }),
+      })
+      if (!res.ok) { toast.error("Error al guardar"); return }
+      toast.success("Imagen de portada actualizada")
+    } catch { toast.error("Error de conexión") }
+    finally { setSavingPortada(false) }
   }
   const [nueva, setNueva] = useState("")
   const [confirmar, setConfirmar] = useState("")
@@ -99,13 +93,15 @@ export function PerfilForm({ debeCambiar, isAdmin = false }: { debeCambiar: bool
       {isAdmin && (
         <div className="mt-5 pt-5 border-t border-[#222222]">
           <h3 className="text-sm font-semibold text-[#F2F2F2] mb-1">Imagen de portada del login</h3>
-          <p className="text-[13px] text-[#737373] mb-3">Sube una imagen que se mostrará en la pantalla de inicio de sesión.</p>
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={subirPortada} />
-          <button type="button" onClick={() => fileRef.current?.click()} disabled={uploadingPortada}
-            className="h-10 px-4 rounded-lg border border-[#262626] bg-[#161616] text-sm text-[#F2F2F2] hover:border-[#00B4C5]/40 disabled:opacity-40 flex items-center gap-2 transition-colors">
-            {uploadingPortada ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-            {uploadingPortada ? "Subiendo..." : "Seleccionar imagen"}
-          </button>
+          <p className="text-[13px] text-[#737373] mb-3">Pega el link de una imagen para mostrarla en la pantalla de inicio de sesión.</p>
+          <form onSubmit={guardarPortada} className="flex gap-2">
+            <input className={inp} value={portadaUrl} onChange={e => setPortadaUrl(e.target.value)} placeholder="https://..." />
+            <button type="submit" disabled={savingPortada || !portadaUrl}
+              className="h-10 px-4 rounded-lg bg-white text-[#0A0A0A] text-sm font-semibold hover:bg-gray-100 disabled:opacity-40 flex items-center gap-2 shrink-0">
+              {savingPortada && <Loader2 className="h-4 w-4 animate-spin" />}
+              Guardar
+            </button>
+          </form>
         </div>
       )}
     </div>

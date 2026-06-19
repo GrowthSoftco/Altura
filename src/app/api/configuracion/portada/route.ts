@@ -5,8 +5,9 @@ import { getCurrentUser } from "@/lib/auth"
 
 export async function GET() {
   const config = await prisma.configuracion.findUnique({ where: { clave: "portada_imagen" } })
-  if (!config) return NextResponse.json({ url: null })
-  return NextResponse.json({ url: config.valor })
+  const res = NextResponse.json({ url: config?.valor ?? null })
+  res.headers.set("Cache-Control", "no-store")
+  return res
 }
 
 export async function POST(req: NextRequest) {
@@ -14,8 +15,8 @@ export async function POST(req: NextRequest) {
   if (!me || me.rol !== "ADMIN") return NextResponse.json({ error: "No autorizado" }, { status: 401 })
 
   const { dataUrl } = await req.json()
-  if (!dataUrl || !dataUrl.startsWith("data:image/")) {
-    return NextResponse.json({ error: "Imagen inválida" }, { status: 400 })
+  if (!dataUrl || (!dataUrl.startsWith("http") && !dataUrl.startsWith("data:image/"))) {
+    return NextResponse.json({ error: "URL inválida" }, { status: 400 })
   }
 
   await prisma.configuracion.upsert({
