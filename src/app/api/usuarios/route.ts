@@ -6,7 +6,7 @@ import { getCurrentUser, hashPassword, generarPasswordTemporal } from "@/lib/aut
 
 const select = {
   id: true, usuario: true, nombre: true, rol: true, mustChangePassword: true,
-  permInicio: true, permClientes: true, permCotizaciones: true, permUsuarios: true,
+  permInicio: true, permClientes: true, permCotizaciones: true, permUsuarios: true, permModificarEstados: true,
   createdAt: true,
 } as const
 
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
         permClientes: b.permClientes ?? true,
         permCotizaciones: b.permCotizaciones ?? true,
         permUsuarios: b.permUsuarios ?? false,
+        permModificarEstados: b.permModificarEstados ?? true,
       },
       select,
     })

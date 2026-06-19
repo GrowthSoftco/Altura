@@ -6,7 +6,7 @@ import { getCurrentUser, hashPassword, generarPasswordTemporal } from "@/lib/aut
 
 const select = {
   id: true, usuario: true, nombre: true, rol: true, mustChangePassword: true,
-  permInicio: true, permClientes: true, permCotizaciones: true, permUsuarios: true,
+  permInicio: true, permClientes: true, permCotizaciones: true, permUsuarios: true, permModificarEstados: true,
   createdAt: true,
 } as const
 
@@ -24,6 +24,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (b.permClientes !== undefined) data.permClientes = !!b.permClientes
     if (b.permCotizaciones !== undefined) data.permCotizaciones = !!b.permCotizaciones
     if (b.permUsuarios !== undefined) data.permUsuarios = !!b.permUsuarios
+    if (b.permModificarEstados !== undefined) data.permModificarEstados = !!b.permModificarEstados
 
     // Restablecer contraseña: el sistema genera una nueva temporal
     let tempPassword: string | undefined

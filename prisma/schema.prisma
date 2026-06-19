@@ -105,7 +105,8 @@ model Usuario {
   permInicio       Boolean @default(true)
   permClientes     Boolean @default(true)
   permCotizaciones Boolean @default(true)
-  permUsuarios     Boolean @default(false)   // gestión de usuarios (solo admin)
+  permUsuarios         Boolean @default(false)   // gestión de usuarios (solo admin)
+  permModificarEstados Boolean @default(true)    // puede cambiar el estado de cotizaciones
 
   cotizaciones Cotizacion[]
   bitacora     Bitacora[]

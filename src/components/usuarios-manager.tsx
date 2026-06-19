@@ -17,6 +17,7 @@ interface Usuario {
   permClientes: boolean
   permCotizaciones: boolean
   permUsuarios: boolean
+  permModificarEstados: boolean
 }
 
 const inp = "w-full h-10 rounded-lg bg-[#161616] border border-[#262626] px-3 text-sm text-[#F2F2F2] placeholder:text-[#4A4A4A] outline-none focus:border-[#00B4C5] transition-colors"
@@ -26,6 +27,7 @@ const PERMISOS: { key: keyof Usuario; label: string }[] = [
   { key: "permCotizaciones", label: "Cotizaciones" },
   { key: "permClientes", label: "Clientes" },
   { key: "permUsuarios", label: "Usuarios" },
+  { key: "permModificarEstados", label: "Mod. estados" },
 ]
 
 export function UsuariosManager({ usuariosIniciales, miId }: { usuariosIniciales: Usuario[]; miId: string }) {

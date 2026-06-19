@@ -38,12 +38,16 @@ export default function CotizacionDetailPage() {
   const [cot, setCot]       = useState<CotizacionCompleta | null>(null)
   const [loading, setLoad]  = useState(true)
   const [saving, setSaving] = useState(false)
+  const [puedeEstado, setPuedeEstado] = useState(true)
 
   useEffect(() => {
-    fetch(`/api/cotizaciones/${id}`)
-      .then((r) => r.json())
-      .then(setCot)
-      .finally(() => setLoad(false))
+    Promise.all([
+      fetch(`/api/cotizaciones/${id}`).then(r => r.json()),
+      fetch("/api/auth/me").then(r => r.ok ? r.json() : null),
+    ]).then(([cotData, me]) => {
+      setCot(cotData)
+      if (me) setPuedeEstado(me.rol === "ADMIN" || me.permModificarEstados !== false)
+    }).finally(() => setLoad(false))
   }, [id])
 
   const handleEstado = async (estado: EstadoCotizacion) => {
@@ -128,22 +132,24 @@ export default function CotizacionDetailPage() {
           >
             <Pencil className="h-3.5 w-3.5" /> Editar
           </Link>
-          <Select
-            value={cot.estado}
-            onValueChange={(v) => handleEstado(v as EstadoCotizacion)}
-            disabled={saving}
-          >
-            <SelectTrigger className="w-40 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] text-sm">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2]">
-              {ESTADOS.map((e) => (
-                <SelectItem key={e} value={e} className="focus:bg-[#242424]">
-                  {estadoLabels[e]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          {puedeEstado && (
+            <Select
+              value={cot.estado}
+              onValueChange={(v) => handleEstado(v as EstadoCotizacion)}
+              disabled={saving}
+            >
+              <SelectTrigger className="w-40 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2]">
+                {ESTADOS.map((e) => (
+                  <SelectItem key={e} value={e} className="focus:bg-[#242424]">
+                    {estadoLabels[e]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
           <Button
             onClick={handlePDF}
             className="bg-white hover:bg-gray-100 text-[#1A1A1A] font-semibold h-9 px-4 shadow-md shadow-black/10"

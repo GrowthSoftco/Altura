@@ -13,7 +13,7 @@ export default async function UsuariosPage() {
   const usuarios = await prisma.usuario.findMany({
     select: {
       id: true, usuario: true, nombre: true, rol: true, mustChangePassword: true,
-      permInicio: true, permClientes: true, permCotizaciones: true, permUsuarios: true,
+      permInicio: true, permClientes: true, permCotizaciones: true, permUsuarios: true, permModificarEstados: true,
     },
     orderBy: { createdAt: "asc" },
   })
