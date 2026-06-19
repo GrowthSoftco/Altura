@@ -7,16 +7,24 @@ import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { RecientesTable } from "@/components/dashboard/recientes-table"
 import { serializeCotizaciones } from "@/lib/serialize"
+import { getCurrentUser, filtroCotizaciones } from "@/lib/auth"
+import { redirect } from "next/navigation"
 import { EstadoCotizacion } from "@/types"
 
 const ESTADOS: { label: string; value: EstadoCotizacion | "ALL" }[] = [
-  { label: "Todas",       value: "ALL"         },
-  { label: "Cotizadas",   value: "COTIZADA"    },
-  { label: "Negociación", value: "NEGOCIACION" },
-  { label: "Aprobadas",   value: "APROBADA"    },
-  { label: "Pagando",     value: "PAGANDO"     },
-  { label: "Completadas", value: "COMPLETADA"  },
-  { label: "Canceladas",  value: "CANCELADA"   },
+  { label: "Todas",            value: "ALL"             },
+  { label: "Borrador",         value: "BORRADOR"        },
+  { label: "Enviada",          value: "ENVIADA"         },
+  { label: "Pendiente",        value: "PENDIENTE"       },
+  { label: "En ajuste",        value: "EN_AJUSTE"       },
+  { label: "Aprobada",         value: "APROBADA"        },
+  { label: "Reservada",        value: "RESERVADA"       },
+  { label: "Pagando",          value: "PAGANDO"         },
+  { label: "Pagada",           value: "PAGADA"          },
+  { label: "Viaje realizado",  value: "VIAJE_REALIZADO" },
+  { label: "Rechazada",        value: "RECHAZADA"       },
+  { label: "Vencida",          value: "VENCIDA"         },
+  { label: "Cancelada",        value: "CANCELADA"       },
 ]
 
 export default async function CotizacionesPage({
@@ -24,13 +32,19 @@ export default async function CotizacionesPage({
 }: {
   searchParams: Promise<{ estado?: string }>
 }) {
+  const me = await getCurrentUser()
+  if (!me) redirect("/login")
+
   const { estado } = await searchParams
   const estadoFilter = estado && estado !== "ALL" ? estado : undefined
 
   const cotizaciones = await prisma.cotizacion.findMany({
-    where: estadoFilter ? { estado: estadoFilter as never } : undefined,
+    where: {
+      ...filtroCotizaciones(me),
+      ...(estadoFilter ? { estado: estadoFilter as never } : {}),
+    },
     orderBy: { createdAt: "desc" },
-    include: { cliente: true },
+    include: { cliente: true, creadoPor: { select: { nombre: true, usuario: true } } },
   })
 
   return (
@@ -76,7 +90,7 @@ export default async function CotizacionesPage({
         })}
       </div>
 
-      <RecientesTable cotizaciones={serializeCotizaciones(cotizaciones)} />
+      <RecientesTable cotizaciones={serializeCotizaciones(cotizaciones)} mostrarCreador={me.rol === "ADMIN"} isAdmin={me.rol === "ADMIN"} />
     </div>
   )
 }

@@ -4,17 +4,27 @@ import { NextRequest, NextResponse } from "next/server"
 import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { calcularPrecios } from "@/lib/calculos"
+import { getCurrentUser, puedeAccederCotizacion } from "@/lib/auth"
+import { logBitacora } from "@/lib/bitacora"
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const me = await getCurrentUser()
+  if (!me) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
   const { id } = await params
   const cot = await prisma.cotizacion.findUnique({ where: { id }, include: { cliente: true } })
   if (!cot) return NextResponse.json({ error: "Not found" }, { status: 404 })
+  if (!puedeAccederCotizacion(me, cot)) return NextResponse.json({ error: "Sin acceso" }, { status: 403 })
   return NextResponse.json(cot)
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+  const me = await getCurrentUser()
+  if (!me) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
   const { id } = await params
+  const actual = await prisma.cotizacion.findUnique({ where: { id }, select: { creadoPorId: true, compartidoCon: true } })
+  if (!actual) return NextResponse.json({ error: "Not found" }, { status: 404 })
+  if (!puedeAccederCotizacion(me, actual)) return NextResponse.json({ error: "Sin acceso" }, { status: 403 })
   const body = await req.json()
 
   // If full edit (has servicios in body), recalculate prices
@@ -31,6 +41,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     preciosData = {
       servicios:           body.servicios,
       porcentajeGanancia:  body.porcentajeGanancia,
+      utilidadModo:        body.utilidadModo || null,
+      utilidadFija:        body.utilidadFija ?? null,
       cobrarIva:           body.cobrarIva ?? false,
       valorNetoIndividual: precios.valorPorPersona,
       valorNetoTotal:      precios.valorFinal,
@@ -76,6 +88,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     },
     include: { cliente: true },
   })
+  await logBitacora("COTIZACION_EDITADA", `Cotización ${cot.codigo} editada`, me.id, { cotizacionId: id })
   return NextResponse.json(cot)
   } catch (err) {
     console.error("PUT /api/cotizaciones/[id] error:", err)
@@ -84,7 +97,14 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const me = await getCurrentUser()
+  if (!me) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+  if (me.rol !== "ADMIN") return NextResponse.json({ error: "Solo el administrador puede eliminar cotizaciones" }, { status: 403 })
   const { id } = await params
+  const cot = await prisma.cotizacion.findUnique({ where: { id }, select: { creadoPorId: true, compartidoCon: true, codigo: true } })
+  if (!cot) return NextResponse.json({ error: "Not found" }, { status: 404 })
+  if (!puedeAccederCotizacion(me, cot)) return NextResponse.json({ error: "Sin acceso" }, { status: 403 })
   await prisma.cotizacion.delete({ where: { id } })
+  await logBitacora("COTIZACION_ELIMINADA", `Cotización ${cot.codigo} eliminada`, me.id, { cotizacionId: id })
   return NextResponse.json({ ok: true })
 }

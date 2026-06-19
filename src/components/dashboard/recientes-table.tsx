@@ -19,11 +19,13 @@ import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { EstadoBadge } from "@/components/cotizaciones/estado-badge"
 import { formatCOP } from "@/lib/utils"
+import { ConfirmDialog, type ConfirmState } from "@/components/ui/confirm-dialog"
 import { CotizacionCompleta } from "@/types"
 
-export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompleta[] }) {
+export function RecientesTable({ cotizaciones, mostrarCreador = false, isAdmin = false }: { cotizaciones: CotizacionCompleta[]; mostrarCreador?: boolean; isAdmin?: boolean }) {
   const router = useRouter()
   const [busyId, setBusyId] = useState<string | null>(null)
+  const [confirm, setConfirm] = useState<ConfirmState | null>(null)
 
   const duplicar = async (id: string) => {
     setBusyId(id)
@@ -40,22 +42,27 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
     }
   }
 
-  const eliminar = async (id: string, codigo: string) => {
-    if (!window.confirm(`¿Eliminar la cotización ${codigo}? Esta acción no se puede deshacer.`)) return
-    setBusyId(id)
-    try {
-      const res = await fetch(`/api/cotizaciones/${id}`, { method: "DELETE" })
-      if (!res.ok) throw new Error(await res.text())
-      toast.success(`Cotización ${codigo} eliminada`)
-      router.refresh()
-    } catch (e) {
-      toast.error(`Error al eliminar: ${e instanceof Error ? e.message.slice(0, 100) : "desconocido"}`)
-    } finally {
-      setBusyId(null)
-    }
-  }
+  const eliminar = (id: string, codigo: string) => setConfirm({
+    title: `Eliminar cotización ${codigo}`,
+    description: "Esta acción no se puede deshacer.",
+    confirmLabel: "Eliminar", danger: true,
+    action: async () => {
+      setBusyId(id)
+      try {
+        const res = await fetch(`/api/cotizaciones/${id}`, { method: "DELETE" })
+        if (!res.ok) throw new Error(await res.text())
+        toast.success(`Cotización ${codigo} eliminada`)
+        router.refresh()
+      } catch (e) {
+        toast.error(`Error al eliminar: ${e instanceof Error ? e.message.slice(0, 100) : "desconocido"}`)
+      } finally {
+        setBusyId(null); setConfirm(null)
+      }
+    },
+  })
 
   return (
+    <>
     <div className="rounded-xl border border-[#222222] overflow-hidden bg-[#1C1C1C]">
       <Table>
         <TableHeader>
@@ -66,13 +73,14 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
             <TableHead className="text-[#4A4A4A] text-[11px] uppercase tracking-wider font-medium h-10">Fecha</TableHead>
             <TableHead className="text-[#4A4A4A] text-[11px] uppercase tracking-wider font-medium h-10">Valor</TableHead>
             <TableHead className="text-[#4A4A4A] text-[11px] uppercase tracking-wider font-medium h-10">Estado</TableHead>
+            {mostrarCreador && <TableHead className="text-[#4A4A4A] text-[11px] uppercase tracking-wider font-medium h-10">Creado por</TableHead>}
             <TableHead className="w-28" />
           </TableRow>
         </TableHeader>
         <TableBody>
           {cotizaciones.length === 0 && (
             <TableRow>
-              <TableCell colSpan={7} className="text-center text-[#4A4A4A] text-sm py-12">
+              <TableCell colSpan={mostrarCreador ? 8 : 7} className="text-center text-[#4A4A4A] text-sm py-12">
                 No hay cotizaciones aún
               </TableCell>
             </TableRow>
@@ -100,6 +108,11 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
               <TableCell className="py-3">
                 <EstadoBadge estado={cot.estado} />
               </TableCell>
+              {mostrarCreador && (
+                <TableCell className="text-[#737373] text-xs py-3">
+                  {cot.creadoPor?.nombre || cot.creadoPor?.usuario || "—"}
+                </TableCell>
+              )}
               <TableCell className="py-3">
                 <div className="flex items-center justify-end gap-0.5">
                   <Link
@@ -124,6 +137,7 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
                   >
                     {busyId === cot.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Copy className="h-3.5 w-3.5" />}
                   </button>
+                  {isAdmin && (
                   <button
                     type="button"
                     title="Eliminar"
@@ -136,6 +150,7 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
+                  )}
                 </div>
               </TableCell>
             </TableRow>
@@ -143,5 +158,7 @@ export function RecientesTable({ cotizaciones }: { cotizaciones: CotizacionCompl
         </TableBody>
       </Table>
     </div>
+    <ConfirmDialog state={confirm} loading={!!busyId} onClose={() => setConfirm(null)} />
+    </>
   )
 }

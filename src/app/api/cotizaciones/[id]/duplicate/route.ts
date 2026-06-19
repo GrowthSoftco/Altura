@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server"
 import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { generarCodigoCotizacion } from "@/lib/calculos"
+import { getCurrentUser, puedeAccederCotizacion } from "@/lib/auth"
+import { logBitacora } from "@/lib/bitacora"
 
 // Json nullable: convierte null/undefined al sentinel de Prisma
 const jOrNull = (v: unknown) =>
@@ -11,9 +13,12 @@ const jOrNull = (v: unknown) =>
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const me = await getCurrentUser()
+    if (!me) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
     const { id } = await params
     const orig = await prisma.cotizacion.findUnique({ where: { id } })
     if (!orig) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    if (!puedeAccederCotizacion(me, orig)) return NextResponse.json({ error: "Sin acceso" }, { status: 403 })
 
     const codigo = await generarCodigoCotizacion(prisma)
 
@@ -31,7 +36,9 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       data: {
         ...rest,
         codigo,
-        estado: "COTIZADA",
+        estado: "BORRADOR",
+        creadoPorId: me.id,
+        compartidoCon: [],
         servicios:  rest.servicios as Prisma.InputJsonValue,
         planPagos:  rest.planPagos as Prisma.InputJsonValue,
         tramos:     jOrNull(rest.tramos),
@@ -40,6 +47,7 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
       },
       include: { cliente: true },
     })
+    await logBitacora("COTIZACION_DUPLICADA", `Cotización ${orig.codigo} duplicada → ${nueva.codigo}`, me.id, { cotizacionId: nueva.id })
     return NextResponse.json(nueva, { status: 201 })
   } catch (err) {
     console.error("POST /api/cotizaciones/[id]/duplicate error:", err)

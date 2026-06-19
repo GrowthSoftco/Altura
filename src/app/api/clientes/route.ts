@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
         }
       : undefined,
     include: { _count: { select: { cotizaciones: true } } },
-    orderBy: { createdAt: "desc" },
+    orderBy: { nombre: "asc" },
   })
   return NextResponse.json(clientes)
 }

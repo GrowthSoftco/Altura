@@ -244,6 +244,7 @@ function TramoBlock({
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
               <Calendar mode="single" selected={selLlegada} locale={es}
+                defaultMonth={selLlegada ?? selSalida}
                 disabled={selSalida ? { before: selSalida } : undefined}
                 className="bg-[#1C1C1C] text-[#F2F2F2]"
                 onSelect={d => { if (d) { up("fechaRegreso", format(d, "yyyy-MM-dd")); setOpenLlegada(false) } }} />
@@ -293,7 +294,7 @@ function TramoBlock({
         ) : (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hotel Tramo {tramoNum}</p>
+              <p className="text-[10px] text-[#4A4A4A] uppercase tracking-wider">Hospedaje tramo {tramoNum}</p>
               <button type="button" onClick={removeHotel}
                 className="text-[#737373] hover:text-red-400 transition-colors" title="Quitar hotel">
                 <Trash2 className="h-3.5 w-3.5" />
@@ -348,6 +349,7 @@ function TramoBlock({
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
                     <Calendar mode="single" selected={selCheckOut} locale={es}
+                      defaultMonth={selCheckOut ?? selCheckIn}
                       disabled={selCheckIn ? { before: selCheckIn } : undefined}
                       className="bg-[#1C1C1C] text-[#F2F2F2]"
                       onSelect={d => { if (d) { up("hotelCheckOut", format(d, "yyyy-MM-dd")); setOpenCheckOut(false) } }} />
@@ -461,6 +463,7 @@ function HospedajeSection({
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
               <Calendar mode="single" selected={selOut} locale={es}
+                defaultMonth={selOut ?? selIn}
                 disabled={selIn ? { before: selIn } : undefined}
                 className="bg-[#1C1C1C] text-[#F2F2F2]"
                 onSelect={d => { if (d) { up("checkOut", format(d, "yyyy-MM-dd")); setOpenOut(false) } }} />
@@ -551,8 +554,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   // ── Servicios ──
   const [servicios, setServicios] = useState<ServicioItem[]>((cotizacion?.servicios as ServicioItem[]) ?? SERVICIOS_DEFAULT)
   const [porcentaje, setPorcentaje]         = useState(cotizacion ? Number(cotizacion.porcentajeGanancia) : 0)
-  const [utilidadModo, setUtilidadModo]     = useState<"porcentaje" | "fijo">("porcentaje")
-  const [utilidadFija, setUtilidadFija]     = useState(0)
+  const [utilidadModo, setUtilidadModo]     = useState<"porcentaje" | "fijo">(
+    (cotizacion?.utilidadModo as "porcentaje" | "fijo") ?? "porcentaje"
+  )
+  const [utilidadFija, setUtilidadFija]     = useState(cotizacion?.utilidadFija ?? 0)
 
   // ── Plan de pagos ──
   const initPlan = cotizacion?.planPagos as { aplicar?: boolean; numeroCuotas?: number; cuotas?: { porcentaje: number; fecha?: string }[]; modalidad?: "mensual" | "quincenal"; incremento?: number; fechaInicial?: string } | undefined
@@ -683,7 +688,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     setTramos(prev => [...prev, { id: tramoId, origen: "", destino: "" }])
     setServicios(prev => [...prev,
       { id: `tkt_${tramoId}`,   nombre: `Tiquete Tramo ${tramoNum}`, activo: true, valorNeto: 0, obs: "", esPorPersona: true  },
-      { id: `hotel_${tramoId}`, nombre: `Hotel Tramo ${tramoNum}`,   activo: true, valorNeto: 0, obs: "", esPorPersona: false },
+      { id: `hotel_${tramoId}`, nombre: `Hospedaje tramo ${tramoNum}`, activo: true, valorNeto: 0, obs: "", esPorPersona: false },
     ])
   }
 
@@ -724,6 +729,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       hospedaje,  // Sección de hospedaje independiente (null si no se usa)
       servicios,
       porcentajeGanancia: porcentajeEfectivo,
+      utilidadModo,
+      utilidadFija: utilidadModo === "fijo" ? Math.round(utilidadFija) : null,
       cobrarIva,
       mostrarPlanPagos,
       numeroCuotas: numCuotas,
@@ -772,7 +779,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
     }
     try {
       const mock: CotizacionCompleta = {
-        id: "preview", codigo: "COT-PREVIEW", estado: "COTIZADA",
+        id: "preview", codigo: "COT-PREVIEW", estado: "BORRADOR",
         fechaCreacion: new Date(), clienteId: clienteId ?? "preview",
         cliente: { id: clienteId ?? "preview", nombre, telefono, correo: correo || null, documento: documento || null, fechaRegistro: new Date(), createdAt: new Date(), updatedAt: new Date() },
         tipo, origen: detOrigen, destino: detDestino,
@@ -787,6 +794,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         hotelNombre: t0?.hotelNombre || null, hotelNoches: t0?.hotelNoches || null, hotelTipo: t0?.hotelTipo || null,
         tramos: tramos.length > 0 ? tramos : null,
         hospedaje,
+        creadoPorId: null, compartidoCon: [], utilidadModo: null, utilidadFija: null,
         porcentajeGanancia: porcentaje,
         costoNetoTotal: calculos.costoNetoTotal,
         valorConUtilidad: calculos.valorConUtilidad,
@@ -961,6 +969,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
                   <Calendar mode="single" selected={fr} locale={es}
+                    defaultMonth={fr ?? fs}
                     disabled={fs ? { before: fs } : undefined}
                     className="bg-[#1C1C1C] text-[#F2F2F2]"
                     onSelect={d => { if (d) { setDetFechaRegreso(format(d, "yyyy-MM-dd")); setOpenDetLlegada(false) } }} />
@@ -1074,7 +1083,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2]">
-                      {[1,2,3,4,5,6].map(n => <SelectItem key={n} value={String(n)}>{n} cuota{n > 1 ? "s" : ""}</SelectItem>)}
+                      {Array.from({length: 24}, (_, i) => i + 1).map(n => <SelectItem key={n} value={String(n)}>{n} cuota{n > 1 ? "s" : ""}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>

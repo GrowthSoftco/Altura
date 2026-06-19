@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic"
 
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
@@ -8,12 +8,15 @@ import { cn } from "@/lib/utils"
 import { prisma } from "@/lib/prisma"
 import { CotizacionForm } from "@/components/cotizaciones/cotizacion-form"
 import { serializeCotizacion } from "@/lib/serialize"
+import { getCurrentUser, puedeAccederCotizacion } from "@/lib/auth"
 
 export default async function EditarCotizacionPage({
   params,
 }: {
   params: Promise<{ id: string }>
 }) {
+  const me = await getCurrentUser()
+  if (!me) redirect("/login")
   const { id } = await params
 
   const cot = await prisma.cotizacion.findUnique({
@@ -22,6 +25,7 @@ export default async function EditarCotizacionPage({
   })
 
   if (!cot) notFound()
+  if (!puedeAccederCotizacion(me, cot)) redirect("/cotizaciones")
 
   return (
     <div className="space-y-6 max-w-7xl">

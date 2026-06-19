@@ -21,13 +21,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
-import { EstadoBadge } from "@/components/cotizaciones/estado-badge"
+import { EstadoBadge, estadoLabels } from "@/components/cotizaciones/estado-badge"
 import { CotizacionPDF } from "@/components/cotizaciones/cotizacion-pdf"
+import { CompartirCotizacion } from "@/components/compartir-cotizacion"
 import { formatCOP, calcularDuracion } from "@/lib/calculos"
 import { CotizacionCompleta, EstadoCotizacion } from "@/types"
 
 const ESTADOS: EstadoCotizacion[] = [
-  "COTIZADA", "NEGOCIACION", "APROBADA", "PAGANDO", "COMPLETADA", "CANCELADA",
+  "BORRADOR", "ENVIADA", "PENDIENTE", "EN_AJUSTE", "APROBADA", "RESERVADA",
+  "PAGANDO", "PAGADA", "VIAJE_REALIZADO", "RECHAZADA", "VENCIDA", "CANCELADA",
 ]
 
 export default function CotizacionDetailPage() {
@@ -119,6 +121,7 @@ export default function CotizacionDetailPage() {
           <EstadoBadge estado={cot.estado} />
         </div>
         <div className="flex items-center gap-2">
+          <CompartirCotizacion id={id} />
           <Link
             href={`/cotizaciones/${id}/editar`}
             className={cn(buttonVariants({ variant: "outline", size: "sm" }), "border-[#262626] bg-[#1C1C1C] text-[#737373] hover:text-[#F2F2F2] hover:bg-[#242424] h-9 gap-1.5")}
@@ -136,7 +139,7 @@ export default function CotizacionDetailPage() {
             <SelectContent className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2]">
               {ESTADOS.map((e) => (
                 <SelectItem key={e} value={e} className="focus:bg-[#242424]">
-                  {e}
+                  {estadoLabels[e]}
                 </SelectItem>
               ))}
             </SelectContent>

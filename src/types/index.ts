@@ -72,8 +72,9 @@ export interface CalculoPrecios {
 }
 
 export type EstadoCotizacion =
-  | "COTIZADA" | "NEGOCIACION" | "APROBADA"
-  | "PAGANDO"  | "COMPLETADA"  | "CANCELADA"
+  | "BORRADOR" | "ENVIADA" | "PENDIENTE" | "EN_AJUSTE"
+  | "APROBADA" | "RESERVADA" | "PAGANDO" | "PAGADA"
+  | "VIAJE_REALIZADO" | "RECHAZADA" | "VENCIDA" | "CANCELADA"
 
 export type TipoViaje = "NACIONAL" | "INTERNACIONAL"
 
@@ -121,7 +122,12 @@ export interface CotizacionBase {
   hotelTipo: string | null
   tramos: Tramo[] | null
   hospedaje: Hospedaje | null
+  creadoPorId: string | null
+  compartidoCon: string[]
+  creadoPor?: { nombre: string | null; usuario: string } | null
   porcentajeGanancia: number
+  utilidadModo: string | null
+  utilidadFija: number | null
   costoNetoTotal: number
   valorConUtilidad: number
   valorPorPersona: number

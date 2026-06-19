@@ -3,14 +3,20 @@ export const dynamic = "force-dynamic"
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { generarCodigoCotizacion, calcularPrecios } from "@/lib/calculos"
+import { getCurrentUser, filtroCotizaciones } from "@/lib/auth"
+import { logBitacora } from "@/lib/bitacora"
 
 export async function GET(req: NextRequest) {
+  const me = await getCurrentUser()
+  if (!me) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
+
   const { searchParams } = new URL(req.url)
   const estado    = searchParams.get("estado")
   const clienteId = searchParams.get("clienteId")
 
   const cotizaciones = await prisma.cotizacion.findMany({
     where: {
+      ...filtroCotizaciones(me),
       ...(estado    && { estado: estado as never }),
       ...(clienteId && { clienteId }),
     },
@@ -22,6 +28,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+  const me = await getCurrentUser()
+  if (!me) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
   const body = await req.json()
   let clienteId = body.clienteId
 
@@ -81,9 +89,12 @@ export async function POST(req: NextRequest) {
       hotelTipo:          body.hotelTipo    || null,
       tramos:             body.tramos       || [],
       hospedaje:          body.hospedaje    || undefined,
+      creadoPorId:        me.id,
       mostrarPlanPagos:   body.mostrarPlanPagos ?? true,
       numeroCuotas:       body.numeroCuotas ?? 3,
       porcentajeGanancia:  body.porcentajeGanancia,
+      utilidadModo:        body.utilidadModo || null,
+      utilidadFija:        body.utilidadFija ?? null,
       cobrarIva:           body.cobrarIva ?? false,
       valorNetoIndividual: precios.valorPorPersona,
       valorNetoTotal:      precios.valorFinal,
@@ -96,6 +107,7 @@ export async function POST(req: NextRequest) {
     },
     include: { cliente: true },
   })
+  await logBitacora("COTIZACION_CREADA", `Cotización ${cotizacion.codigo} creada para ${cotizacion.cliente.nombre}`, me.id, { cotizacionId: cotizacion.id })
   return NextResponse.json(cotizacion, { status: 201 })
   } catch (err) {
     console.error("POST /api/cotizaciones error:", err)

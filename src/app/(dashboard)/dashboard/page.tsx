@@ -5,22 +5,25 @@ import { prisma } from "@/lib/prisma"
 import { MetricCard } from "@/components/dashboard/metric-card"
 import { RecientesTable } from "@/components/dashboard/recientes-table"
 import { serializeCotizaciones } from "@/lib/serialize"
+import { getCurrentUser, filtroCotizaciones } from "@/lib/auth"
+import { redirect } from "next/navigation"
 import { formatCOP } from "@/lib/utils"
 
-async function getDashboardData() {
+async function getDashboardData(scope: object) {
   const now   = new Date()
   const start = new Date(now.getFullYear(), now.getMonth(), 1)
 
   const [cotizacionesMes, totalClientes, aprobadas, valorAggregate, recientes] =
     await Promise.all([
-      prisma.cotizacion.count({ where: { createdAt: { gte: start } } }),
+      prisma.cotizacion.count({ where: { ...scope, createdAt: { gte: start } } }),
       prisma.cliente.count(),
-      prisma.cotizacion.count({ where: { estado: "APROBADA" } }),
-      prisma.cotizacion.aggregate({ _sum: { valorConPorcentaje: true } }),
+      prisma.cotizacion.count({ where: { ...scope, estado: "APROBADA" } }),
+      prisma.cotizacion.aggregate({ where: scope, _sum: { valorConPorcentaje: true } }),
       prisma.cotizacion.findMany({
+        where: scope,
         take: 10,
         orderBy: { createdAt: "desc" },
-        include: { cliente: true },
+        include: { cliente: true, creadoPor: { select: { nombre: true, usuario: true } } },
       }),
     ])
 
@@ -34,8 +37,11 @@ async function getDashboardData() {
 }
 
 export default async function DashboardPage() {
+  const me = await getCurrentUser()
+  if (!me) redirect("/login")
+
   const { cotizacionesMes, totalClientes, aprobadas, valorTotal, recientes } =
-    await getDashboardData()
+    await getDashboardData(filtroCotizaciones(me))
 
   const metrics = [
     {
@@ -98,7 +104,7 @@ export default async function DashboardPage() {
             {recientes.length} registros
           </span>
         </div>
-        <RecientesTable cotizaciones={serializeCotizaciones(recientes)} />
+        <RecientesTable cotizaciones={serializeCotizaciones(recientes)} mostrarCreador={me.rol === "ADMIN"} isAdmin={me.rol === "ADMIN"} />
       </div>
 
     </div>

@@ -10,6 +10,8 @@ export function serializeCotizacion<T extends Record<string, unknown>>(
   return {
     ...cot,
     porcentajeGanancia:  Number(cot.porcentajeGanancia ?? 0),
+    utilidadModo:        (cot.utilidadModo as string | null) ?? null,
+    utilidadFija:        (cot.utilidadFija as number | null) ?? null,
     valorNetoIndividual: Number(cot.valorNetoIndividual ?? 0),
     valorNetoTotal:      Number(cot.valorNetoTotal ?? 0),
     gananciaTotal:       Number(cot.gananciaTotal ?? 0),

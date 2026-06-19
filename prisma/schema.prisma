@@ -25,7 +25,7 @@ model Cliente {
 model Cotizacion {
   id            String   @id @default(cuid())
   codigo        String   @unique
-  estado        Estado   @default(COTIZADA)
+  estado        Estado   @default(BORRADOR)
   fechaCreacion DateTime @default(now())
 
   clienteId String
@@ -63,6 +63,8 @@ model Cotizacion {
   itinerario Json?
 
   porcentajeGanancia  Decimal
+  utilidadModo        String?   // "porcentaje" | "fijo"
+  utilidadFija        Int?      // valor exacto de utilidad si modo = fijo
   valorNetoIndividual Decimal
   valorNetoTotal      Decimal
   gananciaTotal       Decimal
@@ -75,22 +77,78 @@ model Cotizacion {
   observaciones    String?
   notasInternas    String?
 
+  // Propiedad y compartir
+  creadoPorId   String?
+  creadoPor     Usuario?  @relation(fields: [creadoPorId], references: [id], onDelete: SetNull)
+  compartidoCon String[]  @default([])   // ids de usuarios con acceso compartido
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("cotizaciones")
 }
 
+enum Rol {
+  ADMIN
+  USER
+}
+
+model Usuario {
+  id           String  @id @default(cuid())
+  usuario      String  @unique          // identificador de login (correo o nombre de usuario)
+  nombre       String?
+  passwordHash String
+  rol          Rol     @default(USER)
+  mustChangePassword Boolean @default(true)
+
+  // Permisos de páginas (toggles por usuario)
+  permInicio       Boolean @default(true)
+  permClientes     Boolean @default(true)
+  permCotizaciones Boolean @default(true)
+  permUsuarios     Boolean @default(false)   // gestión de usuarios (solo admin)
+
+  cotizaciones Cotizacion[]
+  bitacora     Bitacora[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("usuarios")
+}
+
 enum Estado {
-  COTIZADA
-  NEGOCIACION
+  BORRADOR
+  ENVIADA
+  PENDIENTE
+  EN_AJUSTE
   APROBADA
+  RESERVADA
   PAGANDO
-  COMPLETADA
+  PAGADA
+  VIAJE_REALIZADO
+  RECHAZADA
+  VENCIDA
   CANCELADA
 }
 
 enum TipoViaje {
   NACIONAL
   INTERNACIONAL
+}
+
+model Bitacora {
+  id          String   @id @default(cuid())
+  tipo        String
+  descripcion String
+  usuarioId   String?
+  usuario     Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+  meta        Json?
+  creadoEn    DateTime @default(now())
+  @@map("bitacora")
+}
+
+model Configuracion {
+  clave String @id
+  valor String
+  @@map("configuracion")
 }
