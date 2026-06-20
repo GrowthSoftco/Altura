@@ -11,11 +11,13 @@ export async function GET() {
     usuario: u.usuario,
     nombre: u.nombre,
     rol: u.rol,
+    permModificarEstados: u.permModificarEstados,
     perms: {
       inicio: u.permInicio,
       cotizaciones: u.permCotizaciones,
       clientes: u.permClientes,
       usuarios: u.permUsuarios,
+      modificarEstados: u.permModificarEstados,
     },
   })
 }
