@@ -17,6 +17,29 @@ import { EstadoCotizacion, ClienteBase } from "@/types"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
+// Paleta de colores para avatares; se asigna de forma estable según el nombre/id
+const AVATAR_COLORS = [
+  "bg-[#00B4C5]/15 text-[#22d3ee]",
+  "bg-blue-500/15 text-blue-400",
+  "bg-violet-500/15 text-violet-400",
+  "bg-emerald-500/15 text-emerald-400",
+  "bg-amber-500/15 text-amber-400",
+  "bg-rose-500/15 text-rose-400",
+  "bg-indigo-500/15 text-indigo-400",
+  "bg-teal-500/15 text-teal-400",
+  "bg-orange-500/15 text-orange-400",
+  "bg-pink-500/15 text-pink-400",
+  "bg-cyan-500/15 text-cyan-400",
+  "bg-fuchsia-500/15 text-fuchsia-400",
+  "bg-lime-500/15 text-lime-400",
+  "bg-sky-500/15 text-sky-400",
+]
+function avatarColor(key: string) {
+  let h = 0
+  for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0
+  return AVATAR_COLORS[h % AVATAR_COLORS.length]
+}
+
 interface ClienteRow {
   id: string
   nombre: string
@@ -189,13 +212,13 @@ export default function ClientesPage() {
                   type="button"
                   onClick={() => setSelectedId(c.id)}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2.5 text-left border-l-2 transition-colors",
-                    active ? "bg-[#202020] border-l-[#00B4C5]" : "border-l-transparent hover:bg-[#1C1C1C]"
+                    "w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors",
+                    active ? "bg-[#202020]" : "hover:bg-[#1C1C1C]"
                   )}
                 >
                   <div className={cn(
                     "h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
-                    active ? "bg-[#00B4C5] text-[#052028]" : "bg-[#1A2035] text-[#00B4C5]"
+                    avatarColor(c.id)
                   )}>
                     {c.nombre.charAt(0).toUpperCase()}
                   </div>
@@ -234,7 +257,7 @@ export default function ClientesPage() {
               {/* Header */}
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="h-12 w-12 rounded-full bg-[#1A2035] flex items-center justify-center text-[#00B4C5] font-bold text-lg shrink-0">
+                  <div className={cn("h-12 w-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0", avatarColor(detalle.id))}>
                     {detalle.nombre.charAt(0).toUpperCase()}
                   </div>
                   <div>
