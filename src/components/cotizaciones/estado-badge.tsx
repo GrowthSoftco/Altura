@@ -8,13 +8,13 @@ const estadoVariants: Record<EstadoCotizacion, string> = {
   EN_AJUSTE:       "bg-orange-500/10 text-orange-400 border border-orange-500/20",
   APROBADA:        "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
   RESERVADA:       "bg-[#00B4C5]/10 text-[#00B4C5] border border-[#00B4C5]/20",
+  REVISADA:        "bg-violet-500/10 text-violet-400 border border-violet-500/20",
   PAGANDO:         "bg-purple-500/10 text-purple-400 border border-purple-500/20",
   PAGADA:          "bg-green-600/15 text-green-500 border border-green-600/25",
   VIAJE_REALIZADO: "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20",
   RECHAZADA:       "bg-red-500/10 text-red-400 border border-red-500/20",
   VENCIDA:         "bg-pink-500/10 text-pink-400 border border-pink-500/20",
   CANCELADA:       "bg-red-900/30 text-red-300 border border-red-900/40",
-  REVISADA: "bg-pink-500/10 text-pink-400 border border-pink-500/20",
 }
 
 export const estadoLabels: Record<EstadoCotizacion, string> = {
@@ -24,13 +24,13 @@ export const estadoLabels: Record<EstadoCotizacion, string> = {
   EN_AJUSTE:       "En ajuste",
   APROBADA:        "Aprobada",
   RESERVADA:       "Reservada",
+  REVISADA:        "Revisada",
   PAGANDO:         "Pagando",
   PAGADA:          "Pagada",
   VIAJE_REALIZADO: "Viaje realizado",
   RECHAZADA:       "Rechazada",
   VENCIDA:         "Vencida",
   CANCELADA:       "Cancelada",
-  REVISADA: "Revisada",
 }
 
 export function EstadoBadge({ estado }: { estado: EstadoCotizacion }) {
