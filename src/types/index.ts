@@ -74,7 +74,7 @@ export interface CalculoPrecios {
 export type EstadoCotizacion =
   | "BORRADOR" | "ENVIADA" | "PENDIENTE" | "EN_AJUSTE"
   | "APROBADA" | "RESERVADA" | "PAGANDO" | "PAGADA"
-  | "VIAJE_REALIZADO" | "RECHAZADA" | "VENCIDA" | "CANCELADA"
+  | "VIAJE_REALIZADO" | "RECHAZADA" | "VENCIDA" | "CANCELADA" | "REVISADA"
 
 export type TipoViaje = "NACIONAL" | "INTERNACIONAL"
 
