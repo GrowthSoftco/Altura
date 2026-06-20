@@ -838,9 +838,9 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   const inp = "bg-[#161616] border-[#2A2A2A] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm rounded-lg transition-colors"
 
   return (
-    <div className="grid grid-cols-3 gap-5 items-start">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
       {/* ── Left: Form ── */}
-      <div className="col-span-2 space-y-4">
+      <div className="lg:col-span-2 space-y-4">
 
         {/* CLIENTE */}
         <SectionCard n={1} icon={User} title="Datos del Cliente" subtitle="¿Quién viaja?">
@@ -1214,7 +1214,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       </div>
 
       {/* ── Right: Resumen sticky ── */}
-      <div className="sticky top-6">
+      <div className="lg:sticky lg:top-6">
         <ResumenCard
           calculos={calculos} porcentaje={Math.round(porcentajeEfectivo)} adultos={adultos} menores={menores}
           cobrarIva={cobrarIva} onToggleIva={(v) => setCobrarIva(v)}

@@ -5,8 +5,9 @@ import Link from "next/link"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import {
-  Search, UserPlus, Phone, Mail, CreditCard, FilePlus, Eye, Copy, Trash2, Loader2, Users,
+  Search, UserPlus, Phone, Mail, CreditCard, FilePlus, Eye, Copy, Trash2, Loader2, Users, ArrowLeft,
 } from "lucide-react"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ClienteForm } from "@/components/clientes/cliente-form"
@@ -77,16 +78,25 @@ export default function ClientesPage() {
   const [confirm, setConfirm] = useState<ConfirmState | null>(null)
   const [deleting, setDeleting] = useState(false)
 
+  const isMobile = useIsMobile()
+
   const fetchClientes = useCallback(async (q = "") => {
     setLoading(true)
     try {
       const res = await fetch(`/api/clientes${q ? `?q=${encodeURIComponent(q)}` : ""}`)
       const data: ClienteRow[] = await res.json()
       setClientes(data)
-      // Auto-seleccionar el primero si no hay selección o la actual desapareció
-      setSelectedId(prev => (prev && data.some(c => c.id === prev)) ? prev : (data[0]?.id ?? null))
     } finally { setLoading(false) }
   }, [])
+
+  // Selección: en escritorio auto-selecciona el primero; en móvil arranca en la lista
+  useEffect(() => {
+    setSelectedId(prev => {
+      if (clientes.length === 0) return null
+      if (prev && clientes.some(c => c.id === prev)) return prev
+      return isMobile ? null : clientes[0].id
+    })
+  }, [clientes, isMobile])
 
   const fetchDetalle = useCallback(async (id: string) => {
     setLoadingDetalle(true)
@@ -161,7 +171,7 @@ export default function ClientesPage() {
   })
 
   return (
-    <div className="flex flex-col h-[calc(100svh-6.5rem)] max-w-7xl mx-auto">
+    <div className="flex flex-col md:h-[calc(100svh-6.5rem)] max-w-7xl mx-auto">
       <ConfirmDialog state={confirm} loading={deleting || !!busyId} onClose={() => setConfirm(null)} />
 
       {/* Heading */}
@@ -181,10 +191,13 @@ export default function ClientesPage() {
       </div>
 
       {/* Master-detail */}
-      <div className="grid grid-cols-[340px_1fr] gap-4 flex-1 min-h-0">
+      <div className="grid grid-cols-1 md:grid-cols-[340px_1fr] gap-4 md:flex-1 md:min-h-0">
 
         {/* ── LISTA ── */}
-        <div className="flex flex-col rounded-2xl border border-[#222222] bg-[#171717] overflow-hidden">
+        <div className={cn(
+          "flex-col rounded-2xl border border-[#222222] bg-[#171717] overflow-hidden md:h-auto h-[70vh] md:flex",
+          selectedId ? "hidden md:flex" : "flex"
+        )}>
           <div className="p-3 border-b border-[#1F1F1F] shrink-0">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#737373]" />
@@ -238,7 +251,17 @@ export default function ClientesPage() {
         </div>
 
         {/* ── DETALLE ── */}
-        <div className="rounded-2xl border border-[#222222] bg-[#171717] overflow-y-auto">
+        <div className={cn(
+          "rounded-2xl border border-[#222222] bg-[#171717] overflow-y-auto",
+          selectedId ? "block" : "hidden md:block"
+        )}>
+          {/* Volver (solo móvil) */}
+          {selectedId && (
+            <button type="button" onClick={() => setSelectedId(null)}
+              className="md:hidden flex items-center gap-1.5 text-sm text-[#737373] hover:text-[#F2F2F2] px-5 pt-4 -mb-1">
+              <ArrowLeft className="h-4 w-4" /> Volver a la lista
+            </button>
+          )}
           {!selectedId && (
             <div className="h-full flex flex-col items-center justify-center text-center gap-3 p-8">
               <div className="h-12 w-12 rounded-2xl bg-[#1A1A1A] border border-[#262626] flex items-center justify-center">
@@ -255,7 +278,7 @@ export default function ClientesPage() {
           {detalle && (
             <div className="p-6 space-y-5">
               {/* Header */}
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className={cn("h-12 w-12 rounded-full flex items-center justify-center font-bold text-lg shrink-0", avatarColor(detalle.id))}>
                     {detalle.nombre.charAt(0).toUpperCase()}
@@ -267,7 +290,7 @@ export default function ClientesPage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 shrink-0 flex-wrap">
                   <Link href={`/cotizaciones/nueva?clienteId=${detalle.id}`}
                     className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-white text-[#0A0A0A] text-xs font-semibold hover:bg-gray-100 transition-colors">
                     <FilePlus className="h-3.5 w-3.5" /> Nueva cotización

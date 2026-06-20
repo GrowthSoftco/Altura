@@ -30,7 +30,7 @@ export function DashboardHeader({
 
   return (
     <header className="shrink-0 z-10 flex items-center gap-4 h-14 px-5 border-b border-[#1E1E1E] bg-[#141414]">
-      <SidebarTrigger className="h-7 w-7 shrink-0 text-[#4A4A4A] hover:text-[#C0C0C0] transition-colors" />
+      <SidebarTrigger className="hidden md:flex h-7 w-7 shrink-0 text-[#4A4A4A] hover:text-[#C0C0C0] transition-colors" />
 
       <div className="flex-1 flex justify-center">
         <GlobalSearch rol={rol} perms={perms} />
@@ -40,10 +40,11 @@ export function DashboardHeader({
         {canCotizar && (
           <Link
             href="/cotizaciones/nueva"
-            className="flex items-center gap-2 h-9 pl-3 pr-4 rounded-full bg-white text-[#0A0A0A] text-sm font-semibold hover:bg-gray-100 transition-colors shadow-sm"
+            aria-label="Nueva cotización"
+            className="hidden sm:flex items-center gap-2 h-9 pl-3 pr-4 rounded-full bg-white text-[#0A0A0A] text-sm font-semibold hover:bg-gray-100 transition-colors shadow-sm"
           >
             <FilePlus className="h-4 w-4" />
-            Nueva cotización
+            <span className="hidden lg:inline">Nueva cotización</span>
           </Link>
         )}
 
