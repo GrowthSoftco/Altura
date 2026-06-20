@@ -2,7 +2,9 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { FilePlus, Settings, BookOpen, LogOut } from "lucide-react"
+import { useTheme } from "next-themes"
+import { useEffect, useState } from "react"
+import { FilePlus, Settings, BookOpen, LogOut, Sun, Moon } from "lucide-react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { GlobalSearch } from "@/components/global-search"
@@ -21,6 +23,11 @@ export function DashboardHeader({
 }: { nombre: string; usuario: string; rol: string; canCotizar: boolean; perms: Perms; fotoUrl?: string | null }) {
   const router = useRouter()
   const inicial = (nombre || usuario || "?").trim().charAt(0).toUpperCase()
+
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  const isDark = !mounted || theme !== "light"
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" })
@@ -75,6 +82,15 @@ export function DashboardHeader({
                 Bitácora
               </DropdownMenuItem>
             )}
+            <DropdownMenuSeparator className="bg-[#262626]" />
+            <DropdownMenuItem
+              onClick={() => setTheme(isDark ? "light" : "dark")}
+              closeOnClick={false}
+              className="cursor-pointer focus:bg-[#242424] focus:text-[#F2F2F2]"
+            >
+              {isDark ? <Sun className="h-4 w-4 text-[#737373]" /> : <Moon className="h-4 w-4 text-[#737373]" />}
+              {isDark ? "Tema claro" : "Tema oscuro"}
+            </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-[#262626]" />
             <DropdownMenuItem
               onClick={logout}
