@@ -29,7 +29,7 @@ import { CotizacionCompleta, EstadoCotizacion } from "@/types"
 
 const ESTADOS: EstadoCotizacion[] = [
   "BORRADOR", "ENVIADA", "PENDIENTE", "EN_AJUSTE", "APROBADA", "RESERVADA",
-  "PAGANDO", "PAGADA", "VIAJE_REALIZADO", "RECHAZADA", "VENCIDA", "CANCELADA",
+  "PAGANDO", "PAGADA", "VIAJE_REALIZADO", "RECHAZADA", "VENCIDA", "CANCELADA","REVISADA",
 ]
 
 export default function CotizacionDetailPage() {
