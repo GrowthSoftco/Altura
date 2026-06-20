@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation"
 import { headers } from "next/headers"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ForzarCambioPassword } from "@/components/forzar-cambio-password"
 import { getCurrentUser } from "@/lib/auth"
@@ -36,29 +36,26 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] p-3">
-      <SidebarProvider>
-        <div className="flex w-full min-h-[calc(100vh-24px)] rounded-2xl overflow-hidden border border-[#1E1E1E] bg-[#141414]">
-          <AppSidebar
-            nombre={user.nombre || user.usuario}
-            usuario={user.usuario}
-            rol={user.rol}
-            perms={{
-              inicio: user.permInicio,
-              cotizaciones: user.permCotizaciones,
-              clientes: user.permClientes,
-              usuarios: user.rol === "ADMIN" || user.permUsuarios,
-            }}
-          />
-          <div className="flex-1 flex flex-col min-w-0">
-            <header className="sticky top-0 z-10 flex items-center h-12 px-5 border-b border-[#1E1E1E] bg-[#141414]/95 backdrop-blur-sm">
-              <SidebarTrigger className="h-7 w-7 text-[#4A4A4A] hover:text-[#C0C0C0] transition-colors" />
-            </header>
-            <main className="flex-1 px-8 py-6">{children}</main>
-          </div>
-        </div>
-        <ForzarCambioPassword activo={user.mustChangePassword} />
-      </SidebarProvider>
-    </div>
+    <SidebarProvider className="bg-[#0A0A0A]">
+      <AppSidebar
+        variant="inset"
+        nombre={user.nombre || user.usuario}
+        usuario={user.usuario}
+        rol={user.rol}
+        perms={{
+          inicio: user.permInicio,
+          cotizaciones: user.permCotizaciones,
+          clientes: user.permClientes,
+          usuarios: user.rol === "ADMIN" || user.permUsuarios,
+        }}
+      />
+      <SidebarInset className="bg-[#141414] rounded-xl border border-[#1E1E1E] overflow-hidden min-h-[calc(100svh-1rem)]">
+        <header className="sticky top-0 z-10 flex items-center h-12 px-5 border-b border-[#1E1E1E] bg-[#141414]/95 backdrop-blur-sm">
+          <SidebarTrigger className="h-7 w-7 text-[#4A4A4A] hover:text-[#C0C0C0] transition-colors" />
+        </header>
+        <main className="flex-1 px-8 py-6">{children}</main>
+      </SidebarInset>
+      <ForzarCambioPassword activo={user.mustChangePassword} />
+    </SidebarProvider>
   )
 }
