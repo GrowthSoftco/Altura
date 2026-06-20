@@ -19,7 +19,7 @@ export default async function UsuariosPage() {
   })
 
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-6 max-w-5xl mx-auto">
       <div>
         <h1 className="text-2xl font-semibold text-[#F2F2F2] tracking-tight">Usuarios</h1>
         <p className="text-sm text-[#737373] mt-0.5">Crea cuentas y controla a qué páginas accede cada una.</p>

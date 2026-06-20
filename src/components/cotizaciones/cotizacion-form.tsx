@@ -4,7 +4,10 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { format, addMonths, addDays, differenceInCalendarDays } from "date-fns"
 import { es } from "date-fns/locale"
-import { CalendarIcon, Search, Plus, Trash2 } from "lucide-react"
+import {
+  CalendarIcon, Search, Plus, Trash2,
+  User, Users, MapPin, Plane, BedDouble, ListChecks, Percent, Wallet, StickyNote, type LucideIcon,
+} from "lucide-react"
 import { pdf } from "@react-pdf/renderer"
 import { saveAs } from "file-saver"
 import { toast } from "sonner"
@@ -60,14 +63,28 @@ function generarFechasCuotas(
   })
 }
 
-// ─── Divider ─────────────────────────────────────────────────────────────────
-function Section({ title }: { title: string }) {
+// ─── Section card ──────────────────────────────────────────────────────────────
+function SectionCard({
+  n, icon: Icon, title, subtitle, children,
+}: { n: number; icon: LucideIcon; title: string; subtitle?: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-3 mb-3 mt-6">
-      <div className="h-px flex-1 bg-[#262626]" />
-      <span className="text-[#4A4A4A] text-[10px] font-medium tracking-[0.18em] uppercase">{title}</span>
-      <div className="h-px flex-1 bg-[#262626]" />
-    </div>
+    <section className="group rounded-2xl border border-[#222222] bg-[#171717] overflow-hidden transition-colors hover:border-[#2C2C2C]">
+      <div className="flex items-center gap-3.5 px-5 py-4 border-b border-[#1F1F1F] bg-gradient-to-b from-[#1C1C1C] to-[#171717]">
+        <div className="relative shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-[#00B4C5]/10 ring-1 ring-[#00B4C5]/20 flex items-center justify-center">
+            <Icon className="h-[18px] w-[18px] text-[#00B4C5]" />
+          </div>
+          <span className="absolute -top-1.5 -right-1.5 h-[18px] w-[18px] rounded-full bg-[#00B4C5] text-[#052028] text-[10px] font-bold flex items-center justify-center ring-2 ring-[#171717]">
+            {n}
+          </span>
+        </div>
+        <div className="min-w-0">
+          <h3 className="text-[15px] font-semibold text-[#F2F2F2] leading-tight tracking-tight">{title}</h3>
+          {subtitle && <p className="text-xs text-[#5E5E5E] mt-0.5">{subtitle}</p>}
+        </div>
+      </div>
+      <div className="p-5">{children}</div>
+    </section>
   )
 }
 
@@ -115,7 +132,7 @@ function AirportCombobox({ value, onChange, placeholder, className }: {
         className={className}
       />
       {open && filtered.length > 0 && (
-        <div className="absolute z-50 top-full mt-1 left-0 right-0 rounded-lg border border-[#262626] bg-[#1C1C1C] shadow-xl overflow-hidden">
+        <div className="absolute z-50 top-full mt-1 left-0 right-0 rounded-lg border border-[#262626] bg-[#161616] shadow-xl overflow-hidden">
           {filtered.map(a => (
             <button key={a.code} type="button"
               onMouseDown={e => { e.preventDefault(); handleSelect(a.code, a.city) }}
@@ -132,7 +149,7 @@ function AirportCombobox({ value, onChange, placeholder, className }: {
 }
 
 // ─── Tramo block ─────────────────────────────────────────────────────────────
-const inpT = "bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+const inpT = "bg-[#161616] border-[#2A2A2A] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
 
 function TramoBlock({
   tramo, index, onUpdate, onRemove, isFirst,
@@ -192,7 +209,7 @@ function TramoBlock({
   }, [tramo.hotelCheckIn, tramo.hotelCheckOut])
 
   return (
-    <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
+    <div className="rounded-xl border border-[#262626] bg-[#141414] p-4 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold text-[#00B4C5] uppercase tracking-wider">Tramo {tramoNum}</span>
         {!isFirst && onRemove && (
@@ -218,15 +235,15 @@ function TramoBlock({
           <Popover open={openSalida} onOpenChange={setOpenSalida}>
             <PopoverTrigger render={
               <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                "w-full justify-start text-left font-normal bg-[#161616] border-[#2A2A2A] h-8 text-sm",
                 !tramo.fechaSalida && "text-[#737373]")} />
             }>
               <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
               {selSalida ? format(selSalida, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+            <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
               <Calendar mode="single" selected={selSalida} locale={es}
-                className="bg-[#1C1C1C] text-[#F2F2F2]"
+                className="bg-[#161616] text-[#F2F2F2]"
                 onSelect={d => { if (d) { up("fechaSalida", format(d, "yyyy-MM-dd")); setOpenSalida(false) } }} />
             </PopoverContent>
           </Popover>
@@ -236,17 +253,17 @@ function TramoBlock({
           <Popover open={openLlegada} onOpenChange={setOpenLlegada}>
             <PopoverTrigger render={
               <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                "w-full justify-start text-left font-normal bg-[#161616] border-[#2A2A2A] h-8 text-sm",
                 !tramo.fechaRegreso && "text-[#737373]")} />
             }>
               <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
               {selLlegada ? format(selLlegada, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+            <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
               <Calendar mode="single" selected={selLlegada} locale={es}
                 defaultMonth={selLlegada ?? selSalida}
                 disabled={selSalida ? { before: selSalida } : undefined}
-                className="bg-[#1C1C1C] text-[#F2F2F2]"
+                className="bg-[#161616] text-[#F2F2F2]"
                 onSelect={d => { if (d) { up("fechaRegreso", format(d, "yyyy-MM-dd")); setOpenLlegada(false) } }} />
             </PopoverContent>
           </Popover>
@@ -318,15 +335,15 @@ function TramoBlock({
                 <Popover open={openCheckIn} onOpenChange={setOpenCheckIn}>
                   <PopoverTrigger render={
                     <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                      "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                      "w-full justify-start text-left font-normal bg-[#161616] border-[#2A2A2A] h-8 text-sm",
                       !tramo.hotelCheckIn && "text-[#737373]")} />
                   }>
                     <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
                     {selCheckIn ? format(selCheckIn, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                  <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
                     <Calendar mode="single" selected={selCheckIn} locale={es}
-                      className="bg-[#1C1C1C] text-[#F2F2F2]"
+                      className="bg-[#161616] text-[#F2F2F2]"
                       onSelect={d => { if (d) { up("hotelCheckIn", format(d, "yyyy-MM-dd")); setOpenCheckIn(false) } }} />
                   </PopoverContent>
                 </Popover>
@@ -341,17 +358,17 @@ function TramoBlock({
                 <Popover open={openCheckOut} onOpenChange={setOpenCheckOut}>
                   <PopoverTrigger render={
                     <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                      "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                      "w-full justify-start text-left font-normal bg-[#161616] border-[#2A2A2A] h-8 text-sm",
                       !tramo.hotelCheckOut && "text-[#737373]")} />
                   }>
                     <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
                     {selCheckOut ? format(selCheckOut, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                  <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
                     <Calendar mode="single" selected={selCheckOut} locale={es}
                       defaultMonth={selCheckOut ?? selCheckIn}
                       disabled={selCheckIn ? { before: selCheckIn } : undefined}
-                      className="bg-[#1C1C1C] text-[#F2F2F2]"
+                      className="bg-[#161616] text-[#F2F2F2]"
                       onSelect={d => { if (d) { up("hotelCheckOut", format(d, "yyyy-MM-dd")); setOpenCheckOut(false) } }} />
                   </PopoverContent>
                 </Popover>
@@ -404,7 +421,7 @@ function HospedajeSection({
   }
 
   return (
-    <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-3">
+    <div className="rounded-xl border border-[#262626] bg-[#141414] p-4 space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-xs font-semibold text-[#00B4C5] uppercase tracking-wider">Hospedaje</span>
         <button type="button" onClick={() => onChange(null)}
@@ -434,14 +451,14 @@ function HospedajeSection({
           <Popover open={openIn} onOpenChange={setOpenIn}>
             <PopoverTrigger render={
               <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                "w-full justify-start text-left font-normal bg-[#161616] border-[#2A2A2A] h-8 text-sm",
                 !h.checkIn && "text-[#737373]")} />
             }>
               <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
               {selIn ? format(selIn, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
-              <Calendar mode="single" selected={selIn} locale={es} className="bg-[#1C1C1C] text-[#F2F2F2]"
+            <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
+              <Calendar mode="single" selected={selIn} locale={es} className="bg-[#161616] text-[#F2F2F2]"
                 onSelect={d => { if (d) { up("checkIn", format(d, "yyyy-MM-dd")); setOpenIn(false) } }} />
             </PopoverContent>
           </Popover>
@@ -455,17 +472,17 @@ function HospedajeSection({
           <Popover open={openOut} onOpenChange={setOpenOut}>
             <PopoverTrigger render={
               <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                "w-full justify-start text-left font-normal bg-[#222222] border-[#262626] h-8 text-sm",
+                "w-full justify-start text-left font-normal bg-[#161616] border-[#2A2A2A] h-8 text-sm",
                 !h.checkOut && "text-[#737373]")} />
             }>
               <CalendarIcon className="mr-1.5 h-3 w-3 text-[#737373] shrink-0" />
               {selOut ? format(selOut, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+            <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
               <Calendar mode="single" selected={selOut} locale={es}
                 defaultMonth={selOut ?? selIn}
                 disabled={selIn ? { before: selIn } : undefined}
-                className="bg-[#1C1C1C] text-[#F2F2F2]"
+                className="bg-[#161616] text-[#F2F2F2]"
                 onSelect={d => { if (d) { up("checkOut", format(d, "yyyy-MM-dd")); setOpenOut(false) } }} />
             </PopoverContent>
           </Popover>
@@ -818,15 +835,15 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
   }
 
   // ── Input class helpers ──
-  const inp = "bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+  const inp = "bg-[#161616] border-[#2A2A2A] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm rounded-lg transition-colors"
 
   return (
     <div className="grid grid-cols-3 gap-5 items-start">
       {/* ── Left: Form ── */}
-      <div className="col-span-2 space-y-1">
+      <div className="col-span-2 space-y-4">
 
         {/* CLIENTE */}
-        <Section title="Datos del Cliente" />
+        <SectionCard n={1} icon={User} title="Datos del Cliente" subtitle="¿Quién viaja?">
         <div className="space-y-2.5">
           <div className="flex gap-2">
             <div className="flex-1 space-y-1">
@@ -838,12 +855,12 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
               <Popover open={clienteSearch} onOpenChange={setClienteSearch}>
                 <PopoverTrigger render={
                   <button type="button" className={cn(buttonVariants({ variant: "outline", size: "sm" }),
-                    "border-[#262626] bg-[#1C1C1C] text-[#737373] hover:text-[#F2F2F2]")} />
+                    "border-[#262626] bg-[#161616] text-[#737373] hover:text-[#F2F2F2]")} />
                 }>
                   <Search className="h-4 w-4 mr-1" /> Buscar
                 </PopoverTrigger>
-                <PopoverContent className="w-80 p-0 bg-[#1C1C1C] border-[#262626]">
-                  <Command className="bg-[#1C1C1C]">
+                <PopoverContent className="w-80 p-0 bg-[#161616] border-[#262626]">
+                  <Command className="bg-[#161616]">
                     <CommandInput placeholder="Nombre o teléfono..." className="text-[#F2F2F2]" onValueChange={buscarClientes} />
                     <CommandList>
                       <CommandEmpty className="text-[#737373] text-sm py-4 text-center">Sin resultados</CommandEmpty>
@@ -880,8 +897,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           </div>
         </div>
 
+        </SectionCard>
+
         {/* PASAJEROS */}
-        <Section title="Pasajeros" />
+        <SectionCard n={2} icon={Users} title="Pasajeros" subtitle="Adultos y menores">
         <div className="space-y-3">
           <div className="flex items-center gap-8">
             {[
@@ -892,11 +911,11 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                 <Label className="text-[#737373] text-xs w-14">{label}</Label>
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="icon" type="button"
-                    className="h-7 w-7 border-[#262626] bg-[#1C1C1C] text-[#F2F2F2]"
+                    className="h-7 w-7 border-[#262626] bg-[#161616] text-[#F2F2F2]"
                     onClick={() => set(Math.max(min, value - 1))}>–</Button>
                   <span className="w-5 text-center text-sm font-semibold text-[#F2F2F2]">{value}</span>
                   <Button variant="outline" size="icon" type="button"
-                    className="h-7 w-7 border-[#262626] bg-[#1C1C1C] text-[#F2F2F2]"
+                    className="h-7 w-7 border-[#262626] bg-[#161616] text-[#F2F2F2]"
                     onClick={() => set(value + 1)}>+</Button>
                 </div>
               </div>
@@ -910,7 +929,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                   <div key={i} className="flex items-center gap-1.5">
                     <span className="text-xs text-[#737373]">M{i + 1}:</span>
                     <Input type="number" min={0} max={17}
-                      className="w-14 h-7 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
+                      className="w-14 h-7 bg-[#161616] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
                       value={edad}
                       onChange={e => {
                         const n = [...edadesMenores]; n[i] = parseInt(e.target.value) || 0; setEdadesMenores(n)
@@ -923,8 +942,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           )}
         </div>
 
+        </SectionCard>
+
         {/* DETALLES DEL VIAJE */}
-        <Section title="Detalles del viaje" />
+        <SectionCard n={3} icon={MapPin} title="Detalles del viaje" subtitle="Origen, destino y fechas">
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
@@ -944,15 +965,15 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
               <Popover open={openDetSalida} onOpenChange={setOpenDetSalida}>
                 <PopoverTrigger render={
                   <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                    "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
+                    "w-full justify-start text-left font-normal bg-[#161616] border-[#262626] h-8 text-sm",
                     !fs && "text-[#737373]")} />
                 }>
                   <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373] shrink-0" />
                   {fs ? format(fs, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
                   <Calendar mode="single" selected={fs} locale={es}
-                    className="bg-[#1C1C1C] text-[#F2F2F2]"
+                    className="bg-[#161616] text-[#F2F2F2]"
                     onSelect={d => { if (d) { setDetFechaSalida(format(d, "yyyy-MM-dd")); setOpenDetSalida(false) } }} />
                 </PopoverContent>
               </Popover>
@@ -962,17 +983,17 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
               <Popover open={openDetLlegada} onOpenChange={setOpenDetLlegada}>
                 <PopoverTrigger render={
                   <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                    "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
+                    "w-full justify-start text-left font-normal bg-[#161616] border-[#262626] h-8 text-sm",
                     !fr && "text-[#737373]")} />
                 }>
                   <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373] shrink-0" />
                   {fr ? format(fr, "dd/MM/yyyy") : <span className="text-[#4A4A4A]">Seleccionar</span>}
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
                   <Calendar mode="single" selected={fr} locale={es}
                     defaultMonth={fr ?? fs}
                     disabled={fs ? { before: fs } : undefined}
-                    className="bg-[#1C1C1C] text-[#F2F2F2]"
+                    className="bg-[#161616] text-[#F2F2F2]"
                     onSelect={d => { if (d) { setDetFechaRegreso(format(d, "yyyy-MM-dd")); setOpenDetLlegada(false) } }} />
                 </PopoverContent>
               </Popover>
@@ -983,14 +1004,16 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           )}
         </div>
 
+        </SectionCard>
+
         {/* VUELOS */}
-        <Section title="Vuelos" />
+        <SectionCard n={4} icon={Plane} title="Vuelos" subtitle="Tipo de viaje y tramos">
         {/* Tipo de viaje */}
         <div className="grid grid-cols-2 gap-2 mb-3">
           {(["NACIONAL", "INTERNACIONAL"] as const).map(t => (
             <button key={t} type="button" onClick={() => setTipo(t)}
               className={cn("rounded-lg border px-4 py-2 text-sm font-medium transition-colors",
-                tipo === t ? "bg-[#00B4C5] border-[#00B4C5] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40 hover:text-[#F2F2F2]")}>
+                tipo === t ? "bg-[#00B4C5] border-[#00B4C5] text-white" : "bg-[#161616] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40 hover:text-[#F2F2F2]")}>
               {t === "NACIONAL" ? "Nacional" : "Internacional"}
             </button>
           ))}
@@ -1007,16 +1030,20 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           </button>
         </div>
 
+        </SectionCard>
+
         {/* HOSPEDAJE */}
-        <Section title="Hospedaje" />
+        <SectionCard n={5} icon={BedDouble} title="Hospedaje" subtitle="Alojamiento (opcional)">
         <HospedajeSection hospedaje={hospedaje} onChange={setHospedaje} />
+        </SectionCard>
 
         {/* SERVICIOS */}
-        <Section title="Servicios incluidos" />
+        <SectionCard n={6} icon={ListChecks} title="Servicios incluidos" subtitle="Qué incluye la cotización">
         <ServiciosTable servicios={servicios} onChange={setServicios} />
+        </SectionCard>
 
         {/* UTILIDAD */}
-        <Section title="Utilidad" />
+        <SectionCard n={7} icon={Percent} title="Utilidad" subtitle="Margen de ganancia">
         <div className="space-y-3">
           {/* Toggle modo */}
           <div className="flex gap-2">
@@ -1027,7 +1054,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                   setUtilidadModo(m)
                 }}
                 className={cn("rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors",
-                  utilidadModo === m ? "bg-[#00B4C5] border-[#00B4C5] text-white" : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40")}>
+                  utilidadModo === m ? "bg-[#00B4C5] border-[#00B4C5] text-white" : "bg-[#161616] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40")}>
                 {label}
               </button>
             ))}
@@ -1041,7 +1068,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                 className="flex-1 accent-[#00B4C5]" />
               <div className="flex items-center gap-1">
                 <Input type="number" min={0} max={70}
-                  className="w-14 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-center h-8 text-sm"
+                  className="w-14 bg-[#161616] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-center h-8 text-sm"
                   value={porcentaje} onChange={e => setPorcentaje(Math.min(70, Math.max(0, Number(e.target.value))))} />
                 <span className="text-[#737373] text-sm">%</span>
               </div>
@@ -1050,7 +1077,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
             <div className="flex items-center gap-3">
               <Label className="text-[#737373] text-xs w-36 shrink-0">Valor fijo</Label>
               <Input
-                className="flex-1 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
+                className="flex-1 bg-[#161616] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] h-8 text-sm"
                 value={fmtMiles(utilidadFija)}
                 onChange={e => setUtilidadFija(parseMiles(e.target.value))}
                 placeholder="0" />
@@ -1062,8 +1089,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           )}
         </div>
 
+        </SectionCard>
+
         {/* PLAN DE PAGOS */}
-        <Section title="Plan de Pagos" />
+        <SectionCard n={8} icon={Wallet} title="Plan de Pagos" subtitle="Cuotas y fechas">
         <div className="space-y-3">
           <div className="flex items-center gap-3">
             <Switch checked={aplicarPlan} onCheckedChange={setAplicarPlan} className="data-[state=checked]:bg-[#00B4C5]" />
@@ -1073,17 +1102,17 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           </div>
 
           {aplicarPlan && (
-            <div className="rounded-xl border border-[#262626] bg-[#181818] p-4 space-y-4">
+            <div className="rounded-xl border border-[#262626] bg-[#141414] p-4 space-y-4">
 
               {/* Fila 1: cuotas + modalidad */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-[#737373] text-xs">Número de cuotas</Label>
                   <Select value={String(numCuotas)} onValueChange={v => setNumCuotas(Number(v))}>
-                    <SelectTrigger className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] h-8 text-sm">
+                    <SelectTrigger className="bg-[#161616] border-[#262626] text-[#F2F2F2] h-8 text-sm">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2]">
+                    <SelectContent className="bg-[#161616] border-[#262626] text-[#F2F2F2]">
                       {Array.from({length: 24}, (_, i) => i + 1).map(n => <SelectItem key={n} value={String(n)}>{n} cuota{n > 1 ? "s" : ""}</SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -1096,7 +1125,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                         className={cn("rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors capitalize",
                           modalidadPlan === m
                             ? "bg-[#00B4C5] border-[#00B4C5] text-white"
-                            : "bg-[#1C1C1C] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40")}>
+                            : "bg-[#161616] border-[#262626] text-[#737373] hover:border-[#00B4C5]/40")}>
                         {m === "mensual" ? "Mensual" : "Quincenal"}
                       </button>
                     ))}
@@ -1110,15 +1139,15 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                 <Popover>
                   <PopoverTrigger render={
                     <button type="button" className={cn(buttonVariants({ variant: "outline" }),
-                      "w-full justify-start text-left font-normal bg-[#1C1C1C] border-[#262626] h-8 text-sm",
+                      "w-full justify-start text-left font-normal bg-[#161616] border-[#262626] h-8 text-sm",
                       !fechaInicioPago && "text-[#737373]")} />
                   }>
                     <CalendarIcon className="mr-2 h-3.5 w-3.5 text-[#737373]" />
                     {fechaInicioPago ? format(fechaInicioPago, "dd/MM/yyyy") : "Seleccionar"}
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0 bg-[#1C1C1C] border-[#262626]">
+                  <PopoverContent className="w-auto p-0 bg-[#161616] border-[#262626]">
                     <Calendar mode="single" selected={fechaInicioPago} onSelect={setFechaInicioPago}
-                      locale={es} className="bg-[#1C1C1C] text-[#F2F2F2]" />
+                      locale={es} className="bg-[#161616] text-[#F2F2F2]" />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -1133,7 +1162,7 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
                     <div key={i} className="flex items-center gap-3">
                       <span className="text-xs text-[#737373] w-16 shrink-0">Cuota {i + 1}</span>
                       <Input type="number" min={0} max={200}
-                        className="w-16 h-7 bg-[#222222] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
+                        className="w-16 h-7 bg-[#161616] border-[#2A2A2A] text-[#F2F2F2] focus:border-[#00B4C5] text-sm text-center"
                         value={pct}
                         onChange={e => updatePorcentajeCuota(i, Number(e.target.value))} />
                       <span className="text-xs text-[#737373]">%</span>
@@ -1174,11 +1203,14 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
           )}
         </div>
 
+        </SectionCard>
+
         {/* OBSERVACIONES */}
-        <Section title="Observaciones" />
-        <Textarea className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#00B4C5] min-h-[72px] text-sm"
+        <SectionCard n={9} icon={StickyNote} title="Observaciones" subtitle="Notas para el cliente">
+        <Textarea className="bg-[#161616] border-[#2A2A2A] text-[#F2F2F2] focus:border-[#00B4C5] min-h-[72px] text-sm rounded-lg"
           placeholder="Notas adicionales para el cliente..." value={observaciones}
           onChange={e => setObservaciones(e.target.value)} />
+        </SectionCard>
       </div>
 
       {/* ── Right: Resumen sticky ── */}

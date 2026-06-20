@@ -58,7 +58,7 @@ export default function BitacoraPage() {
   const fechas = Object.keys(grupos).sort((a, b) => b.localeCompare(a))
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="max-w-3xl space-y-6 mx-auto">
       <div>
         <h1 className="text-2xl font-bold text-[#F2F2F2]">Bitácora</h1>
         <p className="text-sm text-[#737373] mt-1">Registro de actividad de los últimos 3 meses.</p>

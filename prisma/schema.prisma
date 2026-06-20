@@ -97,6 +97,7 @@ model Usuario {
   id           String  @id @default(cuid())
   usuario      String  @unique          // identificador de login (correo o nombre de usuario)
   nombre       String?
+  fotoUrl      String?                   // URL de la foto de perfil
   passwordHash String
   rol          Rol     @default(USER)
   mustChangePassword Boolean @default(true)

@@ -8,7 +8,7 @@ export default async function NuevaCotizacionPage({
   const { clienteId } = await searchParams
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <div>
         <h1 className="text-2xl font-semibold text-[#F2F2F2] tracking-tight">
           Nueva Cotización
@@ -17,8 +17,6 @@ export default async function NuevaCotizacionPage({
           Completa los datos del cliente, viaje y servicios incluidos
         </p>
       </div>
-
-      <div className="h-px bg-[#1E1E1E]" />
 
       <CotizacionForm initialClienteId={clienteId} />
     </div>

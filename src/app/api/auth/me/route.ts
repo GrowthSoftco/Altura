@@ -10,6 +10,7 @@ export async function GET() {
     id: u.id,
     usuario: u.usuario,
     nombre: u.nombre,
+    fotoUrl: u.fotoUrl,
     rol: u.rol,
     permModificarEstados: u.permModificarEstados,
     perms: {

@@ -28,7 +28,7 @@ export default async function EditarCotizacionPage({
   if (!puedeAccederCotizacion(me, cot)) redirect("/cotizaciones")
 
   return (
-    <div className="space-y-6 max-w-7xl">
+    <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-3">
         <Link
           href={`/cotizaciones/${id}`}

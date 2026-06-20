@@ -36,9 +36,12 @@ export function ResumenCard({
   const colchonCOP = hayColchon ? totalPlan - calculos.valorFinal : 0
 
   return (
-    <Card className="sticky top-6 border-[#222222] bg-[#1C1C1C] overflow-hidden">
+    <Card className="sticky top-6 rounded-2xl border-[#222222] bg-[#1A1A1A] overflow-hidden">
       <CardHeader className="pb-3 pt-4 px-4 border-b border-[#222222]">
-        <p className="text-xs font-semibold text-[#F2F2F2]">Resumen</p>
+        <div className="flex items-center gap-2.5">
+          <span className="h-3.5 w-1 rounded-full bg-[#00B4C5]" />
+          <p className="text-[13px] font-semibold text-[#F2F2F2]">Resumen</p>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-2.5 p-4">

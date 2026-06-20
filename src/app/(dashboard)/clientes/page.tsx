@@ -1,15 +1,23 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
-import { Search, UserPlus, Phone, Mail } from "lucide-react"
+import {
+  Search, UserPlus, Phone, Mail, CreditCard, FilePlus, Eye, Copy, Trash2, Loader2, Users,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { ClienteForm } from "@/components/clientes/cliente-form"
+import { ConfirmDialog, type ConfirmState } from "@/components/ui/confirm-dialog"
+import { EstadoBadge } from "@/components/cotizaciones/estado-badge"
+import { formatCOP } from "@/lib/utils"
+import { EstadoCotizacion, ClienteBase } from "@/types"
+import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 
-interface Cliente {
+interface ClienteRow {
   id: string
   nombre: string
   telefono: string
@@ -18,37 +26,130 @@ interface Cliente {
   _count?: { cotizaciones: number }
 }
 
-export default function ClientesPage() {
-  const [clientes, setClientes]   = useState<Cliente[]>([])
-  const [query, setQuery]         = useState("")
-  const [loading, setLoading]     = useState(true)
+interface CotizacionRow {
+  id: string
+  codigo: string
+  origen: string
+  destino: string
+  fechaCreacion: string
+  valorConPorcentaje: string
+  estado: EstadoCotizacion
+}
 
-  const fetchClientes = async (q = "") => {
+interface ClienteDetalle extends ClienteBase {
+  cotizaciones: CotizacionRow[]
+}
+
+export default function ClientesPage() {
+  const [clientes, setClientes] = useState<ClienteRow[]>([])
+  const [query, setQuery] = useState("")
+  const [loading, setLoading] = useState(true)
+
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [detalle, setDetalle] = useState<ClienteDetalle | null>(null)
+  const [loadingDetalle, setLoadingDetalle] = useState(false)
+
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [busyId, setBusyId] = useState<string | null>(null)
+  const [confirm, setConfirm] = useState<ConfirmState | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  const fetchClientes = useCallback(async (q = "") => {
     setLoading(true)
     try {
       const res = await fetch(`/api/clientes${q ? `?q=${encodeURIComponent(q)}` : ""}`)
-      const data = await res.json()
+      const data: ClienteRow[] = await res.json()
       setClientes(data)
+      // Auto-seleccionar el primero si no hay selección o la actual desapareció
+      setSelectedId(prev => (prev && data.some(c => c.id === prev)) ? prev : (data[0]?.id ?? null))
     } finally { setLoading(false) }
-  }
+  }, [])
 
-  useEffect(() => { fetchClientes() }, [])
+  const fetchDetalle = useCallback(async (id: string) => {
+    setLoadingDetalle(true)
+    try {
+      const res = await fetch(`/api/clientes/${id}`)
+      if (res.ok) setDetalle(await res.json())
+      else setDetalle(null)
+    } finally { setLoadingDetalle(false) }
+  }, [])
+
+  useEffect(() => {
+    fetchClientes()
+    fetch("/api/auth/me").then(r => r.ok ? r.json() : null).then(d => setIsAdmin(d?.rol === "ADMIN"))
+  }, [fetchClientes])
 
   useEffect(() => {
     const t = setTimeout(() => fetchClientes(query), 300)
     return () => clearTimeout(t)
-  }, [query])
+  }, [query, fetchClientes])
+
+  useEffect(() => {
+    if (selectedId) fetchDetalle(selectedId)
+    else setDetalle(null)
+  }, [selectedId, fetchDetalle])
+
+  const duplicarCotizacion = async (cotId: string) => {
+    setBusyId(cotId)
+    try {
+      const res = await fetch(`/api/cotizaciones/${cotId}/duplicate`, { method: "POST" })
+      if (!res.ok) throw new Error()
+      const nueva = await res.json()
+      toast.success(`Duplicada: ${nueva.codigo}`)
+      if (selectedId) fetchDetalle(selectedId)
+    } catch { toast.error("Error al duplicar") }
+    finally { setBusyId(null) }
+  }
+
+  const eliminarCotizacion = (cot: CotizacionRow) => setConfirm({
+    title: `Eliminar cotización ${cot.codigo}`,
+    description: "Esta acción no se puede deshacer.",
+    confirmLabel: "Eliminar", danger: true,
+    action: async () => {
+      setBusyId(cot.id)
+      try {
+        const r = await fetch(`/api/cotizaciones/${cot.id}`, { method: "DELETE" })
+        if (!r.ok) { toast.error("Error al eliminar"); return }
+        toast.success("Cotización eliminada")
+        setDetalle(prev => prev ? { ...prev, cotizaciones: prev.cotizaciones.filter(c => c.id !== cot.id) } : prev)
+        setConfirm(null)
+      } catch { toast.error("Error al eliminar") }
+      finally { setBusyId(null) }
+    },
+  })
+
+  const eliminarCliente = () => detalle && setConfirm({
+    title: `Eliminar a ${detalle.nombre}`,
+    description: "Se eliminarán también todas sus cotizaciones. Esta acción no se puede deshacer.",
+    confirmLabel: "Eliminar", danger: true,
+    action: async () => {
+      setDeleting(true)
+      try {
+        const r = await fetch(`/api/clientes/${detalle.id}`, { method: "DELETE" })
+        if (!r.ok) { toast.error("Error al eliminar"); return }
+        toast.success("Cliente eliminado")
+        setConfirm(null)
+        setDetalle(null)
+        setSelectedId(null)
+        fetchClientes(query)
+      } catch { toast.error("Error al eliminar") }
+      finally { setDeleting(false) }
+    },
+  })
 
   return (
-    <div className="space-y-5 max-w-7xl">
-      <div className="flex items-center justify-between">
+    <div className="flex flex-col h-[calc(100svh-6.5rem)] max-w-7xl mx-auto">
+      <ConfirmDialog state={confirm} loading={deleting || !!busyId} onClose={() => setConfirm(null)} />
+
+      {/* Heading */}
+      <div className="flex items-center justify-between shrink-0 mb-4">
         <div>
           <h1 className="text-2xl font-semibold text-[#F2F2F2] tracking-tight">Clientes</h1>
           <p className="text-sm text-[#737373] mt-0.5">{clientes.length} cliente(s)</p>
         </div>
         <ClienteForm
           trigger={
-            <Button className="bg-white hover:bg-gray-100 text-[#00B4C5] font-semibold text-sm h-9 px-4 rounded-lg shadow-md shadow-[#272F46]/10">
+            <Button className="bg-white hover:bg-gray-100 text-[#0A0A0A] font-semibold text-sm h-9 px-4 rounded-full shadow-sm">
               <UserPlus className="mr-2 h-4 w-4" /> Nuevo Cliente
             </Button>
           }
@@ -56,66 +157,184 @@ export default function ClientesPage() {
         />
       </div>
 
-      {/* Search */}
-      <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#737373]" />
-        <Input
-          className="pl-9 bg-[#1C1C1C] border-[#262626] text-[#F2F2F2] focus:border-[#272F46] h-9"
-          placeholder="Buscar por nombre o teléfono..."
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-        />
-      </div>
+      {/* Master-detail */}
+      <div className="grid grid-cols-[340px_1fr] gap-4 flex-1 min-h-0">
 
-      {/* Table */}
-      <div className="rounded-xl border border-[#222222] overflow-hidden bg-[#1C1C1C]">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-[#222222]">
-              <th className="text-left text-[10px] text-[#4A4A4A] uppercase tracking-wider font-medium px-4 py-3">Cliente</th>
-              <th className="text-left text-[10px] text-[#4A4A4A] uppercase tracking-wider font-medium px-4 py-3">Teléfono</th>
-              <th className="text-left text-[10px] text-[#4A4A4A] uppercase tracking-wider font-medium px-4 py-3">Correo</th>
-              <th className="text-left text-[10px] text-[#4A4A4A] uppercase tracking-wider font-medium px-4 py-3">Registro</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading && (
-              <tr><td colSpan={4} className="text-center text-[#737373] py-10 text-sm">Cargando...</td></tr>
-            )}
+        {/* ── LISTA ── */}
+        <div className="flex flex-col rounded-2xl border border-[#222222] bg-[#171717] overflow-hidden">
+          <div className="p-3 border-b border-[#1F1F1F] shrink-0">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#737373]" />
+              <Input
+                className="pl-9 bg-[#141414] border-[#2A2A2A] text-[#F2F2F2] focus:border-[#00B4C5] h-9 rounded-lg"
+                placeholder="Buscar cliente..."
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto">
+            {loading && <p className="text-center text-[#737373] py-10 text-sm">Cargando...</p>}
             {!loading && clientes.length === 0 && (
-              <tr><td colSpan={4} className="text-center text-[#4A4A4A] py-10 text-sm">
+              <p className="text-center text-[#4A4A4A] py-10 text-sm px-4">
                 {query ? `Sin resultados para "${query}"` : "No hay clientes aún"}
-              </td></tr>
+              </p>
             )}
-            {clientes.map(c => (
-              <tr key={c.id} className="border-t border-[#1E1E1E] hover:bg-[#202020] transition-colors">
-                <td className="px-4 py-3">
-                  <Link href={`/clientes/${c.id}`} className="flex items-center gap-3 group">
-                    <div className="h-8 w-8 rounded-full bg-[#1A2035] flex items-center justify-center text-[#00B4C5] font-bold text-sm shrink-0">
-                      {c.nombre.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="font-medium text-[#F2F2F2] text-sm group-hover:text-[#00B4C5] transition-colors">{c.nombre}</span>
-                  </Link>
-                </td>
-                <td className="px-4 py-3">
-                  <span className="flex items-center gap-1.5 text-sm text-[#737373]">
-                    <Phone className="h-3 w-3 shrink-0" /> {c.telefono}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  {c.correo ? (
-                    <span className="flex items-center gap-1.5 text-sm text-[#737373] truncate max-w-[200px]">
-                      <Mail className="h-3 w-3 shrink-0" /> {c.correo}
+            {clientes.map(c => {
+              const active = c.id === selectedId
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setSelectedId(c.id)}
+                  className={cn(
+                    "w-full flex items-center gap-3 px-3 py-2.5 text-left border-l-2 transition-colors",
+                    active ? "bg-[#202020] border-l-[#00B4C5]" : "border-l-transparent hover:bg-[#1C1C1C]"
+                  )}
+                >
+                  <div className={cn(
+                    "h-9 w-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0",
+                    active ? "bg-[#00B4C5] text-[#052028]" : "bg-[#1A2035] text-[#00B4C5]"
+                  )}>
+                    {c.nombre.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className={cn("text-sm font-medium truncate", active ? "text-[#F2F2F2]" : "text-[#D5D5D5]")}>{c.nombre}</p>
+                    <p className="text-xs text-[#5E5E5E] truncate">{c.telefono}</p>
+                  </div>
+                  {!!c._count?.cotizaciones && (
+                    <span className="shrink-0 text-[10px] font-medium text-[#737373] bg-[#1A1A1A] border border-[#2A2A2A] rounded-full px-2 py-0.5">
+                      {c._count.cotizaciones}
                     </span>
-                  ) : <span className="text-[#383838] text-sm">—</span>}
-                </td>
-                <td className="px-4 py-3 text-xs text-[#737373] tabular-nums">
-                  {format(new Date(c.createdAt), "dd MMM yyyy", { locale: es })}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  )}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* ── DETALLE ── */}
+        <div className="rounded-2xl border border-[#222222] bg-[#171717] overflow-y-auto">
+          {!selectedId && (
+            <div className="h-full flex flex-col items-center justify-center text-center gap-3 p-8">
+              <div className="h-12 w-12 rounded-2xl bg-[#1A1A1A] border border-[#262626] flex items-center justify-center">
+                <Users className="h-5 w-5 text-[#4A4A4A]" />
+              </div>
+              <p className="text-sm text-[#5E5E5E]">Selecciona un cliente para ver su detalle</p>
+            </div>
+          )}
+
+          {selectedId && loadingDetalle && !detalle && (
+            <div className="h-full flex items-center justify-center"><p className="text-[#737373] text-sm">Cargando...</p></div>
+          )}
+
+          {detalle && (
+            <div className="p-6 space-y-5">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-full bg-[#1A2035] flex items-center justify-center text-[#00B4C5] font-bold text-lg shrink-0">
+                    {detalle.nombre.charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold text-[#F2F2F2] tracking-tight">{detalle.nombre}</h2>
+                    <p className="text-xs text-[#737373]">
+                      Cliente desde {format(new Date(detalle.createdAt), "MMMM yyyy", { locale: es })}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <Link href={`/cotizaciones/nueva?clienteId=${detalle.id}`}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-full bg-white text-[#0A0A0A] text-xs font-semibold hover:bg-gray-100 transition-colors">
+                    <FilePlus className="h-3.5 w-3.5" /> Nueva cotización
+                  </Link>
+                  <ClienteForm
+                    trigger={
+                      <Button variant="outline" size="sm"
+                        className="border-[#2A2A2A] bg-[#141414] text-[#737373] hover:text-[#F2F2F2] hover:bg-[#1C1C1C] h-8 text-xs rounded-lg">
+                        Editar
+                      </Button>
+                    }
+                    cliente={{ ...detalle, correo: detalle.correo ?? null, documento: detalle.documento ?? null }}
+                    onSuccess={() => { fetchDetalle(detalle.id); fetchClientes(query) }}
+                  />
+                  {isAdmin && (
+                    <Button variant="ghost" size="sm" onClick={eliminarCliente} disabled={deleting}
+                      className="text-[#737373] hover:text-red-400 hover:bg-red-500/10 h-8 w-8 p-0">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Info + resumen */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-xl border border-[#222222] bg-[#1A1A1A] p-4 space-y-2">
+                  <p className="text-[11px] text-[#4A4A4A] font-medium uppercase tracking-wider">Contacto</p>
+                  <div className="flex items-center gap-2 text-sm text-[#C0C0C0]">
+                    <Phone className="h-3.5 w-3.5 text-[#737373] shrink-0" />{detalle.telefono}
+                  </div>
+                  {detalle.correo && <div className="flex items-center gap-2 text-sm text-[#C0C0C0]">
+                    <Mail className="h-3.5 w-3.5 text-[#737373] shrink-0" />{detalle.correo}
+                  </div>}
+                  {detalle.documento && <div className="flex items-center gap-2 text-sm text-[#C0C0C0]">
+                    <CreditCard className="h-3.5 w-3.5 text-[#737373] shrink-0" />{detalle.documento}
+                  </div>}
+                </div>
+                <div className="rounded-xl border border-[#222222] bg-[#1A1A1A] p-4 space-y-2">
+                  <p className="text-[11px] text-[#4A4A4A] font-medium uppercase tracking-wider">Resumen</p>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#737373]">Total cotizaciones</span>
+                    <span className="text-[#F2F2F2] font-medium">{detalle.cotizaciones.length}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-[#737373]">Viajes realizados</span>
+                    <span className="text-emerald-400 font-medium">
+                      {detalle.cotizaciones.filter(c => c.estado === "VIAJE_REALIZADO").length}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Cotizaciones */}
+              <div className="space-y-2.5">
+                <p className="text-xs text-[#4A4A4A] font-medium uppercase tracking-wider">Historial de Cotizaciones</p>
+                {detalle.cotizaciones.length === 0 && (
+                  <p className="text-[#4A4A4A] text-sm py-8 text-center">No hay cotizaciones para este cliente</p>
+                )}
+                {detalle.cotizaciones.map(cot => (
+                  <div key={cot.id} className="flex items-center justify-between rounded-xl border border-[#222222] bg-[#1A1A1A] p-4 hover:border-[#2E2E2E] transition-all">
+                    <div className="min-w-0">
+                      <p className="font-mono text-xs text-[#00B4C5] font-medium">{cot.codigo}</p>
+                      <p className="text-sm text-[#F2F2F2] mt-0.5 truncate">{cot.origen} → {cot.destino}</p>
+                      <p className="text-xs text-[#737373] mt-0.5">{format(new Date(cot.fechaCreacion), "dd MMM yyyy", { locale: es })}</p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="text-right space-y-1.5 mr-2">
+                        <p className="text-sm font-semibold text-[#00B4C5] tabular-nums">{formatCOP(Number(cot.valorConPorcentaje))}</p>
+                        <EstadoBadge estado={cot.estado} />
+                      </div>
+                      <Link href={`/cotizaciones/${cot.id}`} title="Ver" className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4A4A4A] hover:text-[#F2F2F2] hover:bg-[#2A2A2A] transition-colors">
+                        <Eye className="h-4 w-4" />
+                      </Link>
+                      <button type="button" title="Duplicar" disabled={busyId === cot.id} onClick={() => duplicarCotizacion(cot.id)}
+                        className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4A4A4A] hover:text-[#00B4C5] hover:bg-[#2A2A2A] transition-colors disabled:opacity-40">
+                        {busyId === cot.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Copy className="h-4 w-4" />}
+                      </button>
+                      {isAdmin && (
+                        <button type="button" title="Eliminar cotización" disabled={busyId === cot.id} onClick={() => eliminarCotizacion(cot)}
+                          className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4A4A4A] hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

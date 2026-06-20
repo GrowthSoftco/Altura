@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation"
 import { headers } from "next/headers"
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
+import { DashboardHeader } from "@/components/dashboard-header"
 import { ForzarCambioPassword } from "@/components/forzar-cambio-password"
 import { getCurrentUser } from "@/lib/auth"
 
@@ -36,7 +37,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <SidebarProvider className="bg-[#0A0A0A]">
+    <SidebarProvider defaultOpen={false} className="bg-[#0A0A0A]">
       <AppSidebar
         variant="inset"
         nombre={user.nombre || user.usuario}
@@ -49,11 +50,21 @@ export default async function DashboardLayout({ children }: { children: React.Re
           usuarios: user.rol === "ADMIN" || user.permUsuarios,
         }}
       />
-      <SidebarInset className="bg-[#141414] rounded-xl border border-[#1E1E1E] overflow-hidden min-h-[calc(100svh-1rem)]">
-        <header className="sticky top-0 z-10 flex items-center h-12 px-5 border-b border-[#1E1E1E] bg-[#141414]/95 backdrop-blur-sm">
-          <SidebarTrigger className="h-7 w-7 text-[#4A4A4A] hover:text-[#C0C0C0] transition-colors" />
-        </header>
-        <main className="flex-1 px-8 py-6">{children}</main>
+      <SidebarInset className="bg-[#141414] rounded-xl border border-[#1E1E1E] overflow-hidden h-[calc(100svh-1rem)] flex flex-col">
+        <DashboardHeader
+          nombre={user.nombre || user.usuario}
+          usuario={user.usuario}
+          rol={user.rol}
+          fotoUrl={user.fotoUrl}
+          canCotizar={user.permCotizaciones}
+          perms={{
+            inicio: user.permInicio,
+            cotizaciones: user.permCotizaciones,
+            clientes: user.permClientes,
+            usuarios: user.rol === "ADMIN" || user.permUsuarios,
+          }}
+        />
+        <main className="flex-1 overflow-y-auto px-8 py-6">{children}</main>
       </SidebarInset>
       <ForzarCambioPassword activo={user.mustChangePassword} />
     </SidebarProvider>

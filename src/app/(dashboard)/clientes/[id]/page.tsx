@@ -84,7 +84,7 @@ export default function ClienteDetailPage() {
   if (!cliente) return null
 
   return (
-    <div className="space-y-5 max-w-3xl">
+    <div className="space-y-5 max-w-3xl mx-auto">
       <ConfirmDialog state={confirm} loading={deleting} onClose={() => setConfirm(null)} />
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -103,7 +103,7 @@ export default function ClienteDetailPage() {
         </div>
         <div className="flex items-center gap-2">
           <Link href={`/cotizaciones/nueva?clienteId=${id}`}
-            className={cn(buttonVariants({ size: "sm" }), "bg-white hover:bg-gray-100 text-[#00B4C5] font-medium h-8 text-xs gap-1.5")}>
+            className={cn(buttonVariants({ size: "sm" }), "bg-white hover:bg-gray-100 text-[#0A0A0A] font-semibold h-8 text-xs gap-1.5 rounded-full")}>
             <FilePlus className="h-3.5 w-3.5" /> Nueva cotización
           </Link>
           <ClienteForm
