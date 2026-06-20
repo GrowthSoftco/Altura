@@ -5,8 +5,9 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
   const session = await verifySessionToken(req.cookies.get(SESSION_COOKIE)?.value)
 
-  // Endpoints de auth siempre públicos (login/logout)
+  // Endpoints públicos (auth + configuración pública)
   if (pathname.startsWith("/api/auth")) return NextResponse.next()
+  if (pathname === "/api/configuracion/portada" && req.method === "GET") return NextResponse.next()
 
   // APIs protegidas → 401 si no hay sesión
   if (pathname.startsWith("/api")) {
