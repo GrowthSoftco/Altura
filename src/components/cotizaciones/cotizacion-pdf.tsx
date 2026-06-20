@@ -379,7 +379,7 @@ function Footer({ codigo }: { codigo?: string }) {
 export function CotizacionPDF({ cotizacion, headerUrl }: { cotizacion: CotizacionCompleta; headerUrl?: string }) {
   ensureFonts()
   const origin   = typeof window !== "undefined" ? window.location.origin : ""
-  const cloudsUrl = headerUrl || `${origin}/nubes.jpg`
+  const cloudsUrl = headerUrl || `${origin}/header-pdf.jpg`
 
   const duracion  = calcularDuracion(new Date(cotizacion.fechaSalida), new Date(cotizacion.fechaRegreso))
   const activos   = (cotizacion.servicios as ServicioItem[]).filter(s => s.activo)
