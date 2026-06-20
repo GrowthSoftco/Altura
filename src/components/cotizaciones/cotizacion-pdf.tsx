@@ -198,10 +198,6 @@ function PageHeader({ url }: { url: string }) {
     <View fixed style={{ position: "absolute", top: 0, left: 0, right: 0 }}>
       <View style={{ height: 110, position: "relative" }}>
         <Image src={url} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 110 }} />
-        <View style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 110, backgroundColor: "#000", opacity: 0.25 }} />
-        <View style={{ position: "absolute", top: 0, left: 0, right: 0, height: 88, alignItems: "center", justifyContent: "center" }}>
-          <LogoFull color={T.white} width={120} />
-        </View>
       </View>
       <View style={{ backgroundColor: T.navy, paddingVertical: 6 }}>
         <Text style={{ fontSize: 8, fontWeight: 600, color: T.aqua, textAlign: "center", letterSpacing: 1.5 }}>
