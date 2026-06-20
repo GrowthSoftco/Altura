@@ -119,7 +119,7 @@ export function LoginForm() {
       <div className="hidden lg:block relative overflow-hidden">
         {portadaUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={portadaUrl} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={portadaUrl} alt="" className="absolute inset-0 w-full h-full object-cover" onError={() => setPortadaUrl(null)} />
         ) : (
           <Image src="/nubes.jpg" alt="" fill priority className="object-cover" />
         )}
