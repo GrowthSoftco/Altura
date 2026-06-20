@@ -14,6 +14,7 @@ const estadoVariants: Record<EstadoCotizacion, string> = {
   RECHAZADA:       "bg-red-500/10 text-red-400 border border-red-500/20",
   VENCIDA:         "bg-pink-500/10 text-pink-400 border border-pink-500/20",
   CANCELADA:       "bg-red-900/30 text-red-300 border border-red-900/40",
+  REVISADA: "bg-pink-500/10 text-pink-400 border border-pink-500/20",
 }
 
 export const estadoLabels: Record<EstadoCotizacion, string> = {
@@ -29,6 +30,7 @@ export const estadoLabels: Record<EstadoCotizacion, string> = {
   RECHAZADA:       "Rechazada",
   VENCIDA:         "Vencida",
   CANCELADA:       "Cancelada",
+  REVISADA: "Revisada",
 }
 
 export function EstadoBadge({ estado }: { estado: EstadoCotizacion }) {
