@@ -48,7 +48,7 @@ export function AppSidebar({
   const inicial = (nombre || usuario || "?").trim().charAt(0).toUpperCase()
 
   return (
-    <Sidebar variant={variant} className="border-r border-[#1E1E1E] bg-[#0F0F0F]">
+    <Sidebar variant={variant} className="bg-[#0F0F0F]">
       <SidebarHeader className="px-5 pt-6 pb-5">
         <AlturaLogo size="md" />
       </SidebarHeader>
