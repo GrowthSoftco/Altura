@@ -42,12 +42,13 @@ export default function CotizacionDetailPage() {
 
   useEffect(() => {
     Promise.all([
-      fetch(`/api/cotizaciones/${id}`).then(r => r.json()),
+      fetch(`/api/cotizaciones/${id}`).then(r => r.ok ? r.json() : null),
       fetch("/api/auth/me").then(r => r.ok ? r.json() : null),
     ]).then(([cotData, me]) => {
-      setCot(cotData)
+      if (cotData && !cotData.error) setCot(cotData)
+      else toast.error("No se pudo cargar la cotización")
       if (me) setPuedeEstado(me.rol === "ADMIN" || me.permModificarEstados !== false)
-    }).finally(() => setLoad(false))
+    }).catch(() => toast.error("Error de conexión")).finally(() => setLoad(false))
   }, [id])
 
   const handleEstado = async (estado: EstadoCotizacion) => {
@@ -59,6 +60,7 @@ export default function CotizacionDetailPage() {
         body: JSON.stringify({ estado }),
       })
       const updated = await res.json()
+      if (!res.ok) { toast.error(updated.error || "No se pudo actualizar el estado"); return }
       setCot(updated)
       toast.success("Estado actualizado")
     } catch {
