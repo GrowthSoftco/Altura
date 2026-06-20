@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { EstadoBadge, estadoLabels } from "@/components/cotizaciones/estado-badge"
-import { CotizacionPDF } from "@/components/cotizaciones/cotizacion-pdf"
+import { CotizacionPDF, resolveHeaderDataUrl } from "@/components/cotizaciones/cotizacion-pdf"
 import { CompartirCotizacion } from "@/components/compartir-cotizacion"
 import { formatCOP, calcularDuracion } from "@/lib/calculos"
 import { CotizacionCompleta, EstadoCotizacion } from "@/types"
@@ -73,8 +73,8 @@ export default function CotizacionDetailPage() {
   const handlePDF = async () => {
     if (!cot) return
     try {
-      const hdr = await fetch("/api/configuracion/header-pdf").then(r => r.json()).catch(() => ({ url: null }))
-      const blob = await pdf(<CotizacionPDF cotizacion={cot} headerUrl={hdr.url || undefined} />).toBlob()
+      const headerUrl = await resolveHeaderDataUrl()
+      const blob = await pdf(<CotizacionPDF cotizacion={cot} headerUrl={headerUrl} />).toBlob()
       saveAs(blob, `Cotizacion_${cot.cliente.nombre}_${cot.codigo}.pdf`)
     } catch (e) {
       toast.error("Error al generar PDF")

@@ -21,7 +21,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 
 import { ServiciosTable } from "@/components/cotizaciones/servicios-table"
 import { ResumenCard } from "@/components/cotizaciones/resumen-card"
-import { CotizacionPDF } from "@/components/cotizaciones/cotizacion-pdf"
+import { CotizacionPDF, resolveHeaderDataUrl } from "@/components/cotizaciones/cotizacion-pdf"
 
 import { calcularPrecios, calcularDuracion, SERVICIOS_DEFAULT, generarPorcentajesDefault } from "@/lib/calculos"
 import { AIRPORTS } from "@/lib/iata-airports"
@@ -811,7 +811,8 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
         observaciones: observaciones || null, notasInternas: null,
         createdAt: new Date(), updatedAt: new Date(),
       }
-      const blob = await pdf(<CotizacionPDF cotizacion={mock} />).toBlob()
+      const headerUrl = await resolveHeaderDataUrl()
+      const blob = await pdf(<CotizacionPDF cotizacion={mock} headerUrl={headerUrl} />).toBlob()
       saveAs(blob, `Cotizacion_${nombre}_COT-PREVIEW.pdf`)
     } catch (e) { toast.error("Error al generar PDF"); console.error(e) }
   }

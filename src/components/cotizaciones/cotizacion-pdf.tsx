@@ -9,6 +9,31 @@ import { es } from "date-fns/locale"
 import { CotizacionCompleta, ServicioItem, Tramo, Hospedaje } from "@/types"
 import { formatCOP, calcularDuracion } from "@/lib/calculos"
 
+// ─── Header image ───────────────────────────────────────────────────────────────
+/**
+ * Devuelve la imagen del header como data URL base64. Embeberla evita que
+ * react-pdf genere el PDF antes de descargar la imagen remota (saldría gris).
+ * Prioriza la URL configurada en BD; si no, usa el banner por defecto en /public.
+ */
+export async function resolveHeaderDataUrl(): Promise<string | undefined> {
+  let src = "/header-pdf.jpg"
+  try {
+    const cfg = await fetch("/api/configuracion/header-pdf").then(r => r.ok ? r.json() : null)
+    if (cfg?.url) src = cfg.url
+  } catch { /* usa el default */ }
+  try {
+    const blob = await fetch(src).then(r => r.blob())
+    return await new Promise<string>((resolve, reject) => {
+      const fr = new FileReader()
+      fr.onload = () => resolve(fr.result as string)
+      fr.onerror = reject
+      fr.readAsDataURL(blob)
+    })
+  } catch {
+    return undefined
+  }
+}
+
 // ─── Fonts ────────────────────────────────────────────────────────────────────
 Font.registerHyphenationCallback((word) => [word])
 let _fontsRegistered = false
