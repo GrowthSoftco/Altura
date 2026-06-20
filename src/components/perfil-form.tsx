@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Loader2 } from "lucide-react"
@@ -11,7 +11,15 @@ export function PerfilForm({ debeCambiar, isAdmin = false }: { debeCambiar: bool
   const router = useRouter()
   const [actual, setActual] = useState("")
   const [portadaUrl, setPortadaUrl] = useState("")
+  const [headerPdfUrl, setHeaderPdfUrl] = useState("")
   const [savingPortada, setSavingPortada] = useState(false)
+  const [savingHeader, setSavingHeader] = useState(false)
+
+  useEffect(() => {
+    if (!isAdmin) return
+    fetch("/api/configuracion/portada").then(r => r.json()).then(d => { if (d.url) setPortadaUrl(d.url) })
+    fetch("/api/configuracion/header-pdf").then(r => r.json()).then(d => { if (d.url) setHeaderPdfUrl(d.url) })
+  }, [isAdmin])
 
   const guardarPortada = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,9 +31,24 @@ export function PerfilForm({ debeCambiar, isAdmin = false }: { debeCambiar: bool
         body: JSON.stringify({ dataUrl: portadaUrl }),
       })
       if (!res.ok) { toast.error("Error al guardar"); return }
-      toast.success("Imagen de portada actualizada")
+      toast.success("Portada actualizada")
     } catch { toast.error("Error de conexión") }
     finally { setSavingPortada(false) }
+  }
+
+  const guardarHeader = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!headerPdfUrl.startsWith("http")) { toast.error("Ingresa una URL válida"); return }
+    setSavingHeader(true)
+    try {
+      const res = await fetch("/api/configuracion/header-pdf", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: headerPdfUrl }),
+      })
+      if (!res.ok) { toast.error("Error al guardar"); return }
+      toast.success("Header PDF actualizado")
+    } catch { toast.error("Error de conexión") }
+    finally { setSavingHeader(false) }
   }
   const [nueva, setNueva] = useState("")
   const [confirmar, setConfirmar] = useState("")
@@ -91,17 +114,29 @@ export function PerfilForm({ debeCambiar, isAdmin = false }: { debeCambiar: bool
       </form>
 
       {isAdmin && (
-        <div className="mt-5 pt-5 border-t border-[#222222]">
-          <h3 className="text-sm font-semibold text-[#F2F2F2] mb-1">Imagen de portada del login</h3>
-          <p className="text-[13px] text-[#737373] mb-3">Pega el link de una imagen para mostrarla en la pantalla de inicio de sesión.</p>
-          <form onSubmit={guardarPortada} className="flex gap-2">
-            <input className={inp} value={portadaUrl} onChange={e => setPortadaUrl(e.target.value)} placeholder="https://..." />
-            <button type="submit" disabled={savingPortada || !portadaUrl}
-              className="h-10 px-4 rounded-lg bg-white text-[#0A0A0A] text-sm font-semibold hover:bg-gray-100 disabled:opacity-40 flex items-center gap-2 shrink-0">
-              {savingPortada && <Loader2 className="h-4 w-4 animate-spin" />}
-              Guardar
-            </button>
-          </form>
+        <div className="mt-5 pt-5 border-t border-[#222222] space-y-5">
+          <div>
+            <h3 className="text-sm font-semibold text-[#F2F2F2] mb-1">Imagen de fondo — pantalla de login</h3>
+            <form onSubmit={guardarPortada} className="flex gap-2 mt-2">
+              <input className={inp} value={portadaUrl} onChange={e => setPortadaUrl(e.target.value)} placeholder="https://..." />
+              <button type="submit" disabled={savingPortada || !portadaUrl}
+                className="h-10 px-4 rounded-lg bg-white text-[#0A0A0A] text-sm font-semibold hover:bg-gray-100 disabled:opacity-40 flex items-center gap-2 shrink-0">
+                {savingPortada && <Loader2 className="h-4 w-4 animate-spin" />}
+                Guardar
+              </button>
+            </form>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-[#F2F2F2] mb-1">Imagen header — PDF de cotizaciones</h3>
+            <form onSubmit={guardarHeader} className="flex gap-2 mt-2">
+              <input className={inp} value={headerPdfUrl} onChange={e => setHeaderPdfUrl(e.target.value)} placeholder="https://..." />
+              <button type="submit" disabled={savingHeader || !headerPdfUrl}
+                className="h-10 px-4 rounded-lg bg-white text-[#0A0A0A] text-sm font-semibold hover:bg-gray-100 disabled:opacity-40 flex items-center gap-2 shrink-0">
+                {savingHeader && <Loader2 className="h-4 w-4 animate-spin" />}
+                Guardar
+              </button>
+            </form>
+          </div>
         </div>
       )}
     </div>

@@ -376,10 +376,10 @@ function Footer({ codigo }: { codigo?: string }) {
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
-export function CotizacionPDF({ cotizacion }: { cotizacion: CotizacionCompleta }) {
+export function CotizacionPDF({ cotizacion, headerUrl }: { cotizacion: CotizacionCompleta; headerUrl?: string }) {
   ensureFonts()
   const origin   = typeof window !== "undefined" ? window.location.origin : ""
-  const cloudsUrl = `${origin}/nubes.jpg`
+  const cloudsUrl = headerUrl || `${origin}/nubes.jpg`
 
   const duracion  = calcularDuracion(new Date(cotizacion.fechaSalida), new Date(cotizacion.fechaRegreso))
   const activos   = (cotizacion.servicios as ServicioItem[]).filter(s => s.activo)

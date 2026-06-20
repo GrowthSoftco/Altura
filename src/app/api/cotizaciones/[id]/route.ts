@@ -26,6 +26,9 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!actual) return NextResponse.json({ error: "Not found" }, { status: 404 })
   if (!puedeAccederCotizacion(me, actual)) return NextResponse.json({ error: "Sin acceso" }, { status: 403 })
   const body = await req.json()
+  if (body.estado !== undefined && me.rol !== "ADMIN" && !me.permModificarEstados) {
+    return NextResponse.json({ error: "Sin permiso para modificar estados" }, { status: 403 })
+  }
 
   // If full edit (has servicios in body), recalculate prices
   let preciosData = {}

@@ -185,6 +185,28 @@ export default function ClienteDetailPage() {
                 className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4A4A4A] hover:text-[#00B4C5] hover:bg-[#2A2A2A] transition-colors disabled:opacity-40">
                 {busyId === cot.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Copy className="h-4 w-4" />}
               </button>
+              {isAdmin && (
+                <button type="button" title="Eliminar cotización" disabled={busyId === cot.id}
+                  onClick={() => setConfirm({
+                    title: `Eliminar cotización ${cot.codigo}`,
+                    description: "Esta acción no se puede deshacer.",
+                    confirmLabel: "Eliminar", danger: true,
+                    action: async () => {
+                      setBusyId(cot.id)
+                      try {
+                        const r = await fetch(`/api/cotizaciones/${cot.id}`, { method: "DELETE" })
+                        if (!r.ok) { toast.error("Error al eliminar"); return }
+                        toast.success("Cotización eliminada")
+                        setCliente(prev => prev ? { ...prev, cotizaciones: prev.cotizaciones.filter(c => c.id !== cot.id) } : prev)
+                        setConfirm(null)
+                      } catch { toast.error("Error al eliminar") }
+                      finally { setBusyId(null) }
+                    },
+                  })}
+                  className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4A4A4A] hover:text-red-400 hover:bg-red-500/10 transition-colors disabled:opacity-40">
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
         ))}
