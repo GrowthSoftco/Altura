@@ -141,7 +141,7 @@ export function ResumenCard({
 
       <CardFooter className="flex flex-col gap-2 p-4 pt-0">
         <Button
-          className="w-full bg-white hover:bg-gray-100 text-[#1A1A1A] font-semibold shadow-md shadow-black/10"
+          className="w-full bg-[#00B4C5] hover:bg-[#009aaa] text-white font-semibold shadow-md shadow-black/10"
           onClick={onGenerarPDF} disabled={isLoading} type="button"
         >
           <Download className="mr-2 h-4 w-4" /> Generar PDF

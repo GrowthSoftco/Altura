@@ -16,6 +16,7 @@ const ESTADOS: { label: string; value: EstadoCotizacion | "ALL" }[] = [
   { label: "Borrador",         value: "BORRADOR"        },
   { label: "Enviada",          value: "ENVIADA"         },
   { label: "Pendiente",        value: "PENDIENTE"       },
+  { label: "Revisada",         value: "REVISADA"        },
   { label: "En ajuste",        value: "EN_AJUSTE"       },
   { label: "Aprobada",         value: "APROBADA"        },
   { label: "Reservada",        value: "RESERVADA"       },

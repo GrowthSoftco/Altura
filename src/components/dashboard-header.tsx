@@ -36,8 +36,8 @@ export function DashboardHeader({
   }
 
   return (
-    <header className="shrink-0 z-10 flex items-center gap-4 h-14 px-5 border-b border-[#1E1E1E] bg-[#141414]">
-      <SidebarTrigger className="hidden md:flex h-7 w-7 shrink-0 text-[#4A4A4A] hover:text-[#C0C0C0] transition-colors" />
+    <header className="shrink-0 z-10 flex items-center gap-4 h-14 px-5 border-b border-border bg-background">
+      <SidebarTrigger className="hidden md:flex h-7 w-7 shrink-0 text-muted-foreground hover:text-foreground transition-colors" />
 
       <div className="flex-1 flex justify-center">
         <GlobalSearch rol={rol} perms={perms} />
@@ -48,7 +48,7 @@ export function DashboardHeader({
           <Link
             href="/cotizaciones/nueva"
             aria-label="Nueva cotización"
-            className="hidden sm:flex items-center gap-2 h-9 pl-3 pr-4 rounded-full bg-white text-[#0A0A0A] text-sm font-semibold hover:bg-gray-100 transition-colors shadow-sm"
+            className="hidden sm:flex items-center gap-2 h-9 pl-3 pr-4 rounded-full bg-[#00B4C5] text-white text-sm font-semibold hover:bg-[#009aaa] transition-colors shadow-sm"
           >
             <FilePlus className="h-4 w-4" />
             <span className="hidden lg:inline">Nueva cotización</span>
@@ -65,33 +65,33 @@ export function DashboardHeader({
           <DropdownMenuContent
             align="end"
             sideOffset={8}
-            className="w-52 bg-[#1A1A1A] border-[#262626] text-[#E5E5E5]"
+            className="w-52 bg-popover border-border text-popover-foreground"
           >
             <div className="flex flex-col gap-0.5 px-1.5 py-1.5">
-              <span className="text-sm font-medium text-[#F2F2F2]">{nombre}</span>
-              <span className="text-[11px] text-[#737373]">{rol === "ADMIN" ? "Administrador" : "Usuario"}</span>
+              <span className="text-sm font-medium text-foreground">{nombre}</span>
+              <span className="text-[11px] text-muted-foreground">{rol === "ADMIN" ? "Administrador" : "Usuario"}</span>
             </div>
-            <DropdownMenuSeparator className="bg-[#262626]" />
-            <DropdownMenuItem render={<Link href="/perfil" />} className="cursor-pointer focus:bg-[#242424] focus:text-[#F2F2F2]">
-              <Settings className="h-4 w-4 text-[#737373]" />
+            <DropdownMenuSeparator className="bg-border" />
+            <DropdownMenuItem render={<Link href="/perfil" />} className="cursor-pointer focus:bg-accent focus:text-accent-foreground">
+              <Settings className="h-4 w-4 text-muted-foreground" />
               Configuración
             </DropdownMenuItem>
             {rol === "ADMIN" && (
-              <DropdownMenuItem render={<Link href="/bitacora" />} className="cursor-pointer focus:bg-[#242424] focus:text-[#F2F2F2]">
-                <BookOpen className="h-4 w-4 text-[#737373]" />
+              <DropdownMenuItem render={<Link href="/bitacora" />} className="cursor-pointer focus:bg-accent focus:text-accent-foreground">
+                <BookOpen className="h-4 w-4 text-muted-foreground" />
                 Bitácora
               </DropdownMenuItem>
             )}
-            <DropdownMenuSeparator className="bg-[#262626]" />
+            <DropdownMenuSeparator className="bg-border" />
             <DropdownMenuItem
               onClick={() => setTheme(isDark ? "light" : "dark")}
               closeOnClick={false}
-              className="cursor-pointer focus:bg-[#242424] focus:text-[#F2F2F2]"
+              className="cursor-pointer focus:bg-accent focus:text-accent-foreground"
             >
-              {isDark ? <Sun className="h-4 w-4 text-[#737373]" /> : <Moon className="h-4 w-4 text-[#737373]" />}
+              {isDark ? <Sun className="h-4 w-4 text-muted-foreground" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
               {isDark ? "Tema claro" : "Tema oscuro"}
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-[#262626]" />
+            <DropdownMenuSeparator className="bg-border" />
             <DropdownMenuItem
               onClick={logout}
               className="cursor-pointer text-red-400 focus:bg-red-500/10 focus:text-red-400"

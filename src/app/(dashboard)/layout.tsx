@@ -38,7 +38,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <SidebarProvider defaultOpen={false} className="bg-[#0A0A0A]">
+    <SidebarProvider defaultOpen={false} className="bg-background">
       <AppSidebar
         variant="inset"
         nombre={user.nombre || user.usuario}
@@ -51,7 +51,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           usuarios: user.rol === "ADMIN" || user.permUsuarios,
         }}
       />
-      <SidebarInset className="bg-[#141414] rounded-xl border border-[#1E1E1E] overflow-hidden h-[calc(100svh-1rem)] flex flex-col">
+      <SidebarInset className="bg-background rounded-xl border border-border overflow-hidden h-[calc(100svh-1rem)] flex flex-col">
         <DashboardHeader
           nombre={user.nombre || user.usuario}
           usuario={user.usuario}

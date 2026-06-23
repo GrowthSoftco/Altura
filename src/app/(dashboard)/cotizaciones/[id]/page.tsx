@@ -28,8 +28,8 @@ import { formatCOP, calcularDuracion } from "@/lib/calculos"
 import { CotizacionCompleta, EstadoCotizacion } from "@/types"
 
 const ESTADOS: EstadoCotizacion[] = [
-  "BORRADOR", "ENVIADA", "PENDIENTE", "EN_AJUSTE", "APROBADA", "RESERVADA",
-  "PAGANDO", "PAGADA", "VIAJE_REALIZADO", "RECHAZADA", "VENCIDA", "CANCELADA","REVISADA",
+  "BORRADOR", "ENVIADA", "PENDIENTE", "REVISADA", "EN_AJUSTE", "APROBADA", "RESERVADA",
+  "PAGANDO", "PAGADA", "VIAJE_REALIZADO", "RECHAZADA", "VENCIDA", "CANCELADA",
 ]
 
 export default function CotizacionDetailPage() {

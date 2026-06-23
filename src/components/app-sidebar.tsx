@@ -37,17 +37,17 @@ export function AppSidebar({
       : pathname.startsWith(href) && href !== "/cotizaciones/nueva"
 
   return (
-    <Sidebar variant={variant} collapsible="icon" className="bg-[#0F0F0F]">
+    <Sidebar variant={variant} collapsible="icon" className="bg-sidebar">
       <SidebarHeader className="px-5 pt-6 pb-5 group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:items-center">
         <div className="group-data-[collapsible=icon]:hidden">
           <AlturaLogo size="md" />
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/logo.svg" alt="Altura" className="hidden h-7 w-auto mx-auto brightness-0 invert group-data-[collapsible=icon]:block" />
+        <img src="/logo.svg" alt="Altura" className="hidden h-7 w-auto mx-auto dark:brightness-0 dark:invert group-data-[collapsible=icon]:block" />
       </SidebarHeader>
 
       <SidebarContent className="px-3 flex-1 group-data-[collapsible=icon]:px-1.5">
-        <p className="px-2 mb-2 text-[10px] font-medium text-[#383838] tracking-[0.18em] uppercase select-none group-data-[collapsible=icon]:hidden">
+        <p className="px-2 mb-2 text-[10px] font-medium text-sidebar-foreground/45 tracking-[0.18em] uppercase select-none group-data-[collapsible=icon]:hidden">
           Navegación
         </p>
 
@@ -62,15 +62,17 @@ export function AppSidebar({
                 className={cn(
                   "group/item flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
                   "group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0 group-data-[collapsible=icon]:h-9",
-                  active ? "bg-[#1E1E1E] text-[#F2F2F2]" : "text-[#737373] hover:bg-[#191919] hover:text-[#C0C0C0]"
+                  active
+                    ? "bg-background text-foreground shadow-sm ring-1 ring-sidebar-border"
+                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
               >
                 <item.icon className={cn(
                   "h-4 w-4 shrink-0 transition-colors",
-                  active ? "text-white" : "text-[#4A4A4A] group-hover/item:text-[#737373]"
+                  active ? "text-foreground" : "text-sidebar-foreground/55 group-hover/item:text-sidebar-accent-foreground"
                 )} />
                 <span className="font-medium group-data-[collapsible=icon]:hidden">{item.label}</span>
-                {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white group-data-[collapsible=icon]:hidden" />}
+                {active && <span className="ml-auto h-1.5 w-1.5 rounded-full bg-sidebar-primary group-data-[collapsible=icon]:hidden" />}
               </Link>
             )
           })}

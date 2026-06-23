@@ -18,12 +18,12 @@ export function AlturaLogo({ size = "md" }: AlturaLogoProps) {
       />
       <div className="flex flex-col leading-none">
         <span
-          className={`${nameSize} font-semibold text-[#F2F2F2] tracking-[0.12em]`}
+          className={`${nameSize} font-semibold text-foreground tracking-[0.12em]`}
         >
           ALTURA
         </span>
         <span
-          className={`${subSize} text-[#737373] tracking-[0.22em] mt-0.5`}
+          className={`${subSize} text-muted-foreground tracking-[0.22em] mt-0.5`}
         >
           AGENCIA DE VIAJES
         </span>

@@ -21,7 +21,7 @@ export function MobileDock({ rol, perms, canCotizar }: { rol: string; perms: Per
     href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(href)
 
   return (
-    <nav className="md:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 rounded-2xl border border-[#262626] bg-[#1A1A1A]/95 backdrop-blur px-2 py-1.5 shadow-xl shadow-black/40">
+    <nav className="md:hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 rounded-2xl border border-border bg-card/95 backdrop-blur px-2 py-1.5 shadow-xl shadow-black/15 dark:shadow-black/40">
       {items.map(item => {
         const active = isActive(item.href)
         return (
@@ -30,7 +30,7 @@ export function MobileDock({ rol, perms, canCotizar }: { rol: string; perms: Per
             href={item.href}
             className={cn(
               "flex flex-col items-center justify-center gap-0.5 rounded-xl px-3.5 py-1.5 transition-colors",
-              active ? "bg-[#00B4C5]/15 text-[#22d3ee]" : "text-[#737373] hover:text-[#C0C0C0]"
+              active ? "bg-[#00B4C5]/15 text-[#009aaa] dark:text-[#22d3ee]" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <item.icon className="h-5 w-5" />
@@ -43,7 +43,7 @@ export function MobileDock({ rol, perms, canCotizar }: { rol: string; perms: Per
         <Link
           href="/cotizaciones/nueva"
           aria-label="Nueva cotización"
-          className="ml-1 flex items-center justify-center h-11 w-11 rounded-xl bg-white text-[#0A0A0A] hover:bg-gray-100 transition-colors shadow-sm"
+          className="ml-1 flex items-center justify-center h-11 w-11 rounded-xl bg-[#00B4C5] text-white hover:bg-[#009aaa] transition-colors shadow-sm"
         >
           <FilePlus className="h-5 w-5" />
         </Link>
