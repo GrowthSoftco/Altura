@@ -27,6 +27,16 @@ export function ClienteForm({ trigger, cliente, onSuccess }: ClienteFormProps) {
   const [correo, setCorreo]     = useState(cliente?.correo ?? "")
   const [documento, setDoc]     = useState(cliente?.documento ?? "")
 
+  // Cargar los datos del cliente actual cada vez que se abre el diálogo,
+  // para que al editar siempre se muestre el cliente correcto (no el primero).
+  const abrir = () => {
+    setNombre(cliente?.nombre ?? "")
+    setTelefono(cliente?.telefono ?? "")
+    setCorreo(cliente?.correo ?? "")
+    setDoc(cliente?.documento ?? "")
+    setOpen(true)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!nombre || !telefono) {
@@ -56,7 +66,7 @@ export function ClienteForm({ trigger, cliente, onSuccess }: ClienteFormProps) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <span onClick={() => setOpen(true)} className="inline-flex">
+      <span onClick={abrir} className="inline-flex">
         {trigger}
       </span>
       <DialogContent className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2]">
