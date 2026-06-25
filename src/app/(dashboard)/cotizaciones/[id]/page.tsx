@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useEffect, useState, Suspense } from "react"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
 import { Download, ArrowLeft, Pencil } from "lucide-react"
@@ -32,9 +32,11 @@ const ESTADOS: EstadoCotizacion[] = [
   "PAGANDO", "PAGADA", "VIAJE_REALIZADO", "RECHAZADA", "VENCIDA", "CANCELADA",
 ]
 
-export default function CotizacionDetailPage() {
+function CotizacionDetail() {
   const { id } = useParams<{ id: string }>()
   const router  = useRouter()
+  const searchParams = useSearchParams()
+  const volverHref = searchParams.get("from") || "/cotizaciones"
   const [cot, setCot]       = useState<CotizacionCompleta | null>(null)
   const [loading, setLoad]  = useState(true)
   const [saving, setSaving] = useState(false)
@@ -112,7 +114,7 @@ export default function CotizacionDetailPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Link
-            href="/cotizaciones"
+            href={volverHref}
             className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-[#737373] hover:text-[#F2F2F2]")}
           >
             <ArrowLeft className="h-4 w-4" />
@@ -294,5 +296,13 @@ export default function CotizacionDetailPage() {
         </Card>
       )}
     </div>
+  )
+}
+
+export default function CotizacionDetailPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center h-64"><p className="text-[#808080]">Cargando...</p></div>}>
+      <CotizacionDetail />
+    </Suspense>
   )
 }

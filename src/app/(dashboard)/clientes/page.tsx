@@ -89,11 +89,14 @@ export default function ClientesPage() {
     } finally { setLoading(false) }
   }, [])
 
-  // Selección: en escritorio auto-selecciona el primero; en móvil arranca en la lista
+  // Selección: respeta ?c=ID (al volver desde una cotización); en escritorio
+  // auto-selecciona el primero; en móvil arranca en la lista.
   useEffect(() => {
     setSelectedId(prev => {
       if (clientes.length === 0) return null
       if (prev && clientes.some(c => c.id === prev)) return prev
+      const fromUrl = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("c") : null
+      if (fromUrl && clientes.some(c => c.id === fromUrl)) return fromUrl
       return isMobile ? null : clientes[0].id
     })
   }, [clientes, isMobile])
@@ -361,7 +364,7 @@ export default function ClientesPage() {
                         <p className="text-sm font-semibold text-[#00B4C5] tabular-nums">{formatCOP(Number(cot.valorConPorcentaje))}</p>
                         <EstadoBadge estado={cot.estado} />
                       </div>
-                      <Link href={`/cotizaciones/${cot.id}`} title="Ver" className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4A4A4A] hover:text-[#F2F2F2] hover:bg-[#2A2A2A] transition-colors">
+                      <Link href={`/cotizaciones/${cot.id}?from=${encodeURIComponent(`/clientes?c=${detalle.id}`)}`} title="Ver" className="h-8 w-8 flex items-center justify-center rounded-lg text-[#4A4A4A] hover:text-[#F2F2F2] hover:bg-[#2A2A2A] transition-colors">
                         <Eye className="h-4 w-4" />
                       </Link>
                       <button type="button" title="Duplicar" disabled={busyId === cot.id} onClick={() => duplicarCotizacion(cot.id)}
