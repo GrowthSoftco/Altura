@@ -9,6 +9,20 @@ import { es } from "date-fns/locale"
 import { CotizacionCompleta, ServicioItem, Tramo, Hospedaje } from "@/types"
 import { formatCOP, calcularDuracion } from "@/lib/calculos"
 
+// ─── Hora 12h ─────────────────────────────────────────────────────────────────
+/** Convierte "HH:mm" (24h) a formato 12h "h:mm a. m./p. m.". */
+export function hora12(hhmm?: string | null): string {
+  if (!hhmm) return ""
+  const parts = hhmm.split(":")
+  let h = parseInt(parts[0], 10)
+  const m = (parts[1] ?? "00").padStart(2, "0")
+  if (isNaN(h)) return hhmm
+  const suf = h < 12 ? "a. m." : "p. m."
+  h = h % 12
+  if (h === 0) h = 12
+  return `${h}:${m} ${suf}`
+}
+
 // ─── Header image ───────────────────────────────────────────────────────────────
 /**
  * Devuelve la imagen del header como data URL base64. Embeberla evita que
@@ -230,14 +244,14 @@ function TramoBlock({ tramo, num }: { tramo: Tramo; num: number }) {
   const fmtHotelDate = (d?: string | null, h?: string) => {
     if (!d) return null
     const base = format(new Date(d + "T12:00:00"), "dd MMM yyyy", { locale: es })
-    return h ? `${base}  ·  ${h}` : base
+    return h ? `${base}  ·  ${hora12(h)}` : base
   }
   const checkInTxt  = fmtHotelDate(fechaIn,  tramo.hotelHoraCheckIn)
   const checkOutTxt = fmtHotelDate(fechaOut, tramo.hotelHoraCheckOut)
   const hasFechasHotel = !!(checkInTxt || checkOutTxt)
 
   const fCols = ["Origen","Destino","Aerolínea","Salida","Llegada","Tiempo","Escala"]
-  const fVals = [tramo.origen, tramo.destino, tramo.aerolineaIda, tramo.horaSalidaIda, tramo.horaLlegadaIda, tramo.tiempoVuelo, tramo.escalas]
+  const fVals = [tramo.origen, tramo.destino, tramo.aerolineaIda, hora12(tramo.horaSalidaIda), hora12(tramo.horaLlegadaIda), tramo.tiempoVuelo, tramo.escalas]
 
   return (
     <View style={S.tramoBox} wrap={false}>
@@ -298,7 +312,7 @@ function HospedajeBlock({ h }: { h: Hospedaje }) {
   const fmtFecha = (d?: string, hora?: string) => {
     if (!d) return null
     const base = format(new Date(d + "T12:00:00"), "dd MMM yyyy", { locale: es })
-    return hora ? `${base}  ·  ${hora}` : base
+    return hora ? `${base}  ·  ${hora12(hora)}` : base
   }
   const checkIn  = fmtFecha(h.checkIn,  h.horaCheckIn)
   const checkOut = fmtFecha(h.checkOut, h.horaCheckOut)
