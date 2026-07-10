@@ -85,7 +85,7 @@ export default function BitacoraPage() {
                   <div className="flex items-start justify-between gap-3 flex-wrap">
                     <p className="text-sm text-[#F2F2F2] leading-snug">{e.descripcion}</p>
                     <span className="text-[11px] text-[#4A4A4A] tabular-nums shrink-0">
-                      {format(new Date(e.creadoEn), "h:mm a", { locale: es })}
+                      {format(new Date(e.creadoEn), "HH:mm")}
                     </span>
                   </div>
                   {e.usuario && (

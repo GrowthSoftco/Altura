@@ -280,12 +280,12 @@ function TramoBlock({
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora salida</Label>
-          <Input type="time" className={inpT}
+          <Input type="time" lang="en-GB" className={inpT}
             value={tramo.horaSalidaIda ?? ""} onChange={e => up("horaSalidaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora llegada</Label>
-          <Input type="time" className={inpT}
+          <Input type="time" lang="en-GB" className={inpT}
             value={tramo.horaLlegadaIda ?? ""} onChange={e => up("horaLlegadaIda", e.target.value)} />
         </div>
         <div className="space-y-1">
@@ -350,7 +350,7 @@ function TramoBlock({
               </div>
               <div className="space-y-1">
                 <Label className="text-[#737373] text-xs">Hora check-in</Label>
-                <Input type="time" className={inpT}
+                <Input type="time" lang="en-GB" className={inpT}
                   value={tramo.hotelHoraCheckIn ?? ""} onChange={e => up("hotelHoraCheckIn", e.target.value)} />
               </div>
               <div className="space-y-1">
@@ -375,7 +375,7 @@ function TramoBlock({
               </div>
               <div className="space-y-1">
                 <Label className="text-[#737373] text-xs">Hora check-out</Label>
-                <Input type="time" className={inpT}
+                <Input type="time" lang="en-GB" className={inpT}
                   value={tramo.hotelHoraCheckOut ?? ""} onChange={e => up("hotelHoraCheckOut", e.target.value)} />
               </div>
             </div>
@@ -465,7 +465,7 @@ function HospedajeSection({
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora check-in</Label>
-          <Input type="time" className={inpT} value={h.horaCheckIn ?? ""} onChange={e => up("horaCheckIn", e.target.value)} />
+          <Input type="time" lang="en-GB" className={inpT} value={h.horaCheckIn ?? ""} onChange={e => up("horaCheckIn", e.target.value)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha check-out</Label>
@@ -489,7 +489,7 @@ function HospedajeSection({
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora check-out</Label>
-          <Input type="time" className={inpT} value={h.horaCheckOut ?? ""} onChange={e => up("horaCheckOut", e.target.value)} />
+          <Input type="time" lang="en-GB" className={inpT} value={h.horaCheckOut ?? ""} onChange={e => up("horaCheckOut", e.target.value)} />
         </div>
       </div>
       {(() => {
