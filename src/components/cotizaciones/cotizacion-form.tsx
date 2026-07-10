@@ -35,6 +35,49 @@ import { cn } from "@/lib/utils"
 const fmtMiles = (v: number) => v === 0 ? "" : String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ".")
 const parseMiles = (raw: string) => { const c = raw.replace(/\./g, "").replace(/[^0-9]/g, ""); return c === "" ? 0 : parseInt(c, 10) }
 
+// ─── Hora 24h ────────────────────────────────────────────────────────────────
+// Campo de texto propio (no <input type="time">) para garantizar formato 24h en
+// TODOS los equipos, sin depender del idioma del sistema operativo/navegador.
+function Hora24({ value, onChange, className }: { value?: string | null; onChange: (v: string) => void; className?: string }) {
+  const [text, setText] = useState(value ?? "")
+  useEffect(() => { setText(value ?? "") }, [value])
+
+  const handle = (raw: string) => {
+    let d = raw.replace(/[^0-9]/g, "").slice(0, 4)
+    if (d.length >= 3) d = d.slice(0, 2) + ":" + d.slice(2)
+    setText(d)
+    const m = d.match(/^(\d{2}):(\d{2})$/)
+    if (m) {
+      const hh = Math.min(23, parseInt(m[1], 10))
+      const mm = Math.min(59, parseInt(m[2], 10))
+      onChange(`${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`)
+    } else if (d === "") {
+      onChange("")
+    }
+  }
+
+  const blur = () => {
+    const m = text.match(/^(\d{1,2}):?(\d{0,2})$/)
+    if (!m) { setText(value ?? ""); return }
+    const hh = Math.min(23, parseInt(m[1] || "0", 10))
+    const mm = Math.min(59, parseInt(m[2] || "0", 10))
+    const norm = `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`
+    setText(norm); onChange(norm)
+  }
+
+  return (
+    <Input
+      className={className}
+      value={text}
+      onChange={e => handle(e.target.value)}
+      onBlur={blur}
+      placeholder="HH:mm"
+      inputMode="numeric"
+      maxLength={5}
+    />
+  )
+}
+
 const NOTA_PLAN_PAGOS =
   "Nota importante: El plan de pagos fraccionado no corresponde a un crédito bancario ni genera intereses. " +
   "Debido a que los servicios turísticos están sujetos a variaciones del mercado, el valor final de los tiquetes " +
@@ -280,13 +323,11 @@ function TramoBlock({
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora salida</Label>
-          <Input type="time" lang="en-GB" className={inpT}
-            value={tramo.horaSalidaIda ?? ""} onChange={e => up("horaSalidaIda", e.target.value)} />
+          <Hora24 className={inpT} value={tramo.horaSalidaIda} onChange={v => up("horaSalidaIda", v)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora llegada</Label>
-          <Input type="time" lang="en-GB" className={inpT}
-            value={tramo.horaLlegadaIda ?? ""} onChange={e => up("horaLlegadaIda", e.target.value)} />
+          <Hora24 className={inpT} value={tramo.horaLlegadaIda} onChange={v => up("horaLlegadaIda", v)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Tiempo de vuelo</Label>
@@ -350,8 +391,7 @@ function TramoBlock({
               </div>
               <div className="space-y-1">
                 <Label className="text-[#737373] text-xs">Hora check-in</Label>
-                <Input type="time" lang="en-GB" className={inpT}
-                  value={tramo.hotelHoraCheckIn ?? ""} onChange={e => up("hotelHoraCheckIn", e.target.value)} />
+                <Hora24 className={inpT} value={tramo.hotelHoraCheckIn} onChange={v => up("hotelHoraCheckIn", v)} />
               </div>
               <div className="space-y-1">
                 <Label className="text-[#737373] text-xs">Fecha check-out</Label>
@@ -375,8 +415,7 @@ function TramoBlock({
               </div>
               <div className="space-y-1">
                 <Label className="text-[#737373] text-xs">Hora check-out</Label>
-                <Input type="time" lang="en-GB" className={inpT}
-                  value={tramo.hotelHoraCheckOut ?? ""} onChange={e => up("hotelHoraCheckOut", e.target.value)} />
+                <Hora24 className={inpT} value={tramo.hotelHoraCheckOut} onChange={v => up("hotelHoraCheckOut", v)} />
               </div>
             </div>
             {(() => {
@@ -465,7 +504,7 @@ function HospedajeSection({
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora check-in</Label>
-          <Input type="time" lang="en-GB" className={inpT} value={h.horaCheckIn ?? ""} onChange={e => up("horaCheckIn", e.target.value)} />
+          <Hora24 className={inpT} value={h.horaCheckIn} onChange={v => up("horaCheckIn", v)} />
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Fecha check-out</Label>
@@ -489,7 +528,7 @@ function HospedajeSection({
         </div>
         <div className="space-y-1">
           <Label className="text-[#737373] text-xs">Hora check-out</Label>
-          <Input type="time" lang="en-GB" className={inpT} value={h.horaCheckOut ?? ""} onChange={e => up("horaCheckOut", e.target.value)} />
+          <Hora24 className={inpT} value={h.horaCheckOut} onChange={v => up("horaCheckOut", v)} />
         </div>
       </div>
       {(() => {
