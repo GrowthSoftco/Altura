@@ -822,7 +822,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       }
       const saved = await res.json()
       toast.success(isEdit ? "Cotización actualizada" : `Cotización ${saved.codigo} guardada`)
-      router.push(`/cotizaciones/${saved.id}`)
+      // Si la cotización se creó desde el perfil de un cliente, conservar ese
+      // contexto para que el botón "regresar" vuelva al cliente y no a Cotizaciones.
+      const from = initialClienteId ? `?from=${encodeURIComponent(`/clientes?c=${initialClienteId}`)}` : ""
+      router.push(`/cotizaciones/${saved.id}${from}`)
     } catch (e) {
       console.error("handleGuardar error:", e)
       toast.error(`Error al guardar: ${e instanceof Error ? e.message : "Error desconocido"}`)
