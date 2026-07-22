@@ -132,7 +132,7 @@ function CotizacionDetail() {
         <div className="flex items-center gap-2">
           <CompartirCotizacion id={id} />
           <Link
-            href={`/cotizaciones/${id}/editar`}
+            href={`/cotizaciones/${id}/editar?from=${encodeURIComponent(volverHref)}`}
             className={cn(buttonVariants({ variant: "outline", size: "sm" }), "border-[#262626] bg-[#1C1C1C] text-[#737373] hover:text-[#F2F2F2] hover:bg-[#242424] h-9 gap-1.5")}
           >
             <Pencil className="h-3.5 w-3.5" /> Editar
@@ -148,7 +148,7 @@ function CotizacionDetail() {
               </SelectTrigger>
               <SelectContent className="bg-[#1C1C1C] border-[#262626] text-[#F2F2F2]">
                 {ESTADOS.map((e) => (
-                  <SelectItem key={e} value={e} className="focus:bg-[#242424]">
+                  <SelectItem key={e} value={e}>
                     {estadoLabels[e]}
                   </SelectItem>
                 ))}

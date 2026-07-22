@@ -12,12 +12,16 @@ import { getCurrentUser, puedeAccederCotizacion } from "@/lib/auth"
 
 export default async function EditarCotizacionPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ from?: string }>
 }) {
   const me = await getCurrentUser()
   if (!me) redirect("/login")
   const { id } = await params
+  const { from } = await searchParams
+  const backTo = from || `/cotizaciones/${id}`
 
   const cot = await prisma.cotizacion.findUnique({
     where: { id },
@@ -31,7 +35,7 @@ export default async function EditarCotizacionPage({
     <div className="space-y-6 max-w-7xl mx-auto">
       <div className="flex items-center gap-3">
         <Link
-          href={`/cotizaciones/${id}`}
+          href={`/cotizaciones/${id}?from=${encodeURIComponent(backTo)}`}
           className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-[#737373] hover:text-[#F2F2F2]")}
         >
           <ArrowLeft className="h-4 w-4" />
@@ -46,7 +50,7 @@ export default async function EditarCotizacionPage({
 
       <div className="h-px bg-[#1E1E1E]" />
 
-      <CotizacionForm cotizacion={serializeCotizacion(cot)} />
+      <CotizacionForm cotizacion={serializeCotizacion(cot)} backTo={backTo} />
     </div>
   )
 }

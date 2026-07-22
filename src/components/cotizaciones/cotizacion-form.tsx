@@ -556,9 +556,11 @@ function HospedajeSection({
 interface CotizacionFormProps {
   initialClienteId?: string
   cotizacion?: CotizacionCompleta
+  /** A dónde volver tras guardar (para conservar el contexto del cliente). */
+  backTo?: string
 }
 
-export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormProps = {}) {
+export function CotizacionForm({ initialClienteId, cotizacion, backTo }: CotizacionFormProps = {}) {
   const router  = useRouter()
   const isEdit  = Boolean(cotizacion)
   const [isLoading, setIsLoading] = useState(false)
@@ -822,9 +824,10 @@ export function CotizacionForm({ initialClienteId, cotizacion }: CotizacionFormP
       }
       const saved = await res.json()
       toast.success(isEdit ? "Cotización actualizada" : `Cotización ${saved.codigo} guardada`)
-      // Si la cotización se creó desde el perfil de un cliente, conservar ese
-      // contexto para que el botón "regresar" vuelva al cliente y no a Cotizaciones.
-      const from = initialClienteId ? `?from=${encodeURIComponent(`/clientes?c=${initialClienteId}`)}` : ""
+      // Conservar el contexto de origen (cliente) para que "regresar" no mande a
+      // Cotizaciones: al editar viene por backTo; al crear desde un cliente, por initialClienteId.
+      const origen = backTo || (initialClienteId ? `/clientes?c=${initialClienteId}` : "")
+      const from = origen ? `?from=${encodeURIComponent(origen)}` : ""
       router.push(`/cotizaciones/${saved.id}${from}`)
     } catch (e) {
       console.error("handleGuardar error:", e)
